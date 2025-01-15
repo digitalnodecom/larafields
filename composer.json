@@ -1,0 +1,27 @@
+{
+  "name": "digitalnode/form-maker",
+  "type": "package",
+  "description": "An example package for Roots Acorn.",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Brandon Nifong",
+      "email": "brandon@tendency.me"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "DigitalNode\\FormMaker\\": "src/"
+    }
+  },
+  "require": {
+    "php": "^8.0"
+  },
+  "extra": {
+    "acorn": {
+      "providers": [
+        "DigitalNode\\FormMaker\\Providers\\FormMakerServiceProvider"
+      ]
+    }
+  }
+}
