@@ -25,6 +25,14 @@ class FormMakerComponent extends Component
                     'label' => $field['label'],
                     'required' => $field['required']
                 ];
+            } else if ( $field['type'] == 'multiselect' ){
+                $this->availablePropertiesSchema[] = [
+                    'type' => $field['type'],
+                    'name' => $field['name'],
+                    'label' => $field['label'],
+                    'required' => $field['required'],
+                    'options' => $field['options']
+                ];
             }
         });
 

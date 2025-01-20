@@ -50,6 +50,27 @@ return [
                     'maxValue'     => 100
                 ],
                 [
+                    'type'         => 'multiselect',
+                    'label'        => 'Product Gender',
+                    'name'         => 'product_gender',
+                    'defaultValue' => '',
+                    'required'     => true,
+                    'options'      => [
+                        [
+                            'value' => 'men',
+                            'label' => 'Men'
+                        ],
+                        [
+                            'value' => 'women',
+                            'label' => 'Women'
+                        ],
+                        [
+                            'value' => 'unisex',
+                            'label' => 'Unisex'
+                        ]
+                    ]
+                ],
+                [
                     'type'             => 'relationship',
                     'label'            => 'Relationship Field',
                     'name'             => 'relationship_field',

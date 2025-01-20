@@ -35,6 +35,11 @@ class FormMaker
         add_filter('wp_footer', function () {
             echo Blade::render('@livewireScripts');
         });
+
+        add_action('admin_enqueue_scripts', function() {
+            wp_enqueue_script('choices-js', 'https://cdnjs.cloudflare.com/ajax/libs/tom-select/2.4.1/js/tom-select.complete.js');
+            wp_enqueue_style('choices-css', 'https://cdnjs.cloudflare.com/ajax/libs/tom-select/2.4.1/css/tom-select.css');
+        }, 10, 1);
     }
 
     public function createMappingPages()

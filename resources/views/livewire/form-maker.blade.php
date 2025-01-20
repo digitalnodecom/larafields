@@ -1,6 +1,6 @@
 @php use Illuminate\Support\Facades\Session; @endphp
 <div>
-  @foreach($availablePropertiesSchema as $field)
+  @foreach($availablePropertiesSchema as $key => $field)
     <div class="mb-2">
       <label for="story">{{ $field['label'] }}</label>
 
@@ -37,6 +37,14 @@
           </textarea>
       @endif
 
+      @if($field['type'] == 'multiselect')
+          <x-tom-select
+            id="attribute_options"
+            class="multiselect"
+            wire:model="{{ $field['key'] }}"
+            options="{{ sprintf('availablePropertiesSchema.%s.options', $key) }}" multiple />
+      @endif
+
     </div>
   @endforeach
 
@@ -47,3 +55,30 @@
 
   <button wire:click="submit">Submit</button>
 </div>
+
+@script
+<script>
+  jQuery(document).ready(function () {
+    initProductGroupSelects();
+
+    Livewire.on('form-submitted', function(){
+      initProductGroupSelects();
+    });
+
+    function initProductGroupSelects() {
+      jQuery('select.multiselect').each(function() {
+        const $select = jQuery(this);
+        const selectedValue = $select.data('value');
+
+        if ($select.find('option').length <= 1) {
+          Object.entries(window.productGroups).forEach(([termId, termName]) => {
+            $select.append(
+              new Option(termName, termId, false, selectedValue == termId)
+            );
+          });
+        }
+      });
+    }
+  });
+</script>
+@endscript
