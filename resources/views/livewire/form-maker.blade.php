@@ -39,9 +39,8 @@
 
       @if($field['type'] == 'multiselect')
           <x-tom-select
-            id="attribute_options"
             class="multiselect"
-            wire:model="{{ $field['key'] }}"
+            wire:model="{{ sprintf('availablePropertiesData.dn_form_maker_%s', $field['name']) }}"
             options="{{ sprintf('availablePropertiesSchema.%s.options', $key) }}" multiple />
       @endif
 

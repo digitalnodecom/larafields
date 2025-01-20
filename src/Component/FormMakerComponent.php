@@ -23,11 +23,11 @@ class FormMakerComponent extends Component {
         }
 
         collect( $group['fields'] )->each( function ( $field ) use ($existingData) {
+            $defaultValue = $existingData['dn_form_maker_' . $field['name']] ?? $field['defaultValue'] ?? '';
+
+            $this->availablePropertiesData[ 'dn_form_maker_' . $field['name'] ] = $defaultValue;
+
             if ( collect( [ 'text', 'textarea', 'number' ] )->contains( $field['type'] ) ) {
-                $defaultValue = $existingData['dn_form_maker_' . $field['name']] ?? $field['defaultValue'];
-
-                $this->availablePropertiesData[ 'dn_form_maker_' . $field['name'] ] = $defaultValue;
-
                 $this->availablePropertiesSchema[] = [
                     'type'     => $field['type'],
                     'name'     => $field['name'],
@@ -44,7 +44,6 @@ class FormMakerComponent extends Component {
                 ];
             }
         } );
-
     }
 
     public function submit() {
