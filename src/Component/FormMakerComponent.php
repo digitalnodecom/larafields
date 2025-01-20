@@ -2,6 +2,7 @@
 
 namespace DigitalNode\FormMaker\Component;
 
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class FormMakerComponent extends Component
@@ -30,7 +31,17 @@ class FormMakerComponent extends Component
     }
 
     public function submit(){
-        dd($this->groupKey);
+        try {
+            DB::table('form_submissions')
+              ->updateOrInsert([
+                  'form_key' => $this->groupKey,
+                  'form_content' => json_encode($this->availablePropertiesData)
+              ]);
+
+            session()->flash('message', 'Form has been saved successfully.');
+        } catch (\Exception $exception){
+            session()->flash('message', 'There has been an error with the form submission. Error was: ' . $exception->getMessage());
+        }
     }
 
     public function render()

@@ -1,3 +1,4 @@
+@php use Illuminate\Support\Facades\Session; @endphp
 <div>
   @foreach($availablePropertiesSchema as $field)
     <div class="mb-2">
@@ -38,6 +39,11 @@
 
     </div>
   @endforeach
+
+  @if(Session::has('message'))
+    <hr>
+    <p>{{ session('message') }}</p>
+  @endif
 
   <button wire:click="submit">Submit</button>
 </div>
