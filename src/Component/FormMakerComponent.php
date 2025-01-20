@@ -5,56 +5,65 @@ namespace DigitalNode\FormMaker\Component;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
-class FormMakerComponent extends Component
-{
+class FormMakerComponent extends Component {
     public array $availablePropertiesSchema = [];
     public array $availablePropertiesData = [];
 
     public string $groupKey;
 
-    public function mount($group) {
+    public function mount( $group ) {
         $this->groupKey = $group['name'];
 
-        collect($group['fields'])->each(function($field){
-            if ( collect(['text', 'textarea', 'number'])->contains($field['type']) ){
-                $this->availablePropertiesData['dn_form_maker_' . $field['name']] = $field['defaultValue'];
+        $existingData = DB::table('form_submissions')
+          ->where('form_key', $this->groupKey)
+          ->first();
+
+        if ( $existingData ){
+            $existingData = json_decode($existingData->form_content, true);
+        }
+
+        collect( $group['fields'] )->each( function ( $field ) use ($existingData) {
+            if ( collect( [ 'text', 'textarea', 'number' ] )->contains( $field['type'] ) ) {
+                $defaultValue = $existingData['dn_form_maker_' . $field['name']] ?? $field['defaultValue'];
+
+                $this->availablePropertiesData[ 'dn_form_maker_' . $field['name'] ] = $defaultValue;
 
                 $this->availablePropertiesSchema[] = [
-                    'type' => $field['type'],
-                    'name' => $field['name'],
-                    'label' => $field['label'],
+                    'type'     => $field['type'],
+                    'name'     => $field['name'],
+                    'label'    => $field['label'],
                     'required' => $field['required']
                 ];
-            } else if ( $field['type'] == 'multiselect' ){
+            } else if ( $field['type'] == 'multiselect' ) {
                 $this->availablePropertiesSchema[] = [
-                    'type' => $field['type'],
-                    'name' => $field['name'],
-                    'label' => $field['label'],
+                    'type'     => $field['type'],
+                    'name'     => $field['name'],
+                    'label'    => $field['label'],
                     'required' => $field['required'],
-                    'options' => $field['options']
+                    'options'  => $field['options']
                 ];
             }
-        });
+        } );
 
     }
 
-    public function submit(){
+    public function submit() {
         try {
-            DB::table('form_submissions')
-              ->updateOrInsert([
+            DB::table( 'form_submissions' )
+              ->updateOrInsert( [
                   'form_key' => $this->groupKey,
-                  'form_content' => json_encode($this->availablePropertiesData)
-              ]);
+              ], [
+                  'form_content' => json_encode( $this->availablePropertiesData )
+              ] );
 
-            session()->flash('message', 'Form has been saved successfully.');
-        } catch (\Exception $exception){
-            session()->flash('message', 'There has been an error with the form submission. Error was: ' . $exception->getMessage());
+            session()->flash( 'message', 'Form has been saved successfully.' );
+        } catch ( \Exception $exception ) {
+            session()->flash( 'message', 'There has been an error with the form submission. Error was: ' . $exception->getMessage() );
         }
     }
 
-    public function render()
-    {
-        return view('FormMaker::livewire.form-maker')
-            ->layout('FormMaker::livewire.layout');
+    public function render() {
+        return view( 'FormMaker::livewire.form-maker' )
+            ->layout( 'FormMaker::livewire.layout' );
     }
 }
