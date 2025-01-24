@@ -37,9 +37,38 @@ class FormMaker
         });
 
         add_action('admin_enqueue_scripts', function() {
+            // TODO: use local .js and .css files.
             wp_enqueue_script('choices-js', 'https://cdnjs.cloudflare.com/ajax/libs/tom-select/2.4.1/js/tom-select.complete.js');
             wp_enqueue_style('choices-css', 'https://cdnjs.cloudflare.com/ajax/libs/tom-select/2.4.1/css/tom-select.css');
         }, 10, 1);
+
+        add_action('add_meta_boxes', array($this, 'renderMetaBox'));
+    }
+
+    public function renderMetaBox( $post_type ){
+        collect(config('form-maker.forms'))->each(function($group) use ($post_type){
+            $conditions = data_get($group, 'settings.conditions');
+
+            collect($conditions)->contains(function($condition) use ($post_type, $group){
+                if ( isset($condition['postType']) && $condition['postType'] == $post_type){
+                    add_meta_box(
+                        $group['name'],
+                        __( $group['label'], 'formmaker' ),
+                        function() use ($group){
+                            echo Livewire::mount(
+                                'FormMaker',
+                                [
+                                    'group' => $group
+                                ]
+                            );
+                        },
+                        $post_type,
+                        'advanced',
+                        'high'
+                    );
+                }
+            });
+        });
     }
 
     public function createMappingPages()

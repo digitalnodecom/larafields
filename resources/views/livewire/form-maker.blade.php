@@ -52,7 +52,7 @@
     <p>{{ session('message') }}</p>
   @endif
 
-  <button wire:click="submit">Submit</button>
+  <button wire:click.prevent="submit">Submit</button>
 </div>
 
 @script
