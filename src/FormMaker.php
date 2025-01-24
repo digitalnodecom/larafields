@@ -43,6 +43,7 @@ class FormMaker
         }, 10, 1);
 
         add_action('add_meta_boxes', array($this, 'renderMetaBox'));
+        add_action('wp_loaded', array($this, 'renderMetaBox'));
     }
 
     public function renderMetaBox( $post_type ){
@@ -52,6 +53,14 @@ class FormMaker
             collect($conditions)->contains(function($condition) use ($post_type, $group){
                 if ( isset($condition['postType']) && $condition['postType'] == $post_type){
                     $this->renderMetaBoxForGroup($group, $post_type);
+                    return;
+                }
+
+                global $pagenow;
+
+                if ( $pagenow == 'term.php' && isset($condition['taxonomy']) && $condition['taxonomy'] == $_GET['taxonomy']) {
+                    add_action("{$_GET['taxonomy']}_edit_form", [$this, 'renderTermMetaBox'], 10, 2);
+                    return;
                 }
             });
         });
@@ -96,5 +105,35 @@ class FormMaker
             'advanced',
             'high'
         );
+    }
+
+    public function renderTermMetaBox(){
+        $termGroups = collect(config('form-maker.forms'))->filter(function($group){
+            return collect(data_get($group, 'settings.conditions'))->filter(function($condition){
+                return array_key_first($condition) == 'taxonomy' && $condition['taxonomy'] == $_GET['taxonomy'];
+            })->isNotEmpty();
+        });
+
+        $termGroups->each(function($group){
+            ?>
+            <div id="poststuff">
+                <div class="form-field postbox">
+                    <div class="postbox-header">
+                        <h2><?= $group['label'] ?></h2>
+                    </div>
+                    <div class="inside">
+                        <?php
+                        echo Livewire::mount(
+                            'FormMaker',
+                            [
+                                'group' => $group,
+                            ]
+                        );
+                        ?>
+                    </div>
+                </div>
+            </div>
+            <?php
+        });
     }
 }
