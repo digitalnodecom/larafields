@@ -51,21 +51,7 @@ class FormMaker
 
             collect($conditions)->contains(function($condition) use ($post_type, $group){
                 if ( isset($condition['postType']) && $condition['postType'] == $post_type){
-                    add_meta_box(
-                        $group['name'],
-                        __( $group['label'], 'formmaker' ),
-                        function() use ($group){
-                            echo Livewire::mount(
-                                'FormMaker',
-                                [
-                                    'group' => $group
-                                ]
-                            );
-                        },
-                        $post_type,
-                        'advanced',
-                        'high'
-                    );
+                    $this->renderMetaBoxForGroup($group, $post_type);
                 }
             });
         });
@@ -92,5 +78,23 @@ class FormMaker
                 ]
             );
         });
+    }
+
+    private function renderMetaBoxForGroup( $group, $post_type ) {
+        add_meta_box(
+            $group['name'],
+            __( $group['label'], 'formmaker' ),
+            function() use ($group){
+                echo Livewire::mount(
+                    'FormMaker',
+                    [
+                        'group' => $group
+                    ]
+                );
+            },
+            $post_type,
+            'advanced',
+            'high'
+        );
     }
 }
