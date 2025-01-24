@@ -12,7 +12,7 @@ class FormMakerComponent extends Component {
     public string $groupKey;
 
     public function mount( $group ) {
-        $this->groupKey = $group['name'];
+        $this->groupKey = $this->getGroupKey($group);
 
         $existingData = DB::table('form_submissions')
           ->where('form_key', $this->groupKey)
@@ -64,5 +64,21 @@ class FormMakerComponent extends Component {
     public function render() {
         return view( 'FormMaker::livewire.form-maker' )
             ->layout( 'FormMaker::livewire.layout' );
+    }
+
+    private function getGroupKey( $group ) {
+        global $post;
+
+        if ( $post ){
+            return sprintf("%s_%s", $group['name'], $post->ID);
+        }
+
+        global $pagenow;
+
+        if ( $pagenow == 'term.php' ){
+            return sprintf("%s_%s", $group['name'], $_GET['tag_ID']);
+        }
+
+        return $group['label'];
     }
 }
