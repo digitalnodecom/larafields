@@ -42,8 +42,28 @@ class FormMakerComponent extends Component {
                     'required' => $field['required'],
                     'options'  => $field['options']
                 ];
+            } else if ( $field['type'] == 'repeater' ){
+                $this->availablePropertiesSchema[] = [
+                    'type'      => 'repeater',
+                    'name'      => $field['name'],
+                    'label'     => $field['label'],
+                    'subfields' => $field['subfields'],
+                ];
+
+                $defaultValue = $existingData['dn_form_maker_' . $field['name']] ?? $field['defaultValue'] ?? [];
+
+                $this->availablePropertiesData[ 'dn_form_maker_' . $field['name'] ] = $defaultValue;
             }
         } );
+    }
+
+    public function addRepeaterRow($fieldName) {
+        $this->availablePropertiesData['dn_form_maker_' . $fieldName][] = [];
+    }
+
+    public function removeRepeaterRow($fieldName, $index) {
+        unset($this->availablePropertiesData['dn_form_maker_' . $fieldName][$index]);
+        $this->availablePropertiesData['dn_form_maker_' . $fieldName] = array_values($this->availablePropertiesData['dn_form_maker_' . $fieldName]);
     }
 
     public function submit() {

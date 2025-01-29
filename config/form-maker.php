@@ -131,6 +131,27 @@ return [
             ],
             'fields'   => [
                 [
+                    'type'          => 'repeater',
+                    'label'         => 'Employees',
+                    'name'          => 'employees',
+                    'subfields'     => [
+                        [
+                            'type'           => 'text',
+                            'label'          => 'First Name',
+                            'name'           => 'first_name',
+                            'defaultValue'   => '',
+                            'required'       => true,
+                        ],
+                        [
+                            'type'           => 'text',
+                            'label'          => 'Last Name',
+                            'name'           => 'last_name',
+                            'defaultValue'   => '',
+                            'required'       => true,
+                        ]
+                    ]
+                ],
+                [
                     'type'           => 'text',
                     'label'          => 'Primer input',
                     'name'           => 'primer_input',
@@ -197,37 +218,37 @@ return [
                     'selectMultiple'   => true,
                     'bidirectional'    => false
                 ],
-                [
-                    'type'        => 'repeater',
-                    'label'       => 'Repeater Field',
-                    'name'        => 'repeater_field',
-                    'layout'      => 'block',
-                    'required'    => true,
-                    'minRows'     => 1,
-                    'maxRows'     => 5,
-                    'buttonLabel' => 'Add Row',
-                    'fields'      => [
-                        [
-                            'type'           => 'text',
-                            'label'          => 'Nested Text Input',
-                            'name'           => 'nested_text_input',
-                            'defaultValue'   => '',
-                            'required'       => true,
-                            'characterLimit' => 50
-                        ],
-                        [
-                            'type'             => 'relationship',
-                            'label'            => 'Nested Relationship Field',
-                            'name'             => 'nested_relationship_field',
-                            'relationshipTo'   => 'taxonomy',
-                            'required'         => false,
-                            'minRelationships' => 0,
-                            'maxRelationships' => 3,
-                            'selectMultiple'   => true,
-                            'bidirectional'    => false
-                        ]
-                    ]
-                ]
+                //[
+                //    'type'        => 'repeater',
+                //    'label'       => 'Repeater Field',
+                //    'name'        => 'repeater_field',
+                //    'layout'      => 'block',
+                //    'required'    => true,
+                //    'minRows'     => 1,
+                //    'maxRows'     => 5,
+                //    'buttonLabel' => 'Add Row',
+                //    'fields'      => [
+                //        [
+                //            'type'           => 'text',
+                //            'label'          => 'Nested Text Input',
+                //            'name'           => 'nested_text_input',
+                //            'defaultValue'   => '',
+                //            'required'       => true,
+                //            'characterLimit' => 50
+                //        ],
+                //        [
+                //            'type'             => 'relationship',
+                //            'label'            => 'Nested Relationship Field',
+                //            'name'             => 'nested_relationship_field',
+                //            'relationshipTo'   => 'taxonomy',
+                //            'required'         => false,
+                //            'minRelationships' => 0,
+                //            'maxRelationships' => 3,
+                //            'selectMultiple'   => true,
+                //            'bidirectional'    => false
+                //        ]
+                //    ]
+                //]
             ]
         ]
     ]

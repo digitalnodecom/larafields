@@ -44,6 +44,26 @@
             options="{{ sprintf('availablePropertiesSchema.%s.options', $key) }}" multiple />
       @endif
 
+      @if($field['type'] == 'repeater')
+        <div class="repeater">
+          @foreach($availablePropertiesData['dn_form_maker_' . $field['name']] as $index => $repeaterItem)
+            <div class="repeater-row">
+              @foreach($field['subfields'] as $subfield)
+                @php
+                  $subfieldKey = sprintf("availablePropertiesData.dn_form_maker_%s.%s.%s", $field['name'], $index, $subfield['name']);
+                @endphp
+                <div>
+                  <label>{{ $subfield['label'] }}</label>
+                  <input wire:model="{{ $subfieldKey }}" type="text" name="{{ $subfield['name'] }}" @required($subfield['required']) />
+                </div>
+              @endforeach
+              <button wire:click.prevent="removeRepeaterRow('{{ $field['name'] }}', {{ $index }})">Remove</button>
+            </div>
+          @endforeach
+          <button wire:click.prevent="addRepeaterRow('{{ $field['name'] }}')">Add Row</button>
+        </div>
+      @endif
+
     </div>
   @endforeach
 
