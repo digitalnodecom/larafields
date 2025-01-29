@@ -6,42 +6,26 @@
 
       @php
         $field['key'] = 'availablePropertiesData.dn_form_maker_' . $field['name'];
-
       @endphp
 
       @if($field['type'] == 'text')
-        <input
-          wire:model="{{ $field['key'] }}"
-          type="text"
-          name="{{ $field['name'] }}"
-          @required($field['required'])
-        />
+        @include('FormMaker::components.TextField', ['field' => $field])
       @endif
 
       @if($field['type'] == 'number')
-        <input
-          wire:model="{{ $field['key'] }}"
-          type="number"
-          name="{{ $field['name'] }}"
-          @required($field['required'])
-        />
+        @include('FormMaker::components.NumberField', ['field' => $field])
       @endif
 
       @if($field['type'] == 'textarea')
-        <textarea
-          wire:model="{{ $field['key'] }}"
-          name="{{ $field['name'] }}"
-          cols="10"
-            @required($field['required'])
-          >
-          </textarea>
+        @include('FormMaker::components.TextareaField', ['field' => $field])
       @endif
 
       @if($field['type'] == 'multiselect')
           <x-tom-select
             class="multiselect"
             wire:model="{{ sprintf('availablePropertiesData.dn_form_maker_%s', $field['name']) }}"
-            options="{{ sprintf('availablePropertiesSchema.%s.options', $key) }}" multiple />
+            options="{{ sprintf('availablePropertiesSchema.%s.options', $key) }}" multiple
+          />
       @endif
 
       @if($field['type'] == 'repeater')
@@ -50,11 +34,29 @@
             <div class="repeater-row">
               @foreach($field['subfields'] as $subfield)
                 @php
-                  $subfieldKey = sprintf("availablePropertiesData.dn_form_maker_%s.%s.%s", $field['name'], $index, $subfield['name']);
+                  $subfield['key'] = sprintf("availablePropertiesData.dn_form_maker_%s.%s.%s", $field['name'], $index, $subfield['name']);
                 @endphp
                 <div>
                   <label>{{ $subfield['label'] }}</label>
-                  <input wire:model="{{ $subfieldKey }}" type="text" name="{{ $subfield['name'] }}" @required($subfield['required']) />
+                  @if($subfield['type'] == 'text')
+                    @include('FormMaker::components.TextField', ['field' => $subfield])
+                  @endif
+
+                  @if($subfield['type'] == 'number')
+                    @include('FormMaker::components.NumberField', ['field' => $subfield])
+                  @endif
+
+                  @if($subfield['type'] == 'textarea')
+                    @include('FormMaker::components.TextareaField', ['field' => $subfield])
+                  @endif
+
+{{--                  @if($subfield['type'] == 'multiselect')--}}
+{{--                    <x-tom-select--}}
+{{--                      class="multiselect"--}}
+{{--                      wire:model="{{ sprintf('availablePropertiesData.dn_form_maker_%s', $subfield['name']) }}"--}}
+{{--                      options="{{ sprintf('availablePropertiesSchema.%s.options', $key) }}" multiple--}}
+{{--                    />--}}
+{{--                  @endif--}}
                 </div>
               @endforeach
               <button wire:click.prevent="removeRepeaterRow('{{ $field['name'] }}', {{ $index }})">Remove</button>
