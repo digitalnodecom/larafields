@@ -1,31 +1,263 @@
-# Acorn Example Package
+# Abstract Form Builder
 
-This repo can be used to scaffold an Acorn package. See the [Acorn Package Development](https://roots.io/acorn/docs/package-development/) docs for further information.
+A flexible form builder package that allows you to define custom form groups for WordPress posts and taxonomies.
 
 ## Installation
 
 You can install this package with Composer:
 
 ```bash
-composer require vendor-name/example-package
+composer require brandsgateway/abstract-form-builder
 ```
 
-You can publish the config file with:
+## Configuration
 
-```shell
-$ wp acorn vendor:publish --provider="VendorName\ExamplePackage\Providers\ExampleServiceProvider"
+Form groups are defined in the `config/form-maker.php` file. Each form group can be configured to display on specific post types or taxonomies.
+
+### Basic Structure
+
+```php
+return [
+    'forms' => [
+        [
+            'label'    => 'Your Field Group Name',
+            'name'     => 'unique_field_group_name',
+            'settings' => [
+                'showInRestApi' => true,
+                'storage'       => [
+                    'type'     => 'json',
+                    'location' => 'shared_table'
+                ],
+                'conditions'    => [
+                    // Define where to display the form
+                ]
+            ],
+            'fields'   => [
+                // Your field definitions
+            ]
+        ]
+    ]
+];
 ```
 
-## Usage
+### Display Conditions
 
-From a Blade template:
+You can display form groups on either post types or taxonomies:
 
-```blade
-@include('Example::example')
+#### Post Type Display
+
+```php
+'conditions' => [
+    [ 'postType' => 'product' ]
+]
 ```
 
-From WP-CLI:
+#### Taxonomy Display
 
-```shell
-$ wp acorn example
+```php
+'conditions' => [
+    [ 'taxonomy' => 'product_brand' ]
+]
+```
+
+## Available Field Types
+
+### Text Field
+
+Simple text input with optional character limit.
+
+```php
+[
+    'type'           => 'text',
+    'label'          => 'Input Label',
+    'name'           => 'field_name',
+    'defaultValue'   => 'Default text',
+    'required'       => true,
+    'characterLimit' => 50
+]
+```
+
+### Textarea Field
+
+Multiline text input with optional character limit.
+
+```php
+[
+    'type'           => 'textarea',
+    'label'          => 'Textarea Label',
+    'name'           => 'textarea_field',
+    'defaultValue'   => 'Default multiline text',
+    'required'       => false,
+    'characterLimit' => 200
+]
+```
+
+### Number Field
+
+Numeric input with optional min/max values.
+
+```php
+[
+    'type'         => 'number',
+    'label'        => 'Number Input',
+    'name'         => 'number_field',
+    'defaultValue' => 10,
+    'required'     => true,
+    'minValue'     => 1,
+    'maxValue'     => 100
+]
+```
+
+### Multiselect Field
+
+Dropdown field that allows selecting multiple options.
+
+```php
+[
+    'type'         => 'multiselect',
+    'label'        => 'Multiple Choice',
+    'name'         => 'multiselect_field',
+    'defaultValue' => '',
+    'required'     => true,
+    'options'      => [
+        [
+            'value' => 'option1',
+            'label' => 'Option 1'
+        ],
+        [
+            'value' => 'option2',
+            'label' => 'Option 2'
+        ]
+    ]
+]
+```
+
+### Repeater Field
+
+Group of fields that can be repeated multiple times.
+
+```php
+[
+    'type'          => 'repeater',
+    'label'         => 'Repeatable Group',
+    'name'          => 'repeater_field',
+    'subfields'     => [
+        [
+            'type'           => 'text',
+            'label'          => 'Sub Field 1',
+            'name'           => 'sub_field_1',
+            'defaultValue'   => '',
+            'required'       => true
+        ],
+        [
+            'type'           => 'text',
+            'label'          => 'Sub Field 2',
+            'name'           => 'sub_field_2',
+            'defaultValue'   => '',
+            'required'       => true
+        ]
+    ]
+]
+```
+
+## Complete Examples
+
+### Post Type Form Group
+
+```php
+[
+    'label'    => 'Product Details',
+    'name'     => 'product_details',
+    'settings' => [
+        'showInRestApi' => true,
+        'storage'       => [
+            'type'     => 'json',
+            'location' => 'shared_table'
+        ],
+        'conditions'    => [
+            [ 'postType' => 'product' ]
+        ]
+    ],
+    'fields'   => [
+        [
+            'type'         => 'multiselect',
+            'label'        => 'Product Gender',
+            'name'         => 'product_gender',
+            'defaultValue' => '',
+            'required'     => true,
+            'options'      => [
+                [
+                    'value' => 'men',
+                    'label' => 'Men'
+                ],
+                [
+                    'value' => 'women',
+                    'label' => 'Women'
+                ],
+                [
+                    'value' => 'unisex',
+                    'label' => 'Unisex'
+                ]
+            ]
+        ],
+        [
+            'type'           => 'textarea',
+            'label'          => 'Product Description',
+            'name'           => 'product_description',
+            'defaultValue'   => '',
+            'required'       => false,
+            'characterLimit' => 200
+        ]
+    ]
+]
+```
+
+### Taxonomy Form Group
+
+```php
+[
+    'label'    => 'Brand Information',
+    'name'     => 'brand_information',
+    'settings' => [
+        'showInRestApi' => true,
+        'storage'       => [
+            'type'     => 'json',
+            'location' => 'shared_table'
+        ],
+        'conditions'    => [
+            [ 'taxonomy' => 'product_brand' ]
+        ]
+    ],
+    'fields'   => [
+        [
+            'type'          => 'repeater',
+            'label'         => 'Brand Contacts',
+            'name'          => 'brand_contacts',
+            'subfields'     => [
+                [
+                    'type'           => 'text',
+                    'label'          => 'Contact Name',
+                    'name'           => 'contact_name',
+                    'defaultValue'   => '',
+                    'required'       => true
+                ],
+                [
+                    'type'           => 'text',
+                    'label'          => 'Contact Email',
+                    'name'           => 'contact_email',
+                    'defaultValue'   => '',
+                    'required'       => true
+                ]
+            ]
+        ],
+        [
+            'type'           => 'text',
+            'label'          => 'Brand Website',
+            'name'           => 'brand_website',
+            'defaultValue'   => '',
+            'required'       => true,
+            'characterLimit' => 100
+        ]
+    ]
+]
 ```
