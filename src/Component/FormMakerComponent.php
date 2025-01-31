@@ -11,9 +11,14 @@ class FormMakerComponent extends Component {
 
     public string $groupKey;
     private string $is_on_page = '';
+    private string $is_on_term_options_page = '';
+    private string $taxonomy = '';
 
-    public function mount( $group, $is_on_page = false ) {
+    public function mount( $group, $is_on_page = '', $is_on_term_options_page = '', $taxonomy = '' ) {
         $this->is_on_page = $is_on_page;
+        $this->is_on_term_options_page = $is_on_term_options_page;
+        $this->taxonomy = $taxonomy;
+
         $this->groupKey = $this->getGroupKey($group);
 
         $existingData = DB::table('form_submissions')
@@ -89,6 +94,10 @@ class FormMakerComponent extends Component {
     }
 
     private function getGroupKey( $group ) {
+        if ( $this->taxonomy && $this->is_on_term_options_page ){
+            return sprintf("%s_term_option_%s_%s", $group['name'], $this->taxonomy, $this->is_on_term_options_page);
+        }
+
         if ( $this->is_on_page ){
             return sprintf("%s_page_%s", $group['name'], $this->is_on_page);
         }

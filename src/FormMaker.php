@@ -27,8 +27,6 @@ class FormMaker
     {
         $this->app = $app;
 
-        add_action( 'admin_menu', array( $this, 'createMappingPages'));
-
         add_filter('wp_head', function () {
             echo Blade::render('@livewireStyles');
         });
@@ -45,7 +43,9 @@ class FormMaker
 
         add_action('add_meta_boxes', array($this, 'renderMetaBox'));
         add_action('wp_loaded', array($this, 'renderMetaBox'));
-        add_action( 'admin_menu', array($this, 'addMenuPages') );
+        add_action('admin_menu', array($this, 'addMenuPages') );
+        add_filter('init', array( $this, 'addTermOptionPages' ), 10, 2);
+        add_action( 'admin_menu', array( $this, 'createPlaceholderTermOptionPage'));
     }
 
     public function renderMetaBox( $post_type ){
@@ -65,29 +65,6 @@ class FormMaker
                     return;
                 }
             });
-        });
-    }
-
-    public function createMappingPages()
-    {
-        add_menu_page(
-            'Testing Forms',
-            'Testing Forms',
-            'manage_woocommerce',
-            'testing-forms',
-            array( $this, 'renderMappingPage'),
-            100
-        );
-    }
-
-    public function renderMappingPage(){
-        collect(config('form-maker.forms'))->each(function($group){
-            echo Livewire::mount(
-                'FormMaker',
-                [
-                    'group' => $group
-                ]
-            );
         });
     }
 
@@ -141,17 +118,15 @@ class FormMaker
 
     public function addMenuPages(){
         $formsForPages = collect(config('form-maker')['forms'])->filter(function($group){
-            return collect($group['settings']['conditions'])->some(function($condition){
-                return array_key_exists('page', $condition);
+            return collect($group['settings']['conditions'])->some(function($condition, $key){
+                return 'page' == $key;
             });
         });
 
         $formsForPages->each(function($group){
-            collect($group['settings']['conditions'])->filter(function($condition){
-                return array_key_exists('page', $condition);
+            collect($group['settings']['conditions'])->filter(function($condition, $key){
+                return 'page' == $key;
             })->each(function($condition) use ($group){
-                $condition = $condition['page'];
-
                 add_menu_page(
                     __( $condition['page_title'], 'form-maker' ),
                     $condition['menu_title'],
@@ -167,6 +142,64 @@ class FormMaker
                         );
                     },
                 );
+            });
+        });
+    }
+
+    public function addTermOptionPages($options){
+        collect(get_taxonomies())->keys()->each(function($taxonomy){
+            add_filter( sprintf('%s_row_actions', $taxonomy), array( $this, 'appendTermOptionLinks' ), 10, 2);
+        });
+    }
+
+    public function appendTermOptionLinks($links, $tag){
+        $formsForPages = collect(config('form-maker')['forms'])->filter(function($group){
+            return collect($group['settings']['conditions'])->some(function($condition, $key){
+                return $key == 'term_page';
+            });
+        });
+
+        $formsForPages->each(function($group) use (&$links, $tag){
+            collect($group['settings']['conditions'])->filter(function($condition, $key){
+                return $key == 'term_page';
+            })->each(function($condition,) use ($group, &$links, $tag){
+                if ( isset($_GET['taxonomy']) && $_GET['taxonomy'] == $condition['taxonomy'] ){
+                    $links['mappings'] = sprintf(
+                        '<a href="%s">Modify Mappings</a>',
+                        admin_url('admin.php?page=term-options&taxonomy='. $condition['taxonomy'] . '&term_id=' . $tag->term_id)
+                    );
+                }
+            });
+        });
+
+        return $links;
+    }
+
+    public function createPlaceholderTermOptionPage(){
+        add_submenu_page(
+            null,
+            'Term Options Page',
+            'Term Options Page',
+            'manage_woocommerce',
+            'term-options',
+            array( $this, 'renderTermOptionsPage'),
+            100
+        );
+    }
+
+    public function renderTermOptionsPage(){
+        collect(config('form-maker')['forms'])->filter(function($group){
+            return collect($group['settings']['conditions'])->where(function($value, $key) use ($group){
+                if ( isset($_GET['taxonomy']) && $key == 'term_page' && $value['taxonomy'] == $_GET['taxonomy'] ){
+                    echo Livewire::mount(
+                        'FormMaker',
+                        [
+                            'group' => $group,
+                            'is_on_term_options_page' => $_GET['term_id'] ?? 0,
+                            'taxonomy' => $value['taxonomy']
+                        ]
+                    );
+                }
             });
         });
     }
