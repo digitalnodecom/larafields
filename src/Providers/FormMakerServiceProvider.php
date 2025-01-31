@@ -41,6 +41,8 @@ class FormMakerServiceProvider extends ServiceProvider
             __DIR__.'/../../resources/views/',
             'FormMaker',
         );
+
+        Blade::anonymousComponentPath( __DIR__.'/../../resources/views/components/' );
     }
 
     private function configureLivewire() {
