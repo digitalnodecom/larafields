@@ -10,6 +10,20 @@ You can install this package with Composer:
 composer require brandsgateway/abstract-form-builder
 ```
 
+After installation, you need to:
+
+1. Publish the package assets and configuration:
+
+```bash
+wp acorn vendor:publish --tag="form-maker"
+```
+
+2. Run the database migrations:
+
+```bash
+wp acorn migrate
+```
+
 ## Configuration
 
 Form groups are defined in the `config/form-maker.php` file. Each form group can be configured to display on specific post types or taxonomies.
