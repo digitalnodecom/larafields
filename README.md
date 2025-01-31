@@ -80,6 +80,22 @@ This will create a new page in the WordPress Admin dashboard with the specified 
 ]
 ```
 
+#### Term Option Page Display
+
+This will add an action link (alongside Edit, Quick Edit, Delete, View) on the taxonomy overview page. When clicked, it opens a custom page where the form group will be rendered, with the data being related to both the selected term and taxonomy.
+
+```php
+'conditions' => [
+    'term_page' => [
+        'taxonomy' => 'wcpv_product_vendors',
+        'action_name' => 'Change Mappings',
+        'page_title' => 'Brand Testing',
+        'menu_title' => 'Brand Testing',
+        'slug' => 'brand_testing'
+    ]
+]
+```
+
 ## Available Field Types
 
 ### Text Field

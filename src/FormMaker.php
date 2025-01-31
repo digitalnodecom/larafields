@@ -165,8 +165,9 @@ class FormMaker
             })->each(function($condition,) use ($group, &$links, $tag){
                 if ( isset($_GET['taxonomy']) && $_GET['taxonomy'] == $condition['taxonomy'] ){
                     $links['mappings'] = sprintf(
-                        '<a href="%s">Modify Mappings</a>',
-                        admin_url('admin.php?page=term-options&taxonomy='. $condition['taxonomy'] . '&term_id=' . $tag->term_id)
+                        '<a href="%s">%s</a>',
+                        admin_url('admin.php?page=term-options&taxonomy='. $condition['taxonomy'] . '&term_id=' . $tag->term_id),
+                        $condition['action_name']
                     );
                 }
             });

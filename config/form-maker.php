@@ -12,17 +12,18 @@ return [
                     'location' => 'shared_table'
                 ],
                 'conditions'    => [
+                    'term_page' => [
+                        'taxonomy' => 'wcpv_product_vendors',
+                        'action_name' => 'Change Mappings',
+                        'page_title' => 'Brand Testing',
+                        'menu_title' => 'Brand Testing',
+                        'slug' => 'brand_testing'
+                    ],
                     'page' => [
                         'page_title' => 'Testing',
                         'menu_title' => 'Testing',
                         'slug' => 'testing'
                     ],
-                    'term_page' => [
-                        'taxonomy' => 'wcpv_product_vendors',
-                        'page_title' => 'Brand Testing',
-                        'menu_title' => 'Brand Testing',
-                        'slug' => 'brand_testing'
-                    ]
                 ]
             ],
             'fields'   => [
