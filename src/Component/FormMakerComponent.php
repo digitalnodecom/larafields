@@ -90,7 +90,7 @@ class FormMakerComponent extends Component {
 
     private function getGroupKey( $group ) {
         if ( $this->is_on_page ){
-            return sprintf("%s_%s", $group['name'], $this->is_on_page);
+            return sprintf("%s_page_%s", $group['name'], $this->is_on_page);
         }
 
         global $post;
