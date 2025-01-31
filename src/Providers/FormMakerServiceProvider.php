@@ -29,6 +29,7 @@ class FormMakerServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $this->configureDatabase();
         $this->configureViews();
         $this->configureLivewire();
         $this->configureApp();
@@ -55,6 +56,12 @@ class FormMakerServiceProvider extends ServiceProvider
             __DIR__ . '/../../config/form-maker.php',
             'form-maker'
         );
+    }
+
+    private function configureDatabase() {
+        $this->publishesMigrations([
+            __DIR__.'/../../database/migrations' => $this->app->databasePath('migrations'),
+        ], 'form-maker');
     }
 }
 
