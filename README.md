@@ -42,9 +42,11 @@ return [
 
 ### Display Conditions
 
-You can display form groups on either post types or taxonomies:
+You can display form groups on any Post Type, any Term, and/or create a custom Options page:
 
 #### Post Type Display
+
+This will display the form group on the specified post type's edit screen in the WordPress Admin dashboard.
 
 ```php
 'conditions' => [
@@ -54,9 +56,27 @@ You can display form groups on either post types or taxonomies:
 
 #### Taxonomy Display
 
+This will display the form group on the specified taxonomy's term edit screen in the WordPress Admin dashboard.
+
 ```php
 'conditions' => [
     [ 'taxonomy' => 'product_brand' ]
+]
+```
+
+#### Options Page Display
+
+This will create a new page in the WordPress Admin dashboard with the specified title and menu entry. The form group will be rendered on this custom options page.
+
+```php
+'conditions' => [
+    [
+        'page' => [
+            'page_title' => 'Testing',
+            'menu_title' => 'Testing',
+            'slug' => 'testing'
+        ]
+    ]
 ]
 ```
 
