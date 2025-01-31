@@ -10,8 +10,10 @@ class FormMakerComponent extends Component {
     public array $availablePropertiesData = [];
 
     public string $groupKey;
+    private string $is_on_page = '';
 
-    public function mount( $group ) {
+    public function mount( $group, $is_on_page = false ) {
+        $this->is_on_page = $is_on_page;
         $this->groupKey = $this->getGroupKey($group);
 
         $existingData = DB::table('form_submissions')
@@ -87,6 +89,10 @@ class FormMakerComponent extends Component {
     }
 
     private function getGroupKey( $group ) {
+        if ( $this->is_on_page ){
+            return sprintf("%s_%s", $group['name'], $this->is_on_page);
+        }
+
         global $post;
 
         if ( $post ){

@@ -12,7 +12,13 @@ return [
                     'location' => 'shared_table'
                 ],
                 'conditions'    => [
-                    [ 'postType' => 'product' ]
+                    [
+                        'page' => [
+                            'page_title' => 'Testing',
+                            'menu_title' => 'Testing',
+                            'slug' => 'testing'
+                        ]
+                    ]
                 ]
             ],
             'fields'   => [
@@ -70,50 +76,41 @@ return [
                         ]
                     ]
                 ],
+                //[
+                //    'type'             => 'relationship',
+                //    'label'            => 'Relationship Field',
+                //    'name'             => 'relationship_field',
+                //    'relationshipTo'   => [
+                //        'post_type' => 'order'
+                //    ],
+                //    'required'         => true,
+                //    'minRelationships' => 1,
+                //    'maxRelationships' => 5,
+                //    'selectMultiple'   => true,
+                //    'bidirectional'    => false
+                //],
                 [
-                    'type'             => 'relationship',
-                    'label'            => 'Relationship Field',
-                    'name'             => 'relationship_field',
-                    'relationshipTo'   => [
-                        'post_type' => 'order'
-                    ],
-                    'required'         => true,
-                    'minRelationships' => 1,
-                    'maxRelationships' => 5,
-                    'selectMultiple'   => true,
-                    'bidirectional'    => false
-                ],
-                [
-                    'type'        => 'repeater',
-                    'label'       => 'Repeater Field',
-                    'name'        => 'repeater_field',
-                    'layout'      => 'block',
-                    'required'    => true,
-                    'minRows'     => 1,
-                    'maxRows'     => 5,
-                    'buttonLabel' => 'Add Row',
-                    'fields'      => [
+                    'type'          => 'repeater',
+                    'label'         => 'Repeatable Group',
+                    'name'          => 'repeater_field',
+                    'subfields'     => [
                         [
                             'type'           => 'text',
-                            'label'          => 'Nested Text Input',
-                            'name'           => 'nested_text_input',
+                            'label'          => 'Sub Field 1',
+                            'name'           => 'sub_field_1',
                             'defaultValue'   => '',
-                            'required'       => true,
-                            'characterLimit' => 50
+                            'required'       => true
                         ],
                         [
-                            'type'             => 'relationship',
-                            'label'            => 'Nested Relationship Field',
-                            'name'             => 'nested_relationship_field',
-                            'relationshipTo'   => 'taxonomy',
-                            'required'         => false,
-                            'minRelationships' => 0,
-                            'maxRelationships' => 3,
-                            'selectMultiple'   => true,
-                            'bidirectional'    => false
+                            'type'           => 'text',
+                            'label'          => 'Sub Field 2',
+                            'name'           => 'sub_field_2',
+                            'defaultValue'   => '',
+                            'required'       => true
                         ]
                     ]
                 ]
+
             ]
         ],
         [

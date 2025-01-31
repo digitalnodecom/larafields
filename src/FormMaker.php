@@ -6,6 +6,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Blade;
 use Livewire\Livewire;
 use Roots\Acorn\Application;
+use function Clue\StreamFilter\fun;
 
 class FormMaker
 {
@@ -40,10 +41,11 @@ class FormMaker
             // TODO: use local .js and .css files.
             wp_enqueue_script('choices-js', 'https://cdnjs.cloudflare.com/ajax/libs/tom-select/2.4.1/js/tom-select.complete.js');
             wp_enqueue_style('choices-css', 'https://cdnjs.cloudflare.com/ajax/libs/tom-select/2.4.1/css/tom-select.css');
-        }, 10, 1);
+        });
 
         add_action('add_meta_boxes', array($this, 'renderMetaBox'));
         add_action('wp_loaded', array($this, 'renderMetaBox'));
+        add_action( 'admin_menu', array($this, 'addMenuPages') );
     }
 
     public function renderMetaBox( $post_type ){
@@ -134,6 +136,38 @@ class FormMaker
                 </div>
             </div>
             <?php
+        });
+    }
+
+    public function addMenuPages(){
+        $formsForPages = collect(config('form-maker')['forms'])->filter(function($group){
+            return collect($group['settings']['conditions'])->some(function($condition){
+                return array_key_exists('page', $condition);
+            });
+        });
+
+        $formsForPages->each(function($group){
+            collect($group['settings']['conditions'])->filter(function($condition){
+                return array_key_exists('page', $condition);
+            })->each(function($condition) use ($group){
+                $condition = $condition['page'];
+
+                add_menu_page(
+                    __( $condition['page_title'], 'form-maker' ),
+                    $condition['menu_title'],
+                    'manage_options',
+                    $condition['slug'],
+                    function() use ($group, $condition){
+                        echo Livewire::mount(
+                            'FormMaker',
+                            [
+                                'group' => $group,
+                                'is_on_page' => $condition['slug']
+                            ]
+                        );
+                    },
+                );
+            });
         });
     }
 }
