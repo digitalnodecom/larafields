@@ -27,6 +27,8 @@ wp acorn migrate
 3. Add the following hooks to your current theme's `functions.php` file.
 
 ```
+use Livewire\Mechanisms\HandleRequests\HandleRequests;
+
 add_filter('admin_enqueue_scripts', function () {
     echo Blade::render('@livewireStyles');
 });
