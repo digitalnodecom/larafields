@@ -29,7 +29,9 @@ class FormMakerComponent extends Component {
             $existingData = json_decode($existingData->form_content, true);
         }
 
-        collect( $group['fields'] )->each( function ( $field ) use ($existingData) {
+        $fields = apply_filters('dn_form_maker_load_fields', collect( $group['fields'] ));
+
+        $fields->each( function ( $field ) use ($existingData) {
             $defaultValue = $existingData['dn_form_maker_' . $field['name']] ?? $field['defaultValue'] ?? '';
 
             $this->availablePropertiesData[ 'dn_form_maker_' . $field['name'] ] = $defaultValue;
