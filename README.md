@@ -233,6 +233,27 @@ Group of fields that can be repeated multiple times.
 ]
 ```
 
+## Adding Field Groups Programmatically
+
+You can programmatically add new field groups using the `FormMaker::add_group()` method. This can be added to an action hook in your theme or plugin:
+
+```php
+add_action('init', function() {
+    FormMaker::add_group([
+        'label'    => 'CODE Field Group Term',
+        'name'     => 'code_field_group_term',
+        'settings' => [
+            // settings
+        ],
+        'fields'   => [
+            // fields
+        ]
+    ]);
+});
+```
+
+The structure follows the same format as defined in the configuration file, allowing you to specify labels, settings, and fields for your new group.
+
 ## Extending Fields
 
 You can modify or manipulate the existing fields using the `dn_form_maker_load_fields` WordPress filter. This filter provides access to the fields collection before it's processed:

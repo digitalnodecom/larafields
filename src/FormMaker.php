@@ -204,4 +204,12 @@ class FormMaker
             });
         });
     }
+
+    public static function add_group($data){
+       $forms = config('form-maker.forms');
+
+       $forms[] = $data;
+
+       config(['form-maker.forms' => $forms]);
+    }
 }
