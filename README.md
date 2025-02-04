@@ -233,6 +233,18 @@ Group of fields that can be repeated multiple times.
 ]
 ```
 
+## Extending Fields
+
+You can modify or manipulate the existing fields using the `dn_form_maker_load_fields` WordPress filter. This filter provides access to the fields collection before it's processed:
+
+```php
+use Illuminate\Support\Collection;
+
+add_filter('dn_form_maker_load_fields', function(Collection $fields){
+    // Manipulate the $fields collection.
+});
+```
+
 ## Complete Examples
 
 ### Post Type Form Group
