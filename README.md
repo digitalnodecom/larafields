@@ -24,6 +24,27 @@ wp acorn vendor:publish --tag="form-maker"
 wp acorn migrate
 ```
 
+3. Add the following hooks to your current theme's `functions.php` file.
+
+```
+add_filter('admin_enqueue_scripts', function () {
+    echo Blade::render('@livewireStyles');
+});
+
+add_filter('admin_footer', function () {
+    echo Blade::render('@livewireScripts');
+});
+
+add_action('init', function() {
+    if (function_exists('app') && class_exists(Route::class)) {
+        Route::post('/livewire/update', [HandleRequests::class, 'handleUpdate'])->name('livewire.update')->middleware('web');
+
+        app('router')->getRoutes()->refreshNameLookups();
+        app('router')->getRoutes()->refreshActionLookups();
+    }
+}, 20);
+```
+
 ## Configuration
 
 Form groups are defined in the `config/form-maker.php` file. Each form group can be configured to display on specific post types or taxonomies.
