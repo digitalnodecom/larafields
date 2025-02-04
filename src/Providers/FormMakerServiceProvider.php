@@ -38,7 +38,7 @@ class FormMakerServiceProvider extends ServiceProvider
 
     private function configureViews() {
         $this->loadViewsFrom(
-            __DIR__.'/../../resources/views/',
+            __DIR__.'/../../resources/views',
             'FormMaker',
         );
 
