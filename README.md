@@ -7,7 +7,7 @@ A flexible form builder package that allows you to define custom form groups for
 You can install this package with Composer:
 
 ```bash
-composer require brandsgateway/abstract-form-builder
+composer require digitalnode/form-maker
 ```
 
 After installation, you need to:
@@ -46,6 +46,10 @@ add_action('init', function() {
     }
 }, 20);
 ```
+
+4. Clear the cached views
+
+`wp acorn clear:views`
 
 ## Configuration
 
