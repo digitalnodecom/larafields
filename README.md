@@ -1,6 +1,6 @@
-# Abstract Form Builder
+# Abstract Form Maker
 
-A flexible form builder package that allows you to define custom form groups for WordPress posts and taxonomies.
+A flexible form maker package that allows you to define custom form groups for WordPress posts and taxonomies.
 
 ## Installation
 
