@@ -111,7 +111,7 @@ class FormMakerComponent extends Component {
         global $pagenow;
 
         if ( $pagenow == 'term.php' ){
-            return sprintf("%s_%s", $group['name'], $_GET['tag_ID']);
+            return sprintf("%s_term_%s", $group['name'], $_GET['tag_ID']);
         }
 
         return $group['label'];
