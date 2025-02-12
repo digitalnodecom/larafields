@@ -57,7 +57,11 @@ class FormMakerComponent extends Component {
                     'subfields' => $field['subfields'],
                 ];
 
-                $defaultValue = $existingData['dn_form_maker_' . $field['name']] ?? $field['defaultValue'] ?? [];
+                $defaults = collect($field['subfields'])->mapWithKeys(function ($value){
+                    return [ $value['name'] => $value['defaultValue'] ?? '' ];
+                })->all();
+
+                $defaultValue = $existingData['dn_form_maker_' . $field['name']] ?? $defaults ?? [];
 
                 $this->availablePropertiesData[ 'dn_form_maker_' . $field['name'] ] = $defaultValue;
             }
@@ -65,7 +69,13 @@ class FormMakerComponent extends Component {
     }
 
     public function addRepeaterRow($fieldName) {
-        $this->availablePropertiesData['dn_form_maker_' . $fieldName][] = [];
+        $field = collect($this->availablePropertiesSchema)->firstWhere('name', $fieldName);
+
+        $defaults = collect($field['subfields'])->mapWithKeys(function ($value){
+            return [ $value['name'] => $value['defaultValue'] ?? '' ];
+        })->all();
+
+        $this->availablePropertiesData['dn_form_maker_' . $fieldName][] = $defaults;
     }
 
     public function removeRepeaterRow($fieldName, $index) {
