@@ -1,13 +1,13 @@
-# Abstract Form Builder
+# Abstract Form Maker
 
-A flexible form builder package that allows you to define custom form groups for WordPress posts and taxonomies.
+A flexible form maker package that allows you to define custom form groups for WordPress posts and taxonomies.
 
 ## Installation
 
 You can install this package with Composer:
 
 ```bash
-composer require brandsgateway/abstract-form-builder
+composer require digitalnode/form-maker
 ```
 
 After installation, you need to:
@@ -46,6 +46,10 @@ add_action('init', function() {
     }
 }, 20);
 ```
+
+4. Clear the cached views
+
+`wp acorn clear:views`
 
 ## Configuration
 
@@ -231,6 +235,39 @@ Group of fields that can be repeated multiple times.
         ]
     ]
 ]
+```
+
+## Adding Field Groups Programmatically
+
+You can programmatically add new field groups using the `FormMaker::add_group()` method. This can be added to an action hook in your theme or plugin:
+
+```php
+add_action('init', function() {
+    FormMaker::add_group([
+        'label'    => 'CODE Field Group Term',
+        'name'     => 'code_field_group_term',
+        'settings' => [
+            // settings
+        ],
+        'fields'   => [
+            // fields
+        ]
+    ]);
+});
+```
+
+The structure follows the same format as defined in the configuration file, allowing you to specify labels, settings, and fields for your new group.
+
+## Extending Fields
+
+You can modify or manipulate the existing fields using the `dn_form_maker_load_fields` WordPress filter. This filter provides access to the fields collection before it's processed:
+
+```php
+use Illuminate\Support\Collection;
+
+add_filter('dn_form_maker_load_fields', function(Collection $fields){
+    // Manipulate the $fields collection.
+});
 ```
 
 ## Complete Examples

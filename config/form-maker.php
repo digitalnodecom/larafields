@@ -64,7 +64,7 @@ return [
                     'type'         => 'multiselect',
                     'label'        => 'Product Gender',
                     'name'         => 'product_gender',
-                    'defaultValue' => '',
+                    'defaultValue' => [],
                     'required'     => true,
                     'options'      => [
                         [
