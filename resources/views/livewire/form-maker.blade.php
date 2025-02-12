@@ -56,6 +56,7 @@
                       wire:model="{{ sprintf('availablePropertiesData.dn_form_maker_%s.%s.%s', $field['name'], $index, $subfield['name']) }}"
                       options="{{ sprintf('availablePropertiesSchema.%s.subfields.%s.options', $key, $subfieldIndex) }}"
                       key="ms{{$index}}"
+                      wire:ignore
                       multiple
                     />
                   @endif

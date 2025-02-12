@@ -4,31 +4,47 @@
                 tomSelect: null,
                 options: @entangle($attributes['options']),
                 selectValue: @entangle($attributes->whereStartsWith('wire:model')->first()),
-                updateOptions() {
-                    if (!this.tomSelect) return;
-                    this.tomSelect.clearOptions();
-                    this.tomSelect.addOptions(this.options);
-                    this.tomSelect.settings.placeholder = '-- SELECT --';
-                    this.tomSelect.inputState();
+                getCleanOptions() {
+                    return Array.isArray(this.options)
+                        ? this.options.map(opt => ({
+                            value: opt.value,
+                            label: opt.label
+                          }))
+                        : [];
                 }
             }"
     x-init="
                 tomSelect = new TomSelect($refs.{{$attributes->get('key')}}, {
-                    options: options,
-                    items: selectValue,
+                    options: getCleanOptions(),
+                    items: selectValue || [],
                     valueField: 'value',
                     labelField: 'label',
                     searchField: 'label',
-                    plugins: ['remove_button']
+                    plugins: ['remove_button'],
+                    onChange: function(value) {
+                        $wire.$set('{{ $attributes->whereStartsWith('wire:model')->first() }}', value, false);
+                    },
+                    onFocus: function() {
+                        this.clearOptions();
+                        this.addOptions(cleanOptions);
+                    }
                 });
 
                 $watch('selectValue', (newValue) => {
-                    console.log(newValue);
-                    $wire.$set('{{ $attributes->whereStartsWith('wire:model')->first() }}', newValue, false)
-                    if (newValue === null && tomSelect) {
+                    if (!tomSelect) return;
+
+                    if (newValue === null) {
                         tomSelect.clear(true);
+                    } else if (newValue !== tomSelect.getValue()) {
+                        tomSelect.setValue(newValue);
                     }
-                });"
+                });
+
+                $el._x_removeModelListeners = () => {
+                    if (tomSelect) {
+                        tomSelect.destroy();
+                    }
+                };"
     x-ref="{{ $attributes->get('key')  }}"
     x-cloak
     {{ $attributes }}>
