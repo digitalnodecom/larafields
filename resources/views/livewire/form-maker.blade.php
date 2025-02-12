@@ -32,7 +32,7 @@
         <div class="repeater">
           @foreach($availablePropertiesData['dn_form_maker_' . $field['name']] as $index => $repeaterItem)
             <div class="repeater-row">
-              @foreach($field['subfields'] as $subfield)
+              @foreach($field['subfields'] as $subfieldIndex => $subfield)
                 @php
                   $subfield['key'] = sprintf("availablePropertiesData.dn_form_maker_%s.%s.%s", $field['name'], $index, $subfield['name']);
                 @endphp
@@ -50,13 +50,16 @@
                     @include('FormMaker::components.TextareaField', ['field' => $subfield])
                   @endif
 
-{{--                  @if($subfield['type'] == 'multiselect')--}}
-{{--                    <x-tom-select--}}
-{{--                      class="multiselect"--}}
-{{--                      wire:model="{{ sprintf('availablePropertiesData.dn_form_maker_%s', $subfield['name']) }}"--}}
-{{--                      options="{{ sprintf('availablePropertiesSchema.%s.options', $key) }}" multiple--}}
-{{--                    />--}}
-{{--                  @endif--}}
+                  @if($subfield['type'] == 'multiselect')
+                    <x-tom-select
+                      class="multiselect"
+                      wire:model="{{ sprintf('availablePropertiesData.dn_form_maker_%s.%s.%s', $field['name'], $index, $subfield['name']) }}"
+                      options="{{ sprintf('availablePropertiesSchema.%s.subfields.%s.options', $key, $subfieldIndex) }}"
+                      key="ms{{$index}}"
+                      wire:ignore
+                      multiple
+                    />
+                  @endif
                 </div>
               @endforeach
               <button wire:click.prevent="removeRepeaterRow('{{ $field['name'] }}', {{ $index }})">Remove</button>
@@ -76,30 +79,3 @@
 
   <button wire:click.prevent="submit">Submit</button>
 </div>
-
-@script
-<script>
-  jQuery(document).ready(function () {
-    initProductGroupSelects();
-
-    Livewire.on('form-submitted', function(){
-      initProductGroupSelects();
-    });
-
-    function initProductGroupSelects() {
-      jQuery('select.multiselect').each(function() {
-        const $select = jQuery(this);
-        const selectedValue = $select.data('value');
-
-        if ($select.find('option').length <= 1) {
-          Object.entries(window.productGroups).forEach(([termId, termName]) => {
-            $select.append(
-              new Option(termName, termId, false, selectedValue == termId)
-            );
-          });
-        }
-      });
-    }
-  });
-</script>
-@endscript
