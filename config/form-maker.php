@@ -56,6 +56,31 @@ return [
                                 ]
                             ]
                         ],
+                        [
+                            'type'         => 'multiselect',
+                            'label'        => 'Product Type',
+                            'name'         => 'product_type',
+                            'defaultValue' => [],
+                            'required'     => true,
+                            'options'      => [
+                                [
+                                    'value' => 'simple',
+                                    'label' => 'Simple'
+                                ],
+                                [
+                                    'value' => 'variable',
+                                    'label' => 'Variable'
+                                ]
+                            ]
+                        ],
+                        [
+                            'type'         => 'multiselect',
+                            'label'        => 'Attributes',
+                            'name'         => 'attributes',
+                            'defaultValue' => [],
+                            'required'     => true,
+                            'options'      => []
+                        ],
                     ]
                 ],
 
