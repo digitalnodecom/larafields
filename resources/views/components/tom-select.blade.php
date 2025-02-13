@@ -25,8 +25,7 @@
                         $wire.$set('{{ $attributes->whereStartsWith('wire:model')->first() }}', value, false);
                     },
                     onFocus: function() {
-                        this.clearOptions();
-                        this.addOptions(cleanOptions);
+                        this.addOptions(getCleanOptions());
                     }
                 });
 

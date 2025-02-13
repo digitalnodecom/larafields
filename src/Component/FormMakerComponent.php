@@ -15,22 +15,24 @@ class FormMakerComponent extends Component {
     private string $taxonomy = '';
 
     public function mount( $group, $is_on_page = '', $is_on_term_options_page = '', $taxonomy = '' ) {
-        $this->is_on_page = $is_on_page;
+        $this->is_on_page              = $is_on_page;
         $this->is_on_term_options_page = $is_on_term_options_page;
-        $this->taxonomy = $taxonomy;
+        $this->taxonomy                = $taxonomy;
 
-        $this->groupKey = $this->getGroupKey($group);
+        $this->groupKey = $this->getGroupKey( $group );
 
-        $existingData = DB::table('form_submissions')
-          ->where('form_key', $this->groupKey)
-          ->first();
+        $existingData = DB::table( 'form_submissions' )
+                          ->where( 'form_key', $this->groupKey )
+                          ->first();
 
-        if ( $existingData ){
-            $existingData = json_decode($existingData->form_content, true);
+        if ( $existingData ) {
+            $existingData = json_decode( $existingData->form_content, true );
         }
 
-        collect( $group['fields'] )->each( function ( $field ) use ($existingData) {
-            $defaultValue = $existingData['dn_form_maker_' . $field['name']] ?? $field['defaultValue'] ?? '';
+        $fields = apply_filters( 'dn_form_maker_load_fields', collect( $group['fields'] ) );
+
+        $fields->each( function ( $field ) use ( $existingData ) {
+            $defaultValue = $existingData[ 'dn_form_maker_' . $field['name'] ] ?? $field['defaultValue'] ?? '';
 
             $this->availablePropertiesData[ 'dn_form_maker_' . $field['name'] ] = $defaultValue;
 
@@ -49,7 +51,11 @@ class FormMakerComponent extends Component {
                     'required' => $field['required'],
                     'options'  => $field['options']
                 ];
-            } else if ( $field['type'] == 'repeater' ){
+
+                $defaultValue = $existingData[ 'dn_form_maker_' . $field['name'] ] ?? $field['defaultValue'] ?? [];
+
+                $this->availablePropertiesData[ 'dn_form_maker_' . $field['name'] ] = $defaultValue ?: [];
+            } else if ( $field['type'] == 'repeater' ) {
                 $this->availablePropertiesSchema[] = [
                     'type'      => 'repeater',
                     'name'      => $field['name'],
@@ -57,30 +63,30 @@ class FormMakerComponent extends Component {
                     'subfields' => $field['subfields'],
                 ];
 
-                $defaults = collect($field['subfields'])->mapWithKeys(function ($value){
+                $defaults = collect( $field['subfields'] )->mapWithKeys( function ( $value ) {
                     return [ $value['name'] => $value['defaultValue'] ?? '' ];
-                })->all();
+                } )->all();
 
-                $defaultValue = $existingData['dn_form_maker_' . $field['name']] ?? $defaults ?? [];
-
-                $this->availablePropertiesData[ 'dn_form_maker_' . $field['name'] ] = $defaultValue;
+                $this->availablePropertiesData[ 'dn_form_maker_' . $field['name'] ] = collect( $existingData[ 'dn_form_maker_' . $field['name'] ] )->map( function ( $data ) use ( $defaults ) {
+                    return array_merge( $defaults, $data );
+                } )->toArray();
             }
         } );
     }
 
-    public function addRepeaterRow($fieldName) {
-        $field = collect($this->availablePropertiesSchema)->firstWhere('name', $fieldName);
+    public function addRepeaterRow( $fieldName ) {
+        $field = collect( $this->availablePropertiesSchema )->firstWhere( 'name', $fieldName );
 
-        $defaults = collect($field['subfields'])->mapWithKeys(function ($value){
+        $defaults = collect( $field['subfields'] )->mapWithKeys( function ( $value ) {
             return [ $value['name'] => $value['defaultValue'] ?? '' ];
-        })->all();
+        } )->all();
 
-        $this->availablePropertiesData['dn_form_maker_' . $fieldName][] = $defaults;
+        $this->availablePropertiesData[ 'dn_form_maker_' . $fieldName ][] = $defaults;
     }
 
-    public function removeRepeaterRow($fieldName, $index) {
-        unset($this->availablePropertiesData['dn_form_maker_' . $fieldName][$index]);
-        $this->availablePropertiesData['dn_form_maker_' . $fieldName] = array_values($this->availablePropertiesData['dn_form_maker_' . $fieldName]);
+    public function removeRepeaterRow( $fieldName, $index ) {
+        unset( $this->availablePropertiesData[ 'dn_form_maker_' . $fieldName ][ $index ] );
+        $this->availablePropertiesData[ 'dn_form_maker_' . $fieldName ] = array_values( $this->availablePropertiesData[ 'dn_form_maker_' . $fieldName ] );
     }
 
     public function submit() {
@@ -104,24 +110,24 @@ class FormMakerComponent extends Component {
     }
 
     private function getGroupKey( $group ) {
-        if ( $this->taxonomy && $this->is_on_term_options_page ){
-            return sprintf("%s_term_option_%s_%s", $group['name'], $this->taxonomy, $this->is_on_term_options_page);
+        if ( $this->taxonomy && $this->is_on_term_options_page ) {
+            return sprintf( "%s_term_option_%s_%s", $group['name'], $this->taxonomy, $this->is_on_term_options_page );
         }
 
-        if ( $this->is_on_page ){
-            return sprintf("%s_page_%s", $group['name'], $this->is_on_page);
+        if ( $this->is_on_page ) {
+            return sprintf( "%s_page_%s", $group['name'], $this->is_on_page );
         }
 
         global $post;
 
-        if ( $post ){
-            return sprintf("%s_%s", $group['name'], $post->ID);
+        if ( $post ) {
+            return sprintf( "%s_%s", $group['name'], $post->ID );
         }
 
         global $pagenow;
 
-        if ( $pagenow == 'term.php' ){
-            return sprintf("%s_term_%s", $group['name'], $_GET['tag_ID']);
+        if ( $pagenow == 'term.php' ) {
+            return sprintf( "%s_term_%s", $group['name'], $_GET['tag_ID'] );
         }
 
         return $group['label'];
