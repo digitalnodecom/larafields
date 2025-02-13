@@ -39,51 +39,64 @@
 
       @if($field['type'] == 'repeater')
         <div class="repeater">
-          @foreach($availablePropertiesData['dn_form_maker_' . $field['name']] as $index => $repeaterItem)
-            <div class="repeater-row" style="display: flex; justify-content: space-between; width: 100%;">
-              @foreach($field['subfields'] as $subfieldIndex => $subfield)
-                @php
-                  $subfield['key'] = sprintf("availablePropertiesData.dn_form_maker_%s.%s.%s", $field['name'], $index, $subfield['name']);
-                @endphp
-                <div>
-                  <label>{{ $subfield['label'] }}</label>
-                  @if($subfield['type'] == 'text')
-                    @include('FormMaker::components.TextField', ['field' => $subfield])
-                  @endif
+          <table class="w-full border-collapse border border-gray-300 mb-4">
+            <thead>
+              <tr>
+                @foreach($field['subfields'] as $subfield)
+                  <th class="border border-gray-300 p-2 bg-gray-100">{{ $subfield['label'] }}</th>
+                @endforeach
+                <th class="border border-gray-300 p-2 bg-gray-100">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @foreach($availablePropertiesData['dn_form_maker_' . $field['name']] as $index => $repeaterItem)
+                <tr class="repeater-row">
+                  @foreach($field['subfields'] as $subfieldIndex => $subfield)
+                    @php
+                      $subfield['key'] = sprintf("availablePropertiesData.dn_form_maker_%s.%s.%s", $field['name'], $index, $subfield['name']);
+                    @endphp
+                    <td class="border border-gray-300 p-2">
+                      @if($subfield['type'] == 'text')
+                        @include('FormMaker::components.TextField', ['field' => $subfield])
+                      @endif
 
-                  @if($subfield['type'] == 'number')
-                    @include('FormMaker::components.NumberField', ['field' => $subfield])
-                  @endif
+                      @if($subfield['type'] == 'number')
+                        @include('FormMaker::components.NumberField', ['field' => $subfield])
+                      @endif
 
-                  @if($subfield['type'] == 'textarea')
-                    @include('FormMaker::components.TextareaField', ['field' => $subfield])
-                  @endif
+                      @if($subfield['type'] == 'textarea')
+                        @include('FormMaker::components.TextareaField', ['field' => $subfield])
+                      @endif
 
-                  @if($subfield['type'] == 'multiselect')
-                    <x-tom-select
-                      class="multiselect"
-                      wire:model="{{ sprintf('availablePropertiesData.dn_form_maker_%s.%s.%s', $field['name'], $index, $subfield['name']) }}"
-                      options="{{ sprintf('availablePropertiesSchema.%s.subfields.%s.options', $key, $subfieldIndex) }}"
-                      key="ms{{$index}}"
-                      wire:ignore
-                      multiple
-                    />
-                  @endif
+                      @if($subfield['type'] == 'multiselect')
+                        <x-tom-select
+                          class="multiselect"
+                          wire:model="{{ sprintf('availablePropertiesData.dn_form_maker_%s.%s.%s', $field['name'], $index, $subfield['name']) }}"
+                          options="{{ sprintf('availablePropertiesSchema.%s.subfields.%s.options', $key, $subfieldIndex) }}"
+                          key="ms{{$index}}"
+                          wire:ignore
+                          multiple
+                        />
+                      @endif
 
-                  @if($subfield['type'] == 'select')
-                    <x-tom-select
-                      wire:model="{{ sprintf('availablePropertiesData.dn_form_maker_%s.%s.%s', $field['name'], $index, $subfield['name']) }}"
-                      options="{{ sprintf('availablePropertiesSchema.%s.subfields.%s.options', $key, $subfieldIndex) }}"
-                      key="ms{{$index}}"
-                      wire:ignore
-                    />
-                  @endif
-                </div>
+                      @if($subfield['type'] == 'select')
+                        <x-tom-select
+                          wire:model="{{ sprintf('availablePropertiesData.dn_form_maker_%s.%s.%s', $field['name'], $index, $subfield['name']) }}"
+                          options="{{ sprintf('availablePropertiesSchema.%s.subfields.%s.options', $key, $subfieldIndex) }}"
+                          key="ms{{$index}}"
+                          wire:ignore
+                        />
+                      @endif
+                    </td>
+                  @endforeach
+                  <td class="border border-gray-300 p-2 text-center">
+                    <button wire:click.prevent="removeRepeaterRow('{{ $field['name'] }}', {{ $index }})" class="text-red-500 hover:text-red-700">Remove</button>
+                  </td>
+                </tr>
               @endforeach
-              <button wire:click.prevent="removeRepeaterRow('{{ $field['name'] }}', {{ $index }})">Remove</button>
-            </div>
-          @endforeach
-          <button wire:click.prevent="addRepeaterRow('{{ $field['name'] }}')">Add Row</button>
+            </tbody>
+          </table>
+          <button wire:click.prevent="addRepeaterRow('{{ $field['name'] }}')" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add Row</button>
         </div>
       @endif
 
