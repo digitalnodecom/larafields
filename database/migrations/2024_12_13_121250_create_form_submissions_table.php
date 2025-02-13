@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('form_submissions', function (Blueprint $table) {
             $table->id();
-            $table->string('form_key');
+            $table->string('form_key')->unique();
             $table->json('form_content');
         });
     }

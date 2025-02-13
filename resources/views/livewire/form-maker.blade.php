@@ -1,7 +1,7 @@
 @php use Illuminate\Support\Facades\Session; @endphp
 <div>
   @foreach($availablePropertiesSchema as $key => $field)
-    <div class="mb-2">
+    <div class="mb-2 flex flex-col">
       <label for="story">{{ $field['label'] }}</label>
 
       @php
@@ -21,12 +21,12 @@
       @endif
 
       @if($field['type'] == 'multiselect')
-          <x-tom-select
-            class="multiselect"
-            wire:model="{{ sprintf('availablePropertiesData.dn_form_maker_%s', $field['name']) }}"
-            options="{{ sprintf('availablePropertiesSchema.%s.options', $key) }}"
-            multiple
-          />
+        <x-tom-select
+          class="multiselect"
+          wire:model="{{ sprintf('availablePropertiesData.dn_form_maker_%s', $field['name']) }}"
+          options="{{ sprintf('availablePropertiesSchema.%s.options', $key) }}"
+          multiple
+        />
       @endif
 
       @if($field['type'] == 'select')
@@ -40,7 +40,7 @@
       @if($field['type'] == 'repeater')
         <div class="repeater">
           @foreach($availablePropertiesData['dn_form_maker_' . $field['name']] as $index => $repeaterItem)
-            <div class="repeater-row">
+            <div class="repeater-row" style="display: flex; justify-content: space-between; width: 100%;">
               @foreach($field['subfields'] as $subfieldIndex => $subfield)
                 @php
                   $subfield['key'] = sprintf("availablePropertiesData.dn_form_maker_%s.%s.%s", $field['name'], $index, $subfield['name']);
