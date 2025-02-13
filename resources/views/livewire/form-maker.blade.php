@@ -24,8 +24,17 @@
           <x-tom-select
             class="multiselect"
             wire:model="{{ sprintf('availablePropertiesData.dn_form_maker_%s', $field['name']) }}"
-            options="{{ sprintf('availablePropertiesSchema.%s.options', $key) }}" multiple
+            options="{{ sprintf('availablePropertiesSchema.%s.options', $key) }}"
+            multiple
           />
+      @endif
+
+      @if($field['type'] == 'select')
+        <x-tom-select
+          class="multiselect"
+          wire:model="{{ sprintf('availablePropertiesData.dn_form_maker_%s', $field['name']) }}"
+          options="{{ sprintf('availablePropertiesSchema.%s.options', $key) }}" multiple
+        />
       @endif
 
       @if($field['type'] == 'repeater')
@@ -58,6 +67,15 @@
                       key="ms{{$index}}"
                       wire:ignore
                       multiple
+                    />
+                  @endif
+
+                  @if($subfield['type'] == 'select')
+                    <x-tom-select
+                      wire:model="{{ sprintf('availablePropertiesData.dn_form_maker_%s.%s.%s', $field['name'], $index, $subfield['name']) }}"
+                      options="{{ sprintf('availablePropertiesSchema.%s.subfields.%s.options', $key, $subfieldIndex) }}"
+                      key="ms{{$index}}"
+                      wire:ignore
                     />
                   @endif
                 </div>

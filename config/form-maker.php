@@ -36,7 +36,7 @@ return [
                             'characterLimit' => 50
                         ],
                         [
-                            'type'         => 'multiselect',
+                            'type'         => 'select',
                             'label'        => 'Product Gender',
                             'name'         => 'product_gender',
                             'defaultValue' => [],
@@ -57,7 +57,7 @@ return [
                             ]
                         ],
                         [
-                            'type'         => 'multiselect',
+                            'type'         => 'select',
                             'label'        => 'Product Type',
                             'name'         => 'product_type',
                             'defaultValue' => [],
