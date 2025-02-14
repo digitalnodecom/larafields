@@ -46,6 +46,25 @@ class FormMaker
         add_action('admin_menu', array($this, 'addMenuPages') );
         add_filter('init', array( $this, 'addTermOptionPages' ), 10, 2);
         add_action( 'admin_menu', array( $this, 'createPlaceholderTermOptionPage'));
+
+        add_filter('dn_form_maker_load_forms_vendor_mappings_vendor_mappings', function($field){
+            $field['subfields'] = collect($field['subfields'])->map(function($subfield){
+                if ( $subfield['name'] !== 'attributes' ){
+                    return $subfield;
+                }
+
+                $subfield['options'] = collect(wc_get_attribute_taxonomies())->map(function($taxonomy){
+                    return [
+                        'value' => $taxonomy->attribute_id,
+                        'label' => $taxonomy->attribute_label,
+                    ];
+                })->values()->toArray();
+
+                return $subfield;
+            })->values()->toArray();
+
+            return $field;
+        });
     }
 
     public function renderMetaBox( $post_type ){

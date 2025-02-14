@@ -9,18 +9,18 @@ Route::middleware(ApplicationPasswordAuthMiddleware::class)
     ->group(function(){
         Route::get('/forms', function(Request $request){
             $data = $request->validate([
-                'field_name' => 'required',
+                'form_name' => 'required',
                 'location' => 'required',
                 'taxonomy' => 'required_if:location,term_option,taxonomy',
                 'id' => 'required_if:location,term_option,taxonomy,page'
             ]);
 
             $form_key = match($data['location']) {
-                'term_option' => sprintf("%s_term_option_%s_%s", $data['field_name'], $data['taxonomy'], $data['id']),
-                'page' => sprintf("%s_page_%s", $data['field_name'], $data['id']),
-                'taxonomy' => sprintf("%s_term_%s", $data['field_name'], $data['id']),
-                'postType' => sprintf("%s_%s", $data['field_name'], $data['id']),
-                default => $data['field_name']
+                'term_option' => sprintf("%s_term_option_%s_%s", $data['form_name'], $data['taxonomy'], $data['id']),
+                'page' => sprintf("%s_page_%s", $data['form_name'], $data['id']),
+                'taxonomy' => sprintf("%s_term_%s", $data['form_name'], $data['id']),
+                'postType' => sprintf("%s_%s", $data['form_name'], $data['id']),
+                default => $data['form_name']
             };
 
             $form = DB::table('form_submissions')
