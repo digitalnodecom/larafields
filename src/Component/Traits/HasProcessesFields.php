@@ -28,22 +28,22 @@ trait HasProcessesFields
 
     private function processFormFields(array $group, ?array $existingData): void
     {
-        $fields = $this->getFilteredFields($group);
+        $fields = $this->getGroupFields($group);
 
         $fields->each(function ($field) use ($existingData, $group) {
-            $processedField = $this->applyFieldFilters($field, $group);
-            $this->processIndividualField($processedField, $existingData);
+            $field = $this->getGroupIndividualField($field, $group);
+            $this->processGroupIndividualField($field, $existingData);
         });
     }
 
-    private function getFilteredFields(array $group): Collection
+    private function getGroupFields(array $group): Collection
     {
         return collect(
             apply_filters('larafields_load_forms_' . $group['name'], $group['fields'])
         );
     }
 
-    private function applyFieldFilters(array $field, array $group): array
+    private function getGroupIndividualField(array $field, array $group): array
     {
         return apply_filters(
             sprintf('larafields_load_forms_%s_%s', $group['name'], $field['name']),
@@ -51,7 +51,7 @@ trait HasProcessesFields
         );
     }
 
-    private function processIndividualField(array $field, ?array $existingData): void
+    private function processGroupIndividualField(array $field, ?array $existingData): void
     {
         $defaultValue = $this->determineFieldDefaultValue($field, $existingData);
         $this->availablePropertiesData[$field['name']] = $defaultValue;
