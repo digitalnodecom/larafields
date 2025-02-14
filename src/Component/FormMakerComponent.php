@@ -2,13 +2,14 @@
 
 namespace DigitalNode\FormMaker\Component;
 
-use DigitalNode\FormMaker\Component\Traits\ProcessesFields;
+use DigitalNode\FormMaker\Component\Traits\HasRepeaterFields;
+use DigitalNode\FormMaker\Component\Traits\HasProcessesFields;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class FormMakerComponent extends Component
 {
-    use ProcessesFields;
+    use HasProcessesFields, HasRepeaterFields;
 
     public array $availablePropertiesSchema = [];
 
@@ -28,23 +29,6 @@ class FormMakerComponent extends Component
         $this->groupKey = $this->getGroupKey($group);
         $existingData = $this->getExistingFormData();
         $this->processFields($group, $existingData);
-    }
-
-    public function addRepeaterRow($fieldName)
-    {
-        $field = collect($this->availablePropertiesSchema)->firstWhere('name', $fieldName);
-
-        $defaults = collect($field['subfields'])->mapWithKeys(function ($value) {
-            return [$value['name'] => $value['defaultValue'] ?? ''];
-        })->all();
-
-        $this->availablePropertiesData[$fieldName][] = $defaults;
-    }
-
-    public function removeRepeaterRow($fieldName, $index)
-    {
-        unset($this->availablePropertiesData[$fieldName][$index]);
-        $this->availablePropertiesData[$fieldName] = array_values($this->availablePropertiesData[$fieldName]);
     }
 
     public function submit()

@@ -2,7 +2,7 @@
 
 namespace DigitalNode\FormMaker\Component\Traits;
 
-trait ProcessesFields {
+trait HasProcessesFields {
     private function initializeProperties($is_on_page, $is_on_term_options_page, $taxonomy): void
     {
         $this->is_on_page = $is_on_page;
