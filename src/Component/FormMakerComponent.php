@@ -2,11 +2,14 @@
 
 namespace DigitalNode\FormMaker\Component;
 
+use DigitalNode\FormMaker\Component\Traits\ProcessesFields;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class FormMakerComponent extends Component
 {
+    use ProcessesFields;
+
     public array $availablePropertiesSchema = [];
 
     public array $availablePropertiesData = [];
@@ -21,65 +24,10 @@ class FormMakerComponent extends Component
 
     public function mount($group, $is_on_page = '', $is_on_term_options_page = '', $taxonomy = '')
     {
-        $this->is_on_page = $is_on_page;
-        $this->is_on_term_options_page = $is_on_term_options_page;
-        $this->taxonomy = $taxonomy;
-
+        $this->initializeProperties($is_on_page, $is_on_term_options_page, $taxonomy);
         $this->groupKey = $this->getGroupKey($group);
-
-        $existingData = DB::table('form_submissions')
-            ->where('form_key', $this->groupKey)
-            ->first();
-
-        if ($existingData) {
-            $existingData = json_decode($existingData->form_content, true);
-        }
-
-        $fields = collect(apply_filters('dn_form_maker_load_forms_'.$group['name'], $group['fields']));
-
-        $fields->each(function ($field) use ($existingData, $group) {
-            $field = apply_filters(sprintf('dn_form_maker_load_forms_%s_%s', $group['name'], $field['name']), $field);
-
-            $defaultValue = $existingData['dn_form_maker_'.$field['name']] ?? $field['defaultValue'] ?? '';
-
-            $this->availablePropertiesData['dn_form_maker_'.$field['name']] = $defaultValue;
-
-            if (collect(['text', 'textarea', 'number'])->contains($field['type'])) {
-                $this->availablePropertiesSchema[] = [
-                    'type' => $field['type'],
-                    'name' => $field['name'],
-                    'label' => $field['label'],
-                    'required' => $field['required'],
-                ];
-            } elseif ($field['type'] == 'multiselect') {
-                $this->availablePropertiesSchema[] = [
-                    'type' => $field['type'],
-                    'name' => $field['name'],
-                    'label' => $field['label'],
-                    'required' => $field['required'],
-                    'options' => $field['options'],
-                ];
-
-                $defaultValue = $existingData['dn_form_maker_'.$field['name']] ?? $field['defaultValue'] ?? [];
-
-                $this->availablePropertiesData['dn_form_maker_'.$field['name']] = $defaultValue ?: [];
-            } elseif ($field['type'] == 'repeater') {
-                $this->availablePropertiesSchema[] = [
-                    'type' => 'repeater',
-                    'name' => $field['name'],
-                    'label' => $field['label'],
-                    'subfields' => $field['subfields'],
-                ];
-
-                $defaults = collect($field['subfields'])->mapWithKeys(function ($value) {
-                    return [$value['name'] => $value['defaultValue'] ?? ''];
-                })->all();
-
-                $this->availablePropertiesData['dn_form_maker_'.$field['name']] = collect($existingData['dn_form_maker_'.$field['name']] ?? [])->map(function ($data) use ($defaults) {
-                    return array_merge($defaults, $data);
-                })->toArray();
-            }
-        });
+        $existingData = $this->getExistingFormData();
+        $this->processFields($group, $existingData);
     }
 
     public function addRepeaterRow($fieldName)
@@ -90,24 +38,24 @@ class FormMakerComponent extends Component
             return [$value['name'] => $value['defaultValue'] ?? ''];
         })->all();
 
-        $this->availablePropertiesData['dn_form_maker_'.$fieldName][] = $defaults;
+        $this->availablePropertiesData[$fieldName][] = $defaults;
     }
 
     public function removeRepeaterRow($fieldName, $index)
     {
-        unset($this->availablePropertiesData['dn_form_maker_'.$fieldName][$index]);
-        $this->availablePropertiesData['dn_form_maker_'.$fieldName] = array_values($this->availablePropertiesData['dn_form_maker_'.$fieldName]);
+        unset($this->availablePropertiesData[$fieldName][$index]);
+        $this->availablePropertiesData[$fieldName] = array_values($this->availablePropertiesData[$fieldName]);
     }
 
     public function submit()
     {
         try {
             DB::table('form_submissions')
-                ->updateOrInsert([
-                    'form_key' => $this->groupKey,
-                ], [
-                    'form_content' => json_encode($this->availablePropertiesData),
-                ]);
+              ->updateOrInsert([
+                  'form_key' => $this->groupKey,
+              ], [
+                  'form_content' => json_encode($this->availablePropertiesData),
+              ]);
 
             session()->flash('message', 'Form has been saved successfully.');
         } catch (\Exception $exception) {
@@ -120,6 +68,7 @@ class FormMakerComponent extends Component
         return view('FormMaker::livewire.form-maker')
             ->layout('FormMaker::livewire.layout');
     }
+
 
     private function getGroupKey($group)
     {

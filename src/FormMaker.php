@@ -27,7 +27,7 @@ class FormMaker
     {
         $this->app = $app;
         $this->forms = collect(
-            apply_filters('dn_form_maker_load_forms', config('form-maker.forms', []))
+            apply_filters('larafields_load_forms', config('form-maker.forms', []))
         );
 
         add_filter('wp_head', function () {

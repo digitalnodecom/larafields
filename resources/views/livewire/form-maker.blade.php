@@ -5,7 +5,7 @@
       <label for="story">{{ $field['label'] }}</label>
 
       @php
-        $field['key'] = 'availablePropertiesData.dn_form_maker_' . $field['name'];
+        $field['key'] = 'availablePropertiesData.' . $field['name'];
       @endphp
 
       @if($field['type'] == 'text')
@@ -23,7 +23,7 @@
       @if($field['type'] == 'multiselect')
         <x-tom-select
           class="multiselect"
-          wire:model="{{ sprintf('availablePropertiesData.dn_form_maker_%s', $field['name']) }}"
+          wire:model="{{ sprintf('availablePropertiesData.%s', $field['name']) }}"
           options="{{ sprintf('availablePropertiesSchema.%s.options', $key) }}"
           multiple
         />
@@ -32,7 +32,7 @@
       @if($field['type'] == 'select')
         <x-tom-select
           class="multiselect"
-          wire:model="{{ sprintf('availablePropertiesData.dn_form_maker_%s', $field['name']) }}"
+          wire:model="{{ sprintf('availablePropertiesData.%s', $field['name']) }}"
           options="{{ sprintf('availablePropertiesSchema.%s.options', $key) }}" multiple
         />
       @endif
@@ -49,11 +49,11 @@
               </tr>
             </thead>
             <tbody>
-              @foreach($availablePropertiesData['dn_form_maker_' . $field['name']] as $index => $repeaterItem)
+              @foreach($availablePropertiesData['' . $field['name']] as $index => $repeaterItem)
                 <tr class="repeater-row">
                   @foreach($field['subfields'] as $subfieldIndex => $subfield)
                     @php
-                      $subfield['key'] = sprintf("availablePropertiesData.dn_form_maker_%s.%s.%s", $field['name'], $index, $subfield['name']);
+                      $subfield['key'] = sprintf("availablePropertiesData.%s.%s.%s", $field['name'], $index, $subfield['name']);
                     @endphp
                     <td class="border border-gray-300 p-2">
                       @if($subfield['type'] == 'text')
@@ -71,7 +71,7 @@
                       @if($subfield['type'] == 'multiselect')
                         <x-tom-select
                           class="multiselect"
-                          wire:model="{{ sprintf('availablePropertiesData.dn_form_maker_%s.%s.%s', $field['name'], $index, $subfield['name']) }}"
+                          wire:model="{{ sprintf('availablePropertiesData.%s.%s.%s', $field['name'], $index, $subfield['name']) }}"
                           options="{{ sprintf('availablePropertiesSchema.%s.subfields.%s.options', $key, $subfieldIndex) }}"
                           key="ms{{$index}}"
                           wire:ignore
@@ -81,7 +81,7 @@
 
                       @if($subfield['type'] == 'select')
                         <x-tom-select
-                          wire:model="{{ sprintf('availablePropertiesData.dn_form_maker_%s.%s.%s', $field['name'], $index, $subfield['name']) }}"
+                          wire:model="{{ sprintf('availablePropertiesData.%s.%s.%s', $field['name'], $index, $subfield['name']) }}"
                           options="{{ sprintf('availablePropertiesSchema.%s.subfields.%s.options', $key, $subfieldIndex) }}"
                           key="ms{{$index}}"
                           wire:ignore
