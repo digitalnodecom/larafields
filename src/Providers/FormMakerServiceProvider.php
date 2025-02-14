@@ -33,8 +33,8 @@ class FormMakerServiceProvider extends ServiceProvider
         $this->configureViews();
         $this->configureLivewire();
         $this->configureRoutes();
-        $this->configureApp();
         $this->configureConfig();
+        $this->configureApp();
     }
 
     private function configureViews()

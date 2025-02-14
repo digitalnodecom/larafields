@@ -2,6 +2,7 @@
 
 namespace DigitalNode\FormMaker;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Blade;
 use Livewire\Livewire;
 use Roots\Acorn\Application;
@@ -15,6 +16,8 @@ class FormMaker
      */
     protected $app;
 
+    protected Collection $forms;
+
     /**
      * Create a new FormMaker instance.
      *
@@ -23,6 +26,9 @@ class FormMaker
     public function __construct(Application $app)
     {
         $this->app = $app;
+        $this->forms = collect(
+            apply_filters('dn_form_maker_load_forms', config('form-maker.forms', []))
+        );
 
         add_filter('wp_head', function () {
             echo Blade::render('@livewireStyles');
@@ -43,30 +49,11 @@ class FormMaker
         add_action('admin_menu', [$this, 'addMenuPages']);
         add_filter('init', [$this, 'addTermOptionPages'], 10, 2);
         add_action('admin_menu', [$this, 'createPlaceholderTermOptionPage']);
-
-        add_filter('dn_form_maker_load_forms_vendor_mappings_vendor_mappings', function ($field) {
-            $field['subfields'] = collect($field['subfields'])->map(function ($subfield) {
-                if ($subfield['name'] !== 'attributes') {
-                    return $subfield;
-                }
-
-                $subfield['options'] = collect(wc_get_attribute_taxonomies())->map(function ($taxonomy) {
-                    return [
-                        'value' => $taxonomy->attribute_id,
-                        'label' => $taxonomy->attribute_label,
-                    ];
-                })->values()->toArray();
-
-                return $subfield;
-            })->values()->toArray();
-
-            return $field;
-        });
     }
 
     public function renderMetaBox($post_type)
     {
-        collect(config('form-maker.forms'))->each(function ($group) use ($post_type) {
+        $this->forms->each(function ($group) use ($post_type) {
             $conditions = data_get($group, 'settings.conditions');
 
             collect($conditions)->contains(function ($condition) use ($post_type, $group) {
@@ -108,7 +95,7 @@ class FormMaker
 
     public function renderTermMetaBox()
     {
-        $termGroups = collect(config('form-maker.forms'))->filter(function ($group) {
+        $termGroups = $this->forms->filter(function ($group) {
             return collect(data_get($group, 'settings.conditions'))->filter(function ($condition) {
                 return array_key_first($condition) == 'taxonomy' && $condition['taxonomy'] == $_GET['taxonomy'];
             })->isNotEmpty();
@@ -139,7 +126,7 @@ class FormMaker
 
     public function addMenuPages()
     {
-        $formsForPages = collect(config('form-maker')['forms'])->filter(function ($group) {
+        $formsForPages = $this->forms->filter(function ($group) {
             return collect($group['settings']['conditions'])->some(function ($condition, $key) {
                 return $key == 'page';
             });
@@ -177,7 +164,7 @@ class FormMaker
 
     public function appendTermOptionLinks($links, $tag)
     {
-        $formsForPages = collect(config('form-maker')['forms'])->filter(function ($group) {
+        $formsForPages = $this->forms->filter(function ($group) {
             return collect($group['settings']['conditions'])->some(function ($condition, $key) {
                 return $key == 'term_page';
             });
@@ -215,7 +202,7 @@ class FormMaker
 
     public function renderTermOptionsPage()
     {
-        collect(config('form-maker')['forms'])->filter(function ($group) {
+        $this->forms->filter(function ($group) {
             return collect($group['settings']['conditions'])->where(function ($value, $key) use ($group) {
                 if (isset($_GET['taxonomy']) && $key == 'term_page' && $value['taxonomy'] == $_GET['taxonomy']) {
                     echo Livewire::mount(

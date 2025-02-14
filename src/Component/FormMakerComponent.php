@@ -35,10 +35,7 @@ class FormMakerComponent extends Component
             $existingData = json_decode($existingData->form_content, true);
         }
 
-        $fields = apply_filters(
-            'dn_form_maker_load_forms_'.$group['name'],
-            apply_filters('dn_form_maker_load_forms', collect($group['fields']))
-        );
+        $fields = collect(apply_filters('dn_form_maker_load_forms_'.$group['name'], $group['fields']));
 
         $fields->each(function ($field) use ($existingData, $group) {
             $field = apply_filters(sprintf('dn_form_maker_load_forms_%s_%s', $group['name'], $field['name']), $field);
