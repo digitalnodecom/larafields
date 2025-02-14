@@ -23,5 +23,8 @@
         "DigitalNode\\FormMaker\\Providers\\FormMakerServiceProvider"
       ]
     }
+  },
+  "require-dev": {
+    "laravel/pint": "^1.20"
   }
 }

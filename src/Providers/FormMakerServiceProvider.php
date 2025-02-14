@@ -4,9 +4,6 @@ namespace DigitalNode\FormMaker\Providers;
 
 use DigitalNode\FormMaker\Component\FormMakerComponent;
 use DigitalNode\FormMaker\FormMaker;
-use Illuminate\Foundation\Auth\AuthManager;
-use Illuminate\Http\Client\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
@@ -30,7 +27,8 @@ class FormMakerServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot() {
+    public function boot()
+    {
         $this->configureDatabase();
         $this->configureViews();
         $this->configureLivewire();
@@ -39,38 +37,43 @@ class FormMakerServiceProvider extends ServiceProvider
         $this->configureConfig();
     }
 
-    private function configureViews() {
+    private function configureViews()
+    {
         $this->loadViewsFrom(
             __DIR__.'/../../resources/views',
             'FormMaker',
         );
 
-        Blade::anonymousComponentPath( __DIR__.'/../../resources/views/components/' );
+        Blade::anonymousComponentPath(__DIR__.'/../../resources/views/components/');
     }
 
-    private function configureLivewire() {
+    private function configureLivewire()
+    {
         Livewire::component('FormMaker', FormMakerComponent::class);
     }
 
-    private function configureApp() {
+    private function configureApp()
+    {
         $this->app->make(FormMaker::class);
     }
 
-    private function configureConfig() {
+    private function configureConfig()
+    {
         $this->mergeConfigFrom(
-            __DIR__ . '/../../config/form-maker.php',
+            __DIR__.'/../../config/form-maker.php',
             'form-maker'
         );
     }
 
-    private function configureDatabase() {
+    private function configureDatabase()
+    {
         $this->publishesMigrations([
             __DIR__.'/../../database/migrations' => $this->app->databasePath('migrations'),
         ], 'form-maker');
     }
 
-    private function configureRoutes() {
-        $this->loadRoutesFrom( __DIR__.'/../../routes/api.php' );
+    private function configureRoutes()
+    {
+        $this->loadRoutesFrom(__DIR__.'/../../routes/api.php');
     }
 }
-
