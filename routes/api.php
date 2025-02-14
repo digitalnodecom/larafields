@@ -15,8 +15,6 @@ Route::middleware(ApplicationPasswordAuthMiddleware::class)
                 'id' => 'required_if:location,term_option,taxonomy,page'
             ]);
 
-            $query = DB::table('form_submissions');
-
             $form_key = match($data['location']) {
                 'term_option' => sprintf("%s_term_option_%s_%s", $data['field_name'], $data['taxonomy'], $data['id']),
                 'page' => sprintf("%s_page_%s", $data['field_name'], $data['id']),
@@ -25,7 +23,8 @@ Route::middleware(ApplicationPasswordAuthMiddleware::class)
                 default => $data['field_name']
             };
 
-            $form = $query->where('form_key', $form_key)
+            $form = DB::table('form_submissions')
+              ->where('form_key', $form_key)
               ->get()
               ->map(fn($entry) => json_decode($entry->form_content, true))
               ->first();
