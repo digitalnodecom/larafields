@@ -67,7 +67,7 @@ class FormMakerComponent extends Component {
                     return [ $value['name'] => $value['defaultValue'] ?? '' ];
                 } )->all();
 
-                $this->availablePropertiesData[ 'dn_form_maker_' . $field['name'] ] = collect( $existingData[ 'dn_form_maker_' . $field['name'] ] )->map( function ( $data ) use ( $defaults ) {
+                $this->availablePropertiesData[ 'dn_form_maker_' . $field['name'] ] = collect( $existingData[ 'dn_form_maker_' . $field['name'] ] ?? [] )->map( function ( $data ) use ( $defaults ) {
                     return array_merge( $defaults, $data );
                 } )->toArray();
             }

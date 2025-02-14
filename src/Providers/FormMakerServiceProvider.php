@@ -4,6 +4,9 @@ namespace DigitalNode\FormMaker\Providers;
 
 use DigitalNode\FormMaker\Component\FormMakerComponent;
 use DigitalNode\FormMaker\FormMaker;
+use Illuminate\Foundation\Auth\AuthManager;
+use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
@@ -27,11 +30,11 @@ class FormMakerServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
-    {
+    public function boot() {
         $this->configureDatabase();
         $this->configureViews();
         $this->configureLivewire();
+        $this->configureRoutes();
         $this->configureApp();
         $this->configureConfig();
     }
@@ -64,6 +67,10 @@ class FormMakerServiceProvider extends ServiceProvider
         $this->publishesMigrations([
             __DIR__.'/../../database/migrations' => $this->app->databasePath('migrations'),
         ], 'form-maker');
+    }
+
+    private function configureRoutes() {
+        $this->loadRoutesFrom( __DIR__.'/../../routes/api.php' );
     }
 }
 
