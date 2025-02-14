@@ -116,7 +116,7 @@ class FormMaker
                                 'group' => $group,
                             ]
                         );
-            ?>
+                        ?>
                     </div>
                 </div>
             </div>
@@ -146,7 +146,7 @@ class FormMaker
                             'FormMaker',
                             [
                                 'group' => $group,
-                                'is_on_page' => $condition['slug'],
+                                'pageContext' => $condition['slug'],
                             ]
                         );
                     },
@@ -177,7 +177,7 @@ class FormMaker
                 if (isset($_GET['taxonomy']) && $_GET['taxonomy'] == $condition['taxonomy']) {
                     $links['mappings'] = sprintf(
                         '<a href="%s">%s</a>',
-                        admin_url('admin.php?page=term-options&taxonomy='.$condition['taxonomy'].'&term_id='.$tag->term_id),
+                        admin_url('admin.php?page=term-options&taxonomy=' . $condition['taxonomy'] . '&term_id=' . $tag->term_id),
                         $condition['action_name']
                     );
                 }
@@ -209,8 +209,8 @@ class FormMaker
                         'FormMaker',
                         [
                             'group' => $group,
-                            'is_on_term_options_page' => $_GET['term_id'] ?? 0,
-                            'taxonomy' => $value['taxonomy'],
+                            'termOptionsContext' => $_GET['term_id'] ?? 0,
+                            'taxonomyContext' => $value['taxonomy'],
                         ]
                     );
                 }

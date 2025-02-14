@@ -2,31 +2,45 @@
 
 namespace DigitalNode\FormMaker\Component\Traits;
 
-trait HasProcessesFields {
-    private function initializeProperties($is_on_page, $is_on_term_options_page, $taxonomy): void
-    {
-        $this->is_on_page = $is_on_page;
-        $this->is_on_term_options_page = $is_on_term_options_page;
-        $this->taxonomy = $taxonomy;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
+
+trait HasProcessesFields
+{
+    private function initializeContextProperties(
+        ?string $pageContext = null,
+        ?string $termOptionsContext = null,
+        ?string $taxonomyContext = null
+    ): void {
+        $this->pageContext = $pageContext;
+        $this->termOptionsContext = $termOptionsContext;
+        $this->taxonomyContext = $taxonomyContext;
     }
 
-    private function getExistingFormData(): ?array
+    private function fetchExistingFormData(): ?array
     {
-        $data = DB::table('form_submissions')
-                  ->where('form_key', $this->groupKey)
-                  ->first();
+        $submission = DB::table('form_submissions')
+            ->where('form_key', $this->groupKey)
+            ->first();
 
-        return $data ? json_decode($data->form_content, true) : null;
+        return $submission ? json_decode($submission->form_content, true) : null;
     }
 
-    private function processFields($group, ?array $existingData): void
+    private function processFormFields(array $group, ?array $existingData): void
     {
-        $fields = collect(apply_filters('larafields_load_forms_' . $group['name'], $group['fields']));
+        $fields = $this->getFilteredFields($group);
 
         $fields->each(function ($field) use ($existingData, $group) {
-            $field = $this->applyFieldFilters($field, $group);
-            $this->processField($field, $existingData);
+            $processedField = $this->applyFieldFilters($field, $group);
+            $this->processIndividualField($processedField, $existingData);
         });
+    }
+
+    private function getFilteredFields(array $group): Collection
+    {
+        return collect(
+            apply_filters('larafields_load_forms_' . $group['name'], $group['fields'])
+        );
     }
 
     private function applyFieldFilters(array $field, array $group): array
@@ -37,18 +51,23 @@ trait HasProcessesFields {
         );
     }
 
-    private function processField(array $field, ?array $existingData): void
+    private function processIndividualField(array $field, ?array $existingData): void
     {
-        $defaultValue = $existingData[$field['name']] ?? $field['defaultValue'] ?? '';
+        $defaultValue = $this->determineFieldDefaultValue($field, $existingData);
         $this->availablePropertiesData[$field['name']] = $defaultValue;
 
-        $schemaProcessor = $this->getSchemaProcessor($field['type']);
+        $schemaProcessor = $this->getFieldSchemaProcessor($field['type']);
         if ($schemaProcessor) {
             $this->availablePropertiesSchema[] = $schemaProcessor($field, $existingData);
         }
     }
 
-    private function getSchemaProcessor(string $fieldType): ?callable
+    private function determineFieldDefaultValue(array $field, ?array $existingData)
+    {
+        return $existingData[$field['name']] ?? $field['defaultValue'] ?? '';
+    }
+
+    private function getFieldSchemaProcessor(string $fieldType): ?callable
     {
         $processors = [
             'text' => [$this, 'processBasicField'],
@@ -67,7 +86,7 @@ trait HasProcessesFields {
             'type' => $field['type'],
             'name' => $field['name'],
             'label' => $field['label'],
-            'required' => $field['required'],
+            'required' => $field['required'] ?? false,
         ];
     }
 
@@ -77,13 +96,13 @@ trait HasProcessesFields {
             $existingData[$field['name']] ?? $field['defaultValue'] ?? [];
 
         return array_merge($this->processBasicField($field), [
-            'options' => $field['options'],
+            'options' => $field['options'] ?? [],
         ]);
     }
 
     private function processRepeaterField(array $field, ?array $existingData): array
     {
-        $defaults = $this->getRepeaterDefaults($field['subfields']);
+        $defaults = $this->generateRepeaterDefaults($field['subfields']);
 
         $this->availablePropertiesData[$field['name']] = collect($existingData[$field['name']] ?? [])
             ->map(fn($data) => array_merge($defaults, $data))
@@ -97,10 +116,10 @@ trait HasProcessesFields {
         ];
     }
 
-    private function getRepeaterDefaults(array $subfields): array
+    private function generateRepeaterDefaults(array $subfields): array
     {
-        return collect($subfields)->mapWithKeys(function ($value) {
-            return [$value['name'] => $value['defaultValue'] ?? ''];
-        })->all();
+        return collect($subfields)
+            ->mapWithKeys(fn($field) => [$field['name'] => $field['defaultValue'] ?? ''])
+            ->all();
     }
 }
