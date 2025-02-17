@@ -30,14 +30,6 @@ class Larafields
             apply_filters('larafields_load_forms', config('larafields.forms', []))
         );
 
-        add_filter('wp_head', function () {
-            echo Blade::render('@livewireStyles');
-        });
-
-        add_filter('wp_footer', function () {
-            echo Blade::render('@livewireScripts');
-        });
-
         add_action('admin_enqueue_scripts', function () {
             // TODO: use local .js and .css files.
             wp_enqueue_script('choices-js', 'https://cdnjs.cloudflare.com/ajax/libs/tom-select/2.4.1/js/tom-select.complete.js');
