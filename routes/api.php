@@ -23,7 +23,7 @@ Route::middleware(ApplicationPasswordAuthMiddleware::class)
                 default => $data['form_name']
             };
 
-            $form = DB::table('form_submissions')
+            $form = DB::table('larafields')
                 ->where('form_key', $form_key)
                 ->get()
                 ->map(fn ($entry) => json_decode($entry->form_content, true))

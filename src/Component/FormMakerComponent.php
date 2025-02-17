@@ -60,7 +60,7 @@ class FormMakerComponent extends Component
     public function submit(): void
     {
         try {
-            DB::table('form_submissions')->updateOrInsert(
+            DB::table('larafields')->updateOrInsert(
                 ['form_key' => $this->groupKey],
                 ['form_content' => json_encode($this->availablePropertiesData)]
             );

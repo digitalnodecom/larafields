@@ -19,7 +19,7 @@ trait HasProcessesFields
 
     private function fetchExistingFormData(): ?array
     {
-        $submission = DB::table('form_submissions')
+        $submission = DB::table('larafields')
             ->where('form_key', $this->groupKey)
             ->first();
 

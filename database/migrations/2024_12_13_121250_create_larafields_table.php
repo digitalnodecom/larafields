@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('form_submissions', function (Blueprint $table) {
+        Schema::create('larafields', function (Blueprint $table) {
             $table->id();
             $table->string('form_key')->unique();
             $table->json('form_content');
@@ -23,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('form_submissions');
+        Schema::dropIfExists('larafields');
     }
 };
