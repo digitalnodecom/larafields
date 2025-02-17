@@ -1,12 +1,12 @@
 {
-  "name": "digitalnode/form-maker",
+  "name": "digitalnodecom/larafields",
   "type": "package",
-  "description": "An example package for Roots Acorn.",
+  "description": "A Laravel-powered form maker for your WordPress site.",
   "license": "MIT",
   "authors": [
     {
-      "name": "Brandon Nifong",
-      "email": "brandon@tendency.me"
+      "name": "Hristijan Manasijev",
+      "email": "hristijan@digitalnode.com"
     }
   ],
   "autoload": {
