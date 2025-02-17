@@ -9,15 +9,15 @@
       @endphp
 
       @if($field['type'] == 'text')
-        @include('FormMaker::components.TextField', ['field' => $field])
+        @include('Larafields::components.TextField', ['field' => $field])
       @endif
 
       @if($field['type'] == 'number')
-        @include('FormMaker::components.NumberField', ['field' => $field])
+        @include('Larafields::components.NumberField', ['field' => $field])
       @endif
 
       @if($field['type'] == 'textarea')
-        @include('FormMaker::components.TextareaField', ['field' => $field])
+        @include('Larafields::components.TextareaField', ['field' => $field])
       @endif
 
       @if($field['type'] == 'multiselect')
@@ -57,15 +57,15 @@
                     @endphp
                     <td class="border border-gray-300 p-2">
                       @if($subfield['type'] == 'text')
-                        @include('FormMaker::components.TextField', ['field' => $subfield])
+                        @include('Larafields::components.TextField', ['field' => $subfield])
                       @endif
 
                       @if($subfield['type'] == 'number')
-                        @include('FormMaker::components.NumberField', ['field' => $subfield])
+                        @include('Larafields::components.NumberField', ['field' => $subfield])
                       @endif
 
                       @if($subfield['type'] == 'textarea')
-                        @include('FormMaker::components.TextareaField', ['field' => $subfield])
+                        @include('Larafields::components.TextareaField', ['field' => $subfield])
                       @endif
 
                       @if($subfield['type'] == 'multiselect')

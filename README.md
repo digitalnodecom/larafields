@@ -7,7 +7,7 @@ A flexible form maker package that allows you to define custom form groups for W
 You can install this package with Composer:
 
 ```bash
-composer require digitalnode/form-maker
+composer require digitalnodecom/larafields
 ```
 
 After installation, you need to:
@@ -15,7 +15,7 @@ After installation, you need to:
 1. Publish the package assets and configuration:
 
 ```bash
-wp acorn vendor:publish --tag="form-maker"
+wp acorn vendor:publish --tag="larafields"
 ```
 
 2. Run the database migrations:
@@ -53,7 +53,7 @@ add_action('init', function() {
 
 ## Configuration
 
-Form groups are defined in the `config/form-maker.php` file. Each form group can be configured to display on specific post types or taxonomies.
+Form groups are defined in the `config/larafields.php` file. Each form group can be configured to display on specific post types or taxonomies.
 
 ### Basic Structure
 
@@ -260,12 +260,12 @@ The structure follows the same format as defined in the configuration file, allo
 
 ## Extending Fields
 
-You can modify or manipulate the existing fields using the `dn_form_maker_load_fields` WordPress filter. This filter provides access to the fields collection before it's processed:
+You can modify or manipulate the existing fields using the `larafields_load_fields` WordPress filter. This filter provides access to the fields collection before it's processed:
 
 ```php
 use Illuminate\Support\Collection;
 
-add_filter('dn_form_maker_load_fields', function(Collection $fields){
+add_filter('larafields_load_fields', function(Collection $fields){
     // Manipulate the $fields collection.
 });
 ```

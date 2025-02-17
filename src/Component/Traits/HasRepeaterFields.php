@@ -1,6 +1,6 @@
 <?php
 
-namespace DigitalNode\FormMaker\Component\Traits;
+namespace DigitalNode\Larafields\Component\Traits;
 
 trait HasRepeaterFields {
     public function addRepeaterRow($fieldName)

@@ -1,14 +1,14 @@
 <?php
 
-namespace DigitalNode\FormMaker\Providers;
+namespace DigitalNode\Larafields\Providers;
 
-use DigitalNode\FormMaker\Component\FormMakerComponent;
-use DigitalNode\FormMaker\FormMaker;
+use DigitalNode\Larafields\Component\FormMakerComponent;
+use DigitalNode\Larafields\Larafields;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 
-class FormMakerServiceProvider extends ServiceProvider
+class LarafieldsServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
@@ -18,7 +18,7 @@ class FormMakerServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton('FormMaker', function () {
-            return new FormMaker($this->app);
+            return new Larafields($this->app);
         });
     }
 
@@ -41,7 +41,7 @@ class FormMakerServiceProvider extends ServiceProvider
     {
         $this->loadViewsFrom(
             __DIR__.'/../../resources/views',
-            'FormMaker',
+            'Larafields',
         );
 
         Blade::anonymousComponentPath(__DIR__.'/../../resources/views/components/');
@@ -54,14 +54,14 @@ class FormMakerServiceProvider extends ServiceProvider
 
     private function configureApp()
     {
-        $this->app->make(FormMaker::class);
+        $this->app->make(Larafields::class);
     }
 
     private function configureConfig()
     {
         $this->mergeConfigFrom(
-            __DIR__.'/../../config/form-maker.php',
-            'form-maker'
+            __DIR__.'/../../config/larafields.php',
+            'larafields'
         );
     }
 
@@ -69,7 +69,7 @@ class FormMakerServiceProvider extends ServiceProvider
     {
         $this->publishesMigrations([
             __DIR__.'/../../database/migrations' => $this->app->databasePath('migrations'),
-        ], 'form-maker');
+        ], 'larafields');
     }
 
     private function configureRoutes()

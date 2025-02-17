@@ -1,6 +1,6 @@
 <?php
 
-namespace DigitalNode\FormMaker\Component\Traits;
+namespace DigitalNode\Larafields\Component\Traits;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;

@@ -1,6 +1,6 @@
 <?php
 
-namespace DigitalNode\FormMaker\Http\Middleware;
+namespace DigitalNode\Larafields\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;

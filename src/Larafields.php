@@ -1,13 +1,13 @@
 <?php
 
-namespace DigitalNode\FormMaker;
+namespace DigitalNode\Larafields;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Blade;
 use Livewire\Livewire;
 use Roots\Acorn\Application;
 
-class FormMaker
+class Larafields
 {
     /**
      * The application instance.
@@ -27,7 +27,7 @@ class FormMaker
     {
         $this->app = $app;
         $this->forms = collect(
-            apply_filters('larafields_load_forms', config('form-maker.forms', []))
+            apply_filters('larafields_load_forms', config('larafields.forms', []))
         );
 
         add_filter('wp_head', function () {
@@ -137,7 +137,7 @@ class FormMaker
                 return $key == 'page';
             })->each(function ($condition) use ($group) {
                 add_menu_page(
-                    __($condition['page_title'], 'form-maker'),
+                    __($condition['page_title'], 'larafields'),
                     $condition['menu_title'],
                     'manage_options',
                     $condition['slug'],
@@ -220,10 +220,10 @@ class FormMaker
 
     public static function add_group($data)
     {
-        $forms = config('form-maker.forms');
+        $forms = config('larafields.forms');
 
         $forms[] = $data;
 
-        config(['form-maker.forms' => $forms]);
+        config(['larafields.forms' => $forms]);
     }
 }

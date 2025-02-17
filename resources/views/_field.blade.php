@@ -4,10 +4,10 @@
       : "availablePropertiesData.dn_form_maker_" . $field['name'];
 
   $fieldView = match ($field['type']) {
-      'text' => 'FormMaker::components.TextField',
-      'number' => 'FormMaker::components.NumberField',
-      'textarea' => 'FormMaker::components.TextareaField',
-      'multiselect' => 'FormMaker::components.MultiselectField',
+      'text' => 'Larafields::components.TextField',
+      'number' => 'Larafields::components.NumberField',
+      'textarea' => 'Larafields::components.TextareaField',
+      'multiselect' => 'Larafields::components.MultiselectField',
       default => null
   };
 @endphp

@@ -1,9 +1,9 @@
 <?php
 
-namespace DigitalNode\FormMaker\Component;
+namespace DigitalNode\Larafields\Component;
 
-use DigitalNode\FormMaker\Component\Traits\HasProcessesFields;
-use DigitalNode\FormMaker\Component\Traits\HasRepeaterFields;
+use DigitalNode\Larafields\Component\Traits\HasProcessesFields;
+use DigitalNode\Larafields\Component\Traits\HasRepeaterFields;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Illuminate\Support\Facades\Log;
@@ -74,7 +74,7 @@ class FormMakerComponent extends Component
 
     public function render()
     {
-        return view('FormMaker::livewire.form-maker')
-            ->layout('FormMaker::livewire.layout');
+        return view('Larafields::livewire.form-maker')
+            ->layout('Larafields::livewire.layout');
     }
 }

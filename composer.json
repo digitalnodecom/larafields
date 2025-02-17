@@ -11,7 +11,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "DigitalNode\\FormMaker\\": "src/"
+      "DigitalNode\\Larafields\\": "src/"
     }
   },
   "require": {
@@ -20,7 +20,7 @@
   "extra": {
     "acorn": {
       "providers": [
-        "DigitalNode\\FormMaker\\Providers\\FormMakerServiceProvider"
+        "DigitalNode\\Larafields\\Providers\\LarafieldsServiceProvider"
       ]
     }
   },
