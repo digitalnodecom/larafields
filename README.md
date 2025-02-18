@@ -137,6 +137,16 @@ This will add an action link (alongside Edit, Quick Edit, Delete, View) on the t
 ]
 ```
 
+#### User Profile Display
+
+This will display the form group on the user's "Edit Profile" page in the WordPress Admin dashboard.
+
+```php
+'conditions' => [
+    'user'
+]
+```
+
 ## Available Field Types
 
 ### Text Field
