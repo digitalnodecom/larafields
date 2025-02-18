@@ -23,6 +23,7 @@ trait HasProcessesFields
     {
         $submission = DB::table('larafields')
             ->where('form_key', $this->groupKey)
+            ->where('form_location_meta', $this->groupLocationMeta)
             ->first();
 
         return $submission ? json_decode($submission->form_content, true) : null;

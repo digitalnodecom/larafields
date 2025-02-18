@@ -15,6 +15,7 @@ class FormMakerComponent extends Component
     public array $availablePropertiesSchema = [];
     public array $availablePropertiesData = [];
     public string $groupKey;
+    public string $groupLocationMeta = '';
 
     private ?string $pageContext = null;
     private ?string $termOptionsContext = null;
@@ -29,53 +30,68 @@ class FormMakerComponent extends Component
         ?string $userContext = null)
     : void {
         $this->initializeContextProperties($pageContext, $termOptionsContext, $taxonomyContext, $userContext);
-        $this->groupKey = $this->generateGroupKey($group);
+        $this->setGroupKeys($group);
 
         $existingData = $this->fetchExistingFormData();
         $this->processFormFields($group, $existingData);
     }
 
-    private function generateGroupKey(array $group): string
+    private function setGroupKeys(array $group): void
     {
+        $this->groupKey = $group['name'];
+
         if ( $this->userContext ){
-            return sprintf(
-                '%s_user_%s',
-                $group['name'],
+            $this->groupLocationMeta = sprintf(
+                'user_%s',
                 $this->userContext
             );
+
+            return;
         }
 
         if ($this->taxonomyContext && $this->termOptionsContext) {
-            return sprintf(
-                '%s_term_option_%s_%s',
-                $group['name'],
+            $this->groupLocationMeta = sprintf(
+                'term_option_%s_%s',
                 $this->taxonomyContext,
                 $this->termOptionsContext
             );
+
+            return;
         }
 
         if ($this->pageContext) {
-            return sprintf('%s_page_%s', $group['name'], $this->pageContext);
+            $this->groupLocationMeta = sprintf(
+                'page_%s',
+                $this->pageContext
+            );
+
+            return;
         }
 
         global $post;
         if ($post) {
-            return sprintf('%s_%s', $group['name'], $post->ID);
+            $this->groupLocationMeta = sprintf(
+                'post_%s',
+                $post->ID,
+            );
+
+            return;
         }
 
         global $pagenow;
         if ($pagenow === 'term.php') {
-            return sprintf('%s_term_%s', $group['name'], $_GET['tag_ID'] ?? '');
+            $this->groupLocationMeta = sprintf(
+                'term_%s',
+                $_GET['tag_ID']
+            );
         }
-
-        return $group['name'];
     }
 
     public function submit(): void
     {
         try {
             DB::table('larafields')->updateOrInsert(
-                ['form_key' => $this->groupKey],
+                ['form_key' => $this->groupKey, 'form_location_meta' => $this->groupLocationMeta],
                 ['form_content' => json_encode($this->availablePropertiesData)]
             );
 
