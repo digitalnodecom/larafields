@@ -295,6 +295,82 @@ add_filter('larafields_load_fields', function(Collection $fields){
 });
 ```
 
+## API Documentation
+
+The package provides a REST API endpoint for querying forms and their data.
+
+### Endpoint
+
+```
+GET /larafields/forms
+```
+
+### Authentication
+
+The API uses Basic Authentication with WordPress Application Passwords:
+
+- Username: Your WordPress username
+- Password: Generated Application Password key
+
+### Request Body
+
+The request body should be a JSON object with the following properties:
+
+| Property  | Required | Description                                                 |
+| --------- | -------- | ----------------------------------------------------------- |
+| form_name | Yes      | The name of the form to query                               |
+| location  | No       | The location type (e.g., 'page', 'term_page')               |
+| taxonomy  | No       | Required when location is 'term_page' or 'taxonomy'         |
+| id        | No       | The identifier to query (e.g., term_id, post_id, page slug) |
+
+### Query Examples
+
+#### Basic Query
+
+When searching only by `form_name`, the response will include data from all locations where the form exists:
+
+```json
+{
+  "form_name": "example_form"
+}
+```
+
+Response structure:
+
+```json
+{
+    "page_example": [...data],
+    "user_123": [...data]
+}
+```
+
+#### Exact Search Queries
+
+You can perform exact searches by combining `location`, `taxonomy` (when required), and `id`. Here are some example combinations:
+
+##### Example 1: Page Location
+
+```json
+{
+  "form_name": "vendor_mappings",
+  "location": "page",
+  "id": "testing"
+}
+```
+
+##### Example 2: Term Page Location
+
+```json
+{
+  "form_name": "vendor_mappings",
+  "location": "term_page",
+  "taxonomy": "wcpv_product_vendors",
+  "id": "220"
+}
+```
+
+Note: These are just examples of possible combinations. You can search using any combination of these parameters, keeping in mind that `taxonomy` is required whenever the `location` is set to either "term_page" or "taxonomy".
+
 ## Complete Examples
 
 ### Post Type Form Group
