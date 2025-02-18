@@ -39,8 +39,8 @@ class Larafields
         add_action('add_meta_boxes', [$this, 'renderMetaBox']);
         add_action('wp_loaded', [$this, 'renderMetaBox']);
         add_action('admin_menu', [$this, 'addMenuPages']);
-        add_filter('init', [$this, 'addTermOptionPages'], 10, 2);
-        add_action('admin_menu', [$this, 'createPlaceholderTermOptionPage']);
+        add_filter('init', [$this, 'addOptionPages'], 10, 2);
+        add_action('admin_menu', [$this, 'createPlaceholderOptionPages']);
         add_action('edit_user_profile', [$this,'renderUserGroups'], 10, 1);
         add_action('show_user_profile', [$this,'renderUserGroups'], 10, 1);
     }
@@ -180,11 +180,13 @@ class Larafields
         });
     }
 
-    public function addTermOptionPages($options)
+    public function addOptionPages($options)
     {
         collect(get_taxonomies())->keys()->each(function ($taxonomy) {
             add_filter(sprintf('%s_row_actions', $taxonomy), [$this, 'appendTermOptionLinks'], 10, 2);
         });
+
+        add_filter('user_row_actions', [$this, 'appendUserOptionLinks'], 10, 2);
     }
 
     public function appendTermOptionLinks($links, $tag)
@@ -202,7 +204,7 @@ class Larafields
                 if (isset($_GET['taxonomy']) && $_GET['taxonomy'] == $condition['taxonomy']) {
                     $links['mappings'] = sprintf(
                         '<a href="%s">%s</a>',
-                        admin_url('admin.php?page=term-options&taxonomy=' . $condition['taxonomy'] . '&term_id=' . $tag->term_id),
+                        admin_url('admin.php?page=lf-term-options&taxonomy=' . $condition['taxonomy'] . '&term_id=' . $tag->term_id),
                         $condition['action_name']
                     );
                 }
@@ -212,23 +214,66 @@ class Larafields
         return $links;
     }
 
-    public function createPlaceholderTermOptionPage()
+    public function appendUserOptionLinks($links, $user)
+    {
+        $formsForPages = $this->forms->filter(function ($group) {
+            return collect($group['settings']['conditions'])->some(function ($condition, $key) {
+                return $key == 'user_page';
+            });
+        });
+
+        $formsForPages->each(function ($group) use (&$links, $user) {
+            collect($group['settings']['conditions'])->filter(function ($condition, $key) {
+                return $key == 'user_page';
+            })->each(function ($condition) use (&$links, $user) {
+                $links['mappings'] = sprintf(
+                    '<a href="%s">%s</a>',
+                    admin_url('admin.php?page=lf-user-options&user=' . $user->ID),
+                    $condition['action_name']
+                );
+            });
+        });
+
+        return $links;
+    }
+
+    public function createPlaceholderOptionPages()
     {
         add_submenu_page(
             null,
             'Term Options Page',
             'Term Options Page',
             'manage_woocommerce',
-            'term-options',
-            [$this, 'renderTermOptionsPage'],
+            'lf-term-options',
+            [$this, 'renderOptionPages'],
+            100
+        );
+
+        add_submenu_page(
+            null,
+            'User Options Page',
+            'User Options Page',
+            'manage_woocommerce',
+            'lf-user-options',
+            [$this, 'renderOptionPages'],
             100
         );
     }
 
-    public function renderTermOptionsPage()
+    public function renderOptionPages()
     {
         $this->forms->filter(function ($group) {
             return collect($group['settings']['conditions'])->where(function ($value, $key) use ($group) {
+                if ( $key == 'user_page' && isset($_GET['user'])){
+                    echo Livewire::mount(
+                        'FormMaker',
+                        [
+                            'group' => $group,
+                            'userContext' => $_GET['user'] ?? 0,
+                        ]
+                    );
+                }
+
                 if (isset($_GET['taxonomy']) && $key == 'term_page' && $value['taxonomy'] == $_GET['taxonomy']) {
                     echo Livewire::mount(
                         'FormMaker',
