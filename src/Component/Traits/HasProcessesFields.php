@@ -10,11 +10,13 @@ trait HasProcessesFields
     private function initializeContextProperties(
         ?string $pageContext = null,
         ?string $termOptionsContext = null,
-        ?string $taxonomyContext = null
+        ?string $taxonomyContext = null,
+        ?string $userContext = null
     ): void {
         $this->pageContext = $pageContext;
         $this->termOptionsContext = $termOptionsContext;
         $this->taxonomyContext = $taxonomyContext;
+        $this->userContext = $userContext;
     }
 
     private function fetchExistingFormData(): ?array

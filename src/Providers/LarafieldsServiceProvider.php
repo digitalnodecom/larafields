@@ -5,6 +5,7 @@ namespace DigitalNode\Larafields\Providers;
 use DigitalNode\Larafields\Component\FormMakerComponent;
 use DigitalNode\Larafields\Larafields;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 

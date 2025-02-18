@@ -19,10 +19,16 @@ class FormMakerComponent extends Component
     private ?string $pageContext = null;
     private ?string $termOptionsContext = null;
     private ?string $taxonomyContext = null;
+    private ?string $userContext = null;
 
-    public function mount(array $group, ?string $pageContext = null, ?string $termOptionsContext = null, ?string $taxonomyContext = null): void
-    {
-        $this->initializeContextProperties($pageContext, $termOptionsContext, $taxonomyContext);
+    public function mount(
+        array $group,
+        ?string $pageContext = null,
+        ?string $termOptionsContext = null,
+        ?string $taxonomyContext = null,
+        ?string $userContext = null)
+    : void {
+        $this->initializeContextProperties($pageContext, $termOptionsContext, $taxonomyContext, $userContext);
         $this->groupKey = $this->generateGroupKey($group);
 
         $existingData = $this->fetchExistingFormData();
@@ -31,6 +37,14 @@ class FormMakerComponent extends Component
 
     private function generateGroupKey(array $group): string
     {
+        if ( $this->userContext ){
+            return sprintf(
+                '%s_user_%s',
+                $group['name'],
+                $this->userContext
+            );
+        }
+
         if ($this->taxonomyContext && $this->termOptionsContext) {
             return sprintf(
                 '%s_term_option_%s_%s',

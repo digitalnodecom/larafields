@@ -41,6 +41,8 @@ class Larafields
         add_action('admin_menu', [$this, 'addMenuPages']);
         add_filter('init', [$this, 'addTermOptionPages'], 10, 2);
         add_action('admin_menu', [$this, 'createPlaceholderTermOptionPage']);
+        add_action('edit_user_profile', [$this,'renderUserGroups'], 10, 1);
+        add_action('show_user_profile', [$this,'renderUserGroups'], 10, 1);
     }
 
     public function renderMetaBox($post_type)
@@ -63,6 +65,37 @@ class Larafields
                     return;
                 }
             });
+        });
+    }
+
+    public function renderUserGroups($user){
+        $termGroups = $this->forms->filter(function ($group) {
+            return collect(data_get($group, 'settings.conditions'))->filter(function ($condition) {
+                return $condition == 'user';
+            })->isNotEmpty();
+        });
+
+        $termGroups->each(function ($group) use ($user){
+            ?>
+            <div id="poststuff">
+                <div class="form-field postbox">
+                    <div class="postbox-header">
+                        <h2><?= $group['label'] ?></h2>
+                    </div>
+                    <div class="inside">
+                        <?php
+                        echo Livewire::mount(
+                            'FormMaker',
+                            [
+                                'group' => $group,
+                                'userContext' => $user->ID
+                            ]
+                        );
+                        ?>
+                    </div>
+                </div>
+            </div>
+            <?php
         });
     }
 
