@@ -147,6 +147,21 @@ This will display the form group on the user's "Edit Profile" page in the WordPr
 ]
 ```
 
+#### User Page Display
+
+This will add an action link (alongside Edit, Delete, and other user actions) on the Users overview page. When clicked, it opens a custom page where the form group will be rendered for the selected user.
+
+```php
+'conditions' => [
+    'user_page' => [
+        'action_name' => 'Adjust Mappings',
+        'page_title' => 'Vendor User Mappings',
+        'menu_title' => 'Vendor User Mappings',
+        'slug' => 'vendor_mappings_user'
+    ]
+]
+```
+
 ## Available Field Types
 
 ### Text Field
