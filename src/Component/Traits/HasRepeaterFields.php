@@ -2,7 +2,8 @@
 
 namespace DigitalNode\Larafields\Component\Traits;
 
-trait HasRepeaterFields {
+trait HasRepeaterFields
+{
     public function addRepeaterRow($fieldName)
     {
         $field = collect($this->availablePropertiesSchema)->firstWhere('name', $fieldName);

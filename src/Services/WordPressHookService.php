@@ -3,14 +3,12 @@
 namespace DigitalNode\Larafields\Services;
 
 use Illuminate\Support\Collection;
-use function Sentry\captureCheckIn;
 
 class WordPressHookService
 {
     public function __construct(
         private Collection $forms
-    ) {
-    }
+    ) {}
 
     public function registerHooks(): void
     {
@@ -98,7 +96,7 @@ class WordPressHookService
         $userGroups = $this->forms->filter(function (array $group): bool {
             $conditions = data_get($group, 'settings.conditions', []);
 
-            return collect($conditions)->contains(function($condition){
+            return collect($conditions)->contains(function ($condition) {
                 return $condition == 'user';
             });
         });
@@ -126,7 +124,7 @@ class WordPressHookService
             $pageConfig['slug'],
             function () use ($group, $pageConfig): void {
                 echo app(FormRenderer::class)->renderLivewireForm($group, [
-                    'pageContext' => $pageConfig['slug']
+                    'pageContext' => $pageConfig['slug'],
                 ]);
             }
         );
@@ -134,72 +132,62 @@ class WordPressHookService
 
     public function handleOptionPages(): void
     {
-        collect(get_taxonomies())->keys()->each(function ($taxonomy): void {
+        $formsByTaxonomy = $this->forms->reduce(function (array $grouped, array $group): array {
+            $conditions = data_get($group, 'settings.conditions', []);
+
+            if (isset($conditions['term_page']['taxonomy'])) {
+                $taxonomy = $conditions['term_page']['taxonomy'];
+                $grouped[$taxonomy][] = $group;
+            }
+
+            return $grouped;
+        }, []);
+
+        foreach ($formsByTaxonomy as $taxonomy => $forms) {
             add_filter(
                 sprintf('%s_row_actions', $taxonomy),
-                [$this, 'appendTermOptionLinks'],
+                function (array $links, $tag) use ($forms): array {
+                    foreach ($forms as $form) {
+                        if (isset($_GET['taxonomy']) && $_GET['taxonomy'] === $form['settings']['conditions']['term_page']['taxonomy']) {
+                            $links['mappings'] = sprintf(
+                                '<a href="%s">%s</a>',
+                                admin_url(sprintf(
+                                    'admin.php?page=lf-term-options&taxonomy=%s&term_id=%d',
+                                    $form['settings']['conditions']['term_page']['taxonomy'],
+                                    $tag->term_id
+                                )),
+                                $form['settings']['conditions']['term_page']['action_name']
+                            );
+                        }
+                    }
+
+                    return $links;
+                },
                 10,
                 2
             );
-        });
+        }
 
-        add_filter('user_row_actions', [$this, 'appendUserOptionLinks'], 10, 2);
-    }
-
-    private function getFormsForPages(): Collection
-    {
-        return $this->forms->filter(function (array $group): bool {
+        $userForms = $this->forms->filter(function (array $group): bool {
             $conditions = data_get($group, 'settings.conditions', []);
 
-            return array_key_exists('page', $conditions) ||
-                   array_key_exists('term_page', $conditions) ||
-                   array_key_exists('user_page', $conditions);
-        });
-    }
+            return isset($conditions['user_page']);
+        })->values()->all();
 
-    public function appendTermOptionLinks(array $links, $tag): array
-    {
-        $this->getFormsForPages()->each(function (array $group) use (&$links, $tag): void {
-            $conditions = data_get($group, 'settings.conditions', []);
-
-            if (
-                isset($conditions['term_page']) &&
-                isset($_GET['taxonomy']) &&
-                $_GET['taxonomy'] === $conditions['term_page']['taxonomy']
-            ) {
-                $links['mappings'] = sprintf(
-                    '<a href="%s">%s</a>',
-                    admin_url(sprintf(
-                        'admin.php?page=lf-term-options&taxonomy=%s&term_id=%d',
-                        $conditions['term_page']['taxonomy'],
-                        $tag->term_id
-                    )),
-                    $conditions['term_page']['action_name']
-                );
-            }
-        });
-
-        return $links;
-    }
-
-    public function appendUserOptionLinks(array $links, $user): array
-    {
-        $this->getFormsForPages()->each(function (array $group) use (&$links, $user): void {
-            $conditions = data_get($group, 'settings.conditions', []);
-
-            if (isset($conditions['user_page'])) {
+        add_filter('user_row_actions', function (array $links, $user) use ($userForms): array {
+            foreach ($userForms as $form) {
                 $links['mappings'] = sprintf(
                     '<a href="%s">%s</a>',
                     admin_url(sprintf(
                         'admin.php?page=lf-user-options&user=%d',
                         $user->ID
                     )),
-                    $conditions['user_page']['action_name']
+                    $form['settings']['conditions']['user_page']['action_name']
                 );
             }
-        });
 
-        return $links;
+            return $links;
+        }, 10, 2);
     }
 
     public function createPlaceholderOptionPages(): void
@@ -232,7 +220,7 @@ class WordPressHookService
 
             if (isset($conditions['user_page']) && isset($_GET['user'])) {
                 echo app(FormRenderer::class)->renderLivewireForm($group, [
-                    'userContext' => $_GET['user'] ?? 0
+                    'userContext' => $_GET['user'] ?? 0,
                 ]);
             }
 
@@ -243,7 +231,7 @@ class WordPressHookService
             ) {
                 echo app(FormRenderer::class)->renderLivewireForm($group, [
                     'termOptionsContext' => $_GET['term_id'] ?? 0,
-                    'taxonomyContext' => $conditions['term_page']['taxonomy']
+                    'taxonomyContext' => $conditions['term_page']['taxonomy'],
                 ]);
             }
         });
