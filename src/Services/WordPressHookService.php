@@ -81,7 +81,7 @@ class WordPressHookService
     {
         add_meta_box(
             $group['name'],
-            __($group['label'], 'formmaker'),
+            __($group['label'], 'larafields'),
             function () use ($group): void {
                 echo app(FormRenderer::class)->renderLivewireForm($group);
             },
