@@ -13,8 +13,14 @@ return new class extends Migration
     {
         Schema::create('larafields', function (Blueprint $table) {
             $table->id();
-            $table->string('form_key')->unique();
-            $table->json('form_content');
+            $table->enum('object_type', ['post_type', 'taxonomy', 'user', 'settings']);
+            $table->string('object_name')->nullable(); // Nullable if `object_type` is 'user'.
+            $table->string('object_id');
+
+            $table->string('field_key');
+            $table->json('field_value');
+
+            $table->timestamps();
         });
     }
 

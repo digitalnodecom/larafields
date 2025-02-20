@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::table('larafields', function (Blueprint $table) {
             $table->string('form_location_meta')
-                  ->after('form_key')
-                  ->nullable();
+                ->after('form_key')
+                ->nullable();
 
             $table->unique(['form_key', 'form_location_meta']);
         });

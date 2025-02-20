@@ -2,8 +2,8 @@
 
 namespace DigitalNode\Larafields\Component\Traits;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 trait HasProcessesFields
 {
@@ -21,20 +21,20 @@ trait HasProcessesFields
 
     private function fetchExistingFormData(array $group): ?array
     {
-        $fields = $this->getGroupFields($group)->map(fn($field) => $field['name']);
+        $fields = $this->getGroupFields($group)->map(fn ($field) => $field['name']);
 
         $submissions = DB::table('larafields')
             ->whereIn('field_key', $fields)
             ->where('object_id', $this->groupObjectId)
             ->get()
-            ->mapWithKeys(function($row){
+            ->mapWithKeys(function ($row) {
                 $data = (array) $row;
 
-                if ( json_validate($row->field_value) ){
+                if (json_validate($row->field_value)) {
                     $data['field_value'] = json_decode($data['field_value'], true);
                 }
 
-                return [ $data['field_key'] => $data ];
+                return [$data['field_key'] => $data];
             });
 
         return $submissions->all();
@@ -53,7 +53,7 @@ trait HasProcessesFields
     private function getGroupFields(array $group): Collection
     {
         return collect(
-            apply_filters('larafields_load_forms_' . $group['name'], $group['fields'])
+            apply_filters('larafields_load_forms_'.$group['name'], $group['fields'])
         );
     }
 
@@ -119,8 +119,8 @@ trait HasProcessesFields
         $defaults = $this->generateRepeaterDefaults($field['subfields']);
 
         $this->availablePropertiesData[$field['name']] = collect($existingData[$field['name']]['field_value'] ?? [])
-            ->map(function($data) use ($defaults, $existingData){
-                return array_merge( $defaults, $data );
+            ->map(function ($data) use ($defaults) {
+                return array_merge($defaults, $data);
             })
             ->toArray();
 
@@ -135,7 +135,7 @@ trait HasProcessesFields
     private function generateRepeaterDefaults(array $subfields): array
     {
         return collect($subfields)
-            ->mapWithKeys(fn($field) => [$field['name'] => $field['defaultValue'] ?? ''])
+            ->mapWithKeys(fn ($field) => [$field['name'] => $field['defaultValue'] ?? ''])
             ->all();
     }
 }
