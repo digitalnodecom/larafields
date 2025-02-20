@@ -2,6 +2,7 @@
 
 use DigitalNode\Larafields\Http\Middleware\ApplicationPasswordAuthMiddleware;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -11,39 +12,33 @@ Route::middleware(ApplicationPasswordAuthMiddleware::class)
         // TODO: fix this.
         Route::get('/forms', function (Request $request) {
             $data = $request->validate([
-                'form_name' => 'required',
-                'location' => 'sometimes',
-                'taxonomy' => 'required_if:location,term_option,taxonomy',
-                'id' => 'required_if:location,term_option,taxonomy,page',
+                'field_key' => 'required',
+                'object_id' => 'sometimes',
             ]);
 
             $query = DB::table('larafields')
-                ->where('form_key', $data['form_name']);
+                ->where('field_key', $data['field_key']);
 
-            if (isset($data['location'])) {
-                $location_meta = match ($data['location']) {
-                    'term_option' => sprintf('term_option_%s_%s', $data['taxonomy'], $data['id']),
-                    'page' => sprintf('page_%s', $data['id']),
-                    'taxonomy' => sprintf('term_%s', $data['id']),
-                    'postType' => sprintf('%s', $data['id'])
-                };
-
-                $query->where('form_location_meta', $location_meta);
+            if (isset($data['object_id'])) {
+                $query->where('object_id', $data['object_id']);
             }
 
             $result = $query
                 ->get()
                 ->when(
-                    isset($data['location']),
+                    isset($data['object_id']),
                     function (Collection $collection) {
                         return $collection
-                            ->map(fn ($entry) => json_decode($entry->form_content, true))
+                            ->map(fn ($entry) => json_decode($entry->field_value, true))
                             ->first();
                     },
                     function (Collection $collection) {
                         return $collection
-                            ->mapWithKeys(fn ($entry) => [$entry->form_location_meta => json_decode($entry->form_content, true)])
-                            ->all();
+                            ->map(fn ($entry) => (array) $entry)
+                            ->map(fn ($entry) => array_merge(
+                                Arr::except($entry, ['id', 'field_value', 'field_key']),
+                                ['data' => json_decode($entry['field_value'], true)]
+                            ))->all();
                     });
 
             return response()->json($result);
