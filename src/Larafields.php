@@ -121,8 +121,8 @@ class Larafields
     public function renderTermMetaBox()
     {
         $termGroups = $this->forms->filter(function ($group) {
-            return collect(data_get($group, 'settings.conditions'))->filter(function ($condition) {
-                return array_key_first($condition) == 'taxonomy' && $condition['taxonomy'] == $_GET['taxonomy'];
+            return collect(data_get($group, 'settings.conditions'))->filter(function ($condition, $key) {
+                return $key == 'taxonomy' && $condition == $_GET['taxonomy'];
             })->isNotEmpty();
         });
 
