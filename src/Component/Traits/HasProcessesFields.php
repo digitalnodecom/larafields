@@ -19,14 +19,25 @@ trait HasProcessesFields
         $this->userContext = $userContext;
     }
 
-    private function fetchExistingFormData(): ?array
+    private function fetchExistingFormData(array $group): ?array
     {
-        $submission = DB::table('larafields')
-            ->where('form_key', $this->groupKey)
-            ->where('form_location_meta', $this->groupLocationMeta)
-            ->first();
+        $fields = $this->getGroupFields($group)->map(fn($field) => $field['name']);
 
-        return $submission ? json_decode($submission->form_content, true) : null;
+        $submissions = DB::table('larafields')
+            ->whereIn('field_key', $fields)
+            ->where('object_id', $this->groupObjectId)
+            ->get()
+            ->mapWithKeys(function($row){
+                $data = (array) $row;
+
+                if ( json_validate($row->field_value) ){
+                    $data['field_value'] = json_decode($data['field_value'], true);
+                }
+
+                return [ $data['field_key'] => $data ];
+            });
+
+        return $submissions->all();
     }
 
     private function processFormFields(array $group, ?array $existingData): void
@@ -107,8 +118,10 @@ trait HasProcessesFields
     {
         $defaults = $this->generateRepeaterDefaults($field['subfields']);
 
-        $this->availablePropertiesData[$field['name']] = collect($existingData[$field['name']] ?? [])
-            ->map(fn($data) => array_merge($defaults, $data))
+        $this->availablePropertiesData[$field['name']] = collect($existingData[$field['name']]['field_value'] ?? [])
+            ->map(function($data) use ($defaults, $existingData){
+                return array_merge( $defaults, $data );
+            })
             ->toArray();
 
         return [

@@ -15,7 +15,9 @@ class FormMakerComponent extends Component
     public array $availablePropertiesSchema = [];
     public array $availablePropertiesData = [];
     public string $groupKey;
-    public string $groupLocationMeta = '';
+    public ?string $groupObjectId;
+    public ?string $groupObjectType = 'user';
+    public ?string $groupObjectName = '';
 
     private ?string $pageContext = null;
     private ?string $termOptionsContext = null;
@@ -32,70 +34,73 @@ class FormMakerComponent extends Component
         $this->initializeContextProperties($pageContext, $termOptionsContext, $taxonomyContext, $userContext);
         $this->setGroupKeys($group);
 
-        $existingData = $this->fetchExistingFormData();
+        $existingData = $this->fetchExistingFormData($group);
         $this->processFormFields($group, $existingData);
     }
 
     private function setGroupKeys(array $group): void
     {
         $this->groupKey = $group['name'];
+        $this->groupObjectId = null;
 
         if ( $this->userContext ){
-            $this->groupLocationMeta = sprintf(
-                'user_%s',
-                $this->userContext
-            );
+            $this->groupObjectType = 'user';
+            $this->groupObjectName = '';
+            $this->groupObjectId = $this->userContext;
 
             return;
         }
 
         if ($this->taxonomyContext && $this->termOptionsContext) {
-            $this->groupLocationMeta = sprintf(
-                'term_option_%s_%s',
-                $this->taxonomyContext,
-                $this->termOptionsContext
-            );
+            $this->groupObjectType = 'taxonomy';
+            $this->groupObjectName = $this->taxonomyContext;
+            $this->groupObjectId = $this->termOptionsContext;
 
             return;
         }
 
         if ($this->pageContext) {
-            $this->groupLocationMeta = sprintf(
-                'page_%s',
-                $this->pageContext
-            );
+            $this->groupObjectType = 'post'; // TODO: review this shit
+            $this->groupObjectName = 'page';
+            $this->groupObjectId = $this->pageContext;
 
             return;
         }
 
         global $post;
         if ($post) {
-            $this->groupLocationMeta = sprintf(
-                'post_%s',
-                $post->ID,
-            );
+            $this->groupObjectType = 'post';
+            $this->groupObjectName = 'post';
+            $this->groupObjectId = $post->ID;
 
             return;
         }
 
         global $pagenow;
         if ($pagenow === 'term.php') {
-            $this->groupLocationMeta = sprintf(
-                'term_%s',
-                $_GET['tag_ID']
-            );
+            $this->groupObjectType = 'taxonomy';
+            $this->groupObjectName = $_GET['taxonomy'];
+            $this->groupObjectId = $_GET['tag_ID'];
         }
     }
 
     public function submit(): void
     {
         try {
-            DB::table('larafields')->updateOrInsert(
-                ['form_key' => $this->groupKey, 'form_location_meta' => $this->groupLocationMeta],
-                ['form_content' => json_encode($this->availablePropertiesData)]
-            );
+        collect($this->availablePropertiesData)
+            ->each(function($field, $key){
+                DB::table('larafields')->updateOrInsert(
+                    [
+                        'object_type' => $this->groupObjectType,
+                        'object_name' => $this->groupObjectName,
+                        'object_id' => $this->groupObjectId,
+                        'field_key' => $key
+                    ],
+                    ['field_value' => json_encode($field)]
+                );
 
-            session()->flash('message', 'Form saved successfully.');
+                session()->flash('message', 'Form saved successfully.');
+            });
         } catch (\Exception $exception) {
             Log::error('Form submission error: ' . $exception->getMessage());
             session()->flash('message', 'An error occurred while saving the form.');
