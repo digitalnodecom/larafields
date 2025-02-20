@@ -70,7 +70,7 @@ class FormMakerComponent extends Component
         global $post;
         if ($post) {
             $this->groupObjectType = 'post_type';
-            $this->groupObjectName = 'post';
+            $this->groupObjectName = $post->post_type;
             $this->groupObjectId = $post->ID;
 
             return;
@@ -102,7 +102,6 @@ class FormMakerComponent extends Component
                 session()->flash('message', 'Form saved successfully.');
             });
         } catch (\Exception $exception) {
-            Log::error('Form submission error: ' . $exception->getMessage());
             session()->flash('message', 'An error occurred while saving the form.');
         }
     }
