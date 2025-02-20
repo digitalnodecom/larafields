@@ -15,8 +15,6 @@ class FormMakerComponent extends Component
 
     public array $availablePropertiesData = [];
 
-    public string $groupKey;
-
     public ?string $groupObjectId;
 
     public ?string $groupObjectType = 'user';
@@ -47,7 +45,6 @@ class FormMakerComponent extends Component
 
     private function setGroupKeys(array $group): void
     {
-        $this->groupKey = $group['name'];
         $this->groupObjectId = null;
 
         if ($this->userContext) {
