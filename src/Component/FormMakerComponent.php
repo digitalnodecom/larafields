@@ -6,22 +6,29 @@ use DigitalNode\Larafields\Component\Traits\HasProcessesFields;
 use DigitalNode\Larafields\Component\Traits\HasRepeaterFields;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
-use Illuminate\Support\Facades\Log;
 
 class FormMakerComponent extends Component
 {
     use HasProcessesFields, HasRepeaterFields;
 
     public array $availablePropertiesSchema = [];
+
     public array $availablePropertiesData = [];
+
     public string $groupKey;
+
     public ?string $groupObjectId;
+
     public ?string $groupObjectType = 'user';
+
     public ?string $groupObjectName = '';
 
     private ?string $pageContext = null;
+
     private ?string $termOptionsContext = null;
+
     private ?string $taxonomyContext = null;
+
     private ?string $userContext = null;
 
     public function mount(
@@ -29,8 +36,8 @@ class FormMakerComponent extends Component
         ?string $pageContext = null,
         ?string $termOptionsContext = null,
         ?string $taxonomyContext = null,
-        ?string $userContext = null)
-    : void {
+        ?string $userContext = null): void
+    {
         $this->initializeContextProperties($pageContext, $termOptionsContext, $taxonomyContext, $userContext);
         $this->setGroupKeys($group);
 
@@ -43,7 +50,7 @@ class FormMakerComponent extends Component
         $this->groupKey = $group['name'];
         $this->groupObjectId = null;
 
-        if ( $this->userContext ){
+        if ($this->userContext) {
             $this->groupObjectType = 'user';
             $this->groupObjectName = '';
             $this->groupObjectId = $this->userContext;
@@ -70,7 +77,7 @@ class FormMakerComponent extends Component
         global $post;
         if ($post) {
             $this->groupObjectType = 'post_type';
-            $this->groupObjectName = 'post';
+            $this->groupObjectName = $post->post_type;
             $this->groupObjectId = $post->ID;
 
             return;
@@ -87,22 +94,21 @@ class FormMakerComponent extends Component
     public function submit(): void
     {
         try {
-        collect($this->availablePropertiesData)
-            ->each(function($field, $key){
-                DB::table('larafields')->updateOrInsert(
-                    [
-                        'object_type' => $this->groupObjectType,
-                        'object_name' => $this->groupObjectName,
-                        'object_id' => $this->groupObjectId,
-                        'field_key' => $key
-                    ],
-                    ['field_value' => json_encode($field)]
-                );
+            collect($this->availablePropertiesData)
+                ->each(function ($field, $key) {
+                    DB::table('larafields')->updateOrInsert(
+                        [
+                            'object_type' => $this->groupObjectType,
+                            'object_name' => $this->groupObjectName,
+                            'object_id' => $this->groupObjectId,
+                            'field_key' => $key,
+                        ],
+                        ['field_value' => json_encode($field)]
+                    );
 
-                session()->flash('message', 'Form saved successfully.');
-            });
+                    session()->flash('message', 'Form saved successfully.');
+                });
         } catch (\Exception $exception) {
-            Log::error('Form submission error: ' . $exception->getMessage());
             session()->flash('message', 'An error occurred while saving the form.');
         }
     }
