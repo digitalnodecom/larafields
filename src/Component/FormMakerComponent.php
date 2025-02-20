@@ -60,7 +60,7 @@ class FormMakerComponent extends Component
         }
 
         if ($this->pageContext) {
-            $this->groupObjectType = 'post'; // TODO: review this shit
+            $this->groupObjectType = 'post_type'; // TODO: review this shit
             $this->groupObjectName = 'page';
             $this->groupObjectId = $this->pageContext;
 
@@ -69,7 +69,7 @@ class FormMakerComponent extends Component
 
         global $post;
         if ($post) {
-            $this->groupObjectType = 'post';
+            $this->groupObjectType = 'post_type';
             $this->groupObjectName = 'post';
             $this->groupObjectId = $post->ID;
 
