@@ -3,6 +3,7 @@
 namespace DigitalNode\Larafields\Services;
 
 use Illuminate\Support\Collection;
+use function Sentry\captureCheckIn;
 
 class WordPressHookService
 {
@@ -48,8 +49,8 @@ class WordPressHookService
 
     private function registerUserHooks(): void
     {
-        add_action('edit_user_profile', [$this, 'handleUserGroups'], 10, 1);
-        add_action('show_user_profile', [$this, 'handleUserGroups'], 10, 1);
+        add_action('edit_user_profile', [$this, 'handleUserGroups']);
+        add_action('show_user_profile', [$this, 'handleUserGroups']);
     }
 
     public function handleMetaBoxes(string $postType): void
@@ -57,12 +58,10 @@ class WordPressHookService
         $this->forms->each(function (array $group) use ($postType): void {
             $conditions = collect(data_get($group, 'settings.conditions', []));
 
-            // Handle post type meta boxes
             if (isset($conditions['postType']) && $conditions['postType'] == $postType) {
                 $this->addMetaBox($group, $postType);
             }
 
-            // Handle taxonomy meta boxes
             if (isset($conditions['taxonomy'])) {
                 $this->handleTaxonomyMetaBox($conditions['taxonomy'], $group);
             }
@@ -98,6 +97,7 @@ class WordPressHookService
     {
         $userGroups = $this->forms->filter(function (array $group): bool {
             $conditions = data_get($group, 'settings.conditions', []);
+
             return collect($conditions)->contains(function($condition){
                 return $condition == 'user';
             });
@@ -150,9 +150,10 @@ class WordPressHookService
     {
         return $this->forms->filter(function (array $group): bool {
             $conditions = data_get($group, 'settings.conditions', []);
-            return isset($conditions['page']) ||
-                isset($conditions['term_page']) ||
-                isset($conditions['user_page']);
+
+            return array_key_exists('page', $conditions) ||
+                   array_key_exists('term_page', $conditions) ||
+                   array_key_exists('user_page', $conditions);
         });
     }
 
@@ -229,14 +230,12 @@ class WordPressHookService
         $this->forms->each(function (array $group): void {
             $conditions = data_get($group, 'settings.conditions', []);
 
-            // Handle user page options
             if (isset($conditions['user_page']) && isset($_GET['user'])) {
                 echo app(FormRenderer::class)->renderLivewireForm($group, [
                     'userContext' => $_GET['user'] ?? 0
                 ]);
             }
 
-            // Handle term page options
             if (
                 isset($conditions['term_page']) &&
                 isset($_GET['taxonomy']) &&
