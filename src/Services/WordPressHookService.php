@@ -132,62 +132,53 @@ class WordPressHookService
 
     public function handleOptionPages(): void
     {
-        $formsByTaxonomy = $this->forms->reduce(function (array $grouped, array $group): array {
+        $this->forms->each(function (array $group) {
             $conditions = data_get($group, 'settings.conditions', []);
 
             if (isset($conditions['term_page']['taxonomy'])) {
                 $taxonomy = $conditions['term_page']['taxonomy'];
-                $grouped[$taxonomy][] = $group;
-            }
 
-            return $grouped;
-        }, []);
+                add_filter(
+                    sprintf('%s_row_actions', $taxonomy),
+                    function (array $links, $tag) use ($conditions): array {
+                        $termPageCondition = $conditions['term_page'];
 
-        foreach ($formsByTaxonomy as $taxonomy => $forms) {
-            add_filter(
-                sprintf('%s_row_actions', $taxonomy),
-                function (array $links, $tag) use ($forms): array {
-                    foreach ($forms as $form) {
-                        if (isset($_GET['taxonomy']) && $_GET['taxonomy'] === $form['settings']['conditions']['term_page']['taxonomy']) {
-                            $links['mappings'] = sprintf(
-                                '<a href="%s">%s</a>',
-                                admin_url(sprintf(
-                                    'admin.php?page=lf-term-options&taxonomy=%s&term_id=%d',
-                                    $form['settings']['conditions']['term_page']['taxonomy'],
-                                    $tag->term_id
-                                )),
-                                $form['settings']['conditions']['term_page']['action_name']
-                            );
-                        }
-                    }
+                        $links[$termPageCondition['slug']] = sprintf(
+                            '<a href="%s">%s</a>',
+                            url()->query(
+                                menu_page_url('lf-user-options', false),
+                                [
+                                    'term_id' => $tag->term_id,
+                                    'taxonomy' => $termPageCondition['taxonomy'],
+                                ]
+                            ),
+                            $termPageCondition['action_name']
+                        );
 
-                    return $links;
-                },
-                10,
-                2
-            );
-        }
-
-        $userForms = $this->forms->filter(function (array $group): bool {
-            $conditions = data_get($group, 'settings.conditions', []);
-
-            return isset($conditions['user_page']);
-        })->values()->all();
-
-        add_filter('user_row_actions', function (array $links, $user) use ($userForms): array {
-            foreach ($userForms as $form) {
-                $links['mappings'] = sprintf(
-                    '<a href="%s">%s</a>',
-                    admin_url(sprintf(
-                        'admin.php?page=lf-user-options&user=%d',
-                        $user->ID
-                    )),
-                    $form['settings']['conditions']['user_page']['action_name']
+                        return $links;
+                    },
+                    10,
+                    2
                 );
             }
 
-            return $links;
-        }, 10, 2);
+            if (isset($conditions['user_page'])) {
+                add_filter('user_row_actions', function (array $links, $user) use ($group): array {
+                    $userPageCondition = $group['settings']['conditions']['user_page'];
+
+                    $links[$userPageCondition['slug']] = sprintf(
+                        '<a href="%s">%s</a>',
+                        url()->query(
+                            menu_page_url('lf-user-options', false),
+                            ['user' => $user->ID]
+                        ),
+                        $userPageCondition['action_name']
+                    );
+
+                    return $links;
+                }, 10, 2);
+            }
+        });
     }
 
     public function createPlaceholderOptionPages(): void

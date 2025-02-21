@@ -37,7 +37,7 @@ class Larafields
     protected function initializeWordPressHooks(): void
     {
         $this->app->makeWith(WordPressHookService::class, ['forms' => $this->forms])
-                  ->registerHooks();
+            ->registerHooks();
     }
 
     /**
