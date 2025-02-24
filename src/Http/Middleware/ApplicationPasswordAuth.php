@@ -15,39 +15,53 @@ class ApplicationPasswordAuth
         $authHeader = $request->header('Authorization');
 
         if (empty($authHeader)) {
-            return response('Authentication required', 401);
+            return response()->json([
+                'message' => 'Authentication required'
+            ], 401);
         }
 
         $parts = explode(' ', $authHeader);
         if (count($parts) !== 2 || strtolower($parts[0]) !== 'basic') {
-            return response('Invalid authentication format', 401);
+            return response()->json([
+                'message' => 'Invalid authentication format'
+            ], 401);
         }
 
         try {
             $credentials = base64_decode($parts[1]);
             if ($credentials === false) {
-                throw new \Exception('Invalid base64 encoding');
+                return response()->json([
+                    'message' => 'Invalid base64 encoding'
+                ], 401);
             }
 
             list($username, $password) = explode(':', $credentials);
 
             if (empty($username) || empty($password)) {
-                throw new \Exception('Invalid credentials format');
+                return response()->json([
+                    'message' => 'Username or password is missing.'
+                ], 401);
             }
         } catch (\Exception $e) {
-            return response('Invalid credentials format', 401);
+            return response()->json([
+                'message' => 'Invalid credentials format'
+            ], 401);
         }
 
         $user = get_user_by('login', $username);
 
         if (! $user) {
-            return response('User not found', 401);
+            return response()->json([
+                'message' => 'User not found'
+            ], 401);
         }
 
         $user = wp_authenticate_application_password($user, $username, $password);
 
         if ($user instanceof WP_Error) {
-            return response('Invalid credentials', 401);
+            return response()->json([
+                'message' => 'Invalid credentials'
+            ], 401);
         }
 
         wp_set_current_user($user->ID, $user->user_login);
