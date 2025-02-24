@@ -1,5 +1,6 @@
 <?php
 
+use DigitalNode\Larafields\Http\Middleware\ApplicationPasswordAuth;
 use DigitalNode\Larafields\Http\Middleware\ApplicationPasswordAuthMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -7,7 +8,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(ApplicationPasswordAuthMiddleware::class)
+Route::middleware(ApplicationPasswordAuth::class)
     ->group(function () {
         // TODO: fix this.
         Route::get('/forms', function (Request $request) {
