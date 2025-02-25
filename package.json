@@ -1,0 +1,16 @@
+{
+  "name": "abstract-form-builder",
+  "version": "1.0.0",
+  "description": "Abstract Form Builder Package",
+  "scripts": {
+    "build": "npx @tailwindcss/cli -i ./resources/styles/input.css -o ./resources/styles/public/larafields.css",
+    "watch": "npx @tailwindcss/cli -i ./resources/styles/input.css -o ./resources/styles/public/larafields.css --watch",
+    "dev": "npx @tailwindcss/cli -i ./resources/styles/input.css -o /private/var/www/brandsgateway2/web/app/themes/bg-app/public/css/digitalnodecom/larafields.css --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "tailwindcss": "^4.0.8"
+  }
+}

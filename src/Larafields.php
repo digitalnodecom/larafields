@@ -29,6 +29,15 @@ class Larafields
         );
 
         $this->initializeWordPressHooks();
+
+        add_action('admin_enqueue_scripts', function (): void {
+            if (  asset( 'css/digitalnodecom/larafields.css' )->exists() ){
+                wp_enqueue_style(
+                    'larafiels',
+                    asset( 'css/digitalnodecom/larafields.css' )->uri()
+                );
+            }
+        });
     }
 
     /**

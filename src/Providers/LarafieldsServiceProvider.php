@@ -30,14 +30,14 @@ class LarafieldsServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->configureDatabase();
-        $this->configureViews();
+        $this->configureAssets();
         $this->configureLivewire();
         $this->configureRoutes();
         $this->configureConfig();
         $this->configureApp();
     }
 
-    private function configureViews()
+    private function configureAssets()
     {
         $this->loadViewsFrom(
             __DIR__.'/../../resources/views',
@@ -45,6 +45,10 @@ class LarafieldsServiceProvider extends ServiceProvider
         );
 
         Blade::anonymousComponentPath(__DIR__.'/../../resources/views/components/');
+
+        $this->publishes([
+            __DIR__ . '/../../resources/styles/public' => public_path('css/digitalnodecom')
+        ], 'larafields');
     }
 
     private function configureLivewire()
