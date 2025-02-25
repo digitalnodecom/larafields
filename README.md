@@ -179,6 +179,66 @@ Simple text input with optional character limit.
 ]
 ```
 
+### Date Field
+
+Date picker input field.
+
+```php
+[
+    'type'           => 'date',
+    'label'          => 'Date Created',
+    'name'           => 'date_created',
+    'defaultValue'   => '',
+    'required'       => true,
+    'characterLimit' => 50
+]
+```
+
+### DateTime Field
+
+Date and time picker input field.
+
+```php
+[
+    'type'           => 'datetime',
+    'label'          => 'Event Date and Time',
+    'name'           => 'event_datetime',
+    'defaultValue'   => '',
+    'required'       => true,
+    'characterLimit' => 50
+]
+```
+
+### Week Field
+
+Week picker input field.
+
+```php
+[
+    'type'           => 'week',
+    'label'          => 'Week Selection',
+    'name'           => 'selected_week',
+    'defaultValue'   => '',
+    'required'       => true,
+    'characterLimit' => 50
+]
+```
+
+### Month Field
+
+Month picker input field.
+
+```php
+[
+    'type'           => 'month',
+    'label'          => 'Month Selection',
+    'name'           => 'selected_month',
+    'defaultValue'   => '',
+    'required'       => true,
+    'characterLimit' => 50
+]
+```
+
 ### Textarea Field
 
 Multiline text input with optional character limit.
