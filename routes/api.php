@@ -43,4 +43,23 @@ Route::middleware(ApplicationPasswordAuth::class)
 
             return response()->json($result);
         })->prefix('larafields');
+
+        Route::post('/forms', function (Request $request) {
+            $data = $request->validate([
+                'field_key' => 'required',
+                'field_value' => 'required',
+                'object_id' => 'required',
+                'object_name' => 'required'
+            ]);
+
+            DB::table('larafields')
+               ->where('field_key', $data['field_key'])
+               ->where('object_id', $data['object_id'])
+               ->where('object_name', $data['object_name'])
+               ->update([
+                   'field_value' => json_encode($data['field_value'])
+               ]);
+
+            return response()->json(['status' => 'ok' ]);
+        })->prefix('larafields');
     });
