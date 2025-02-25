@@ -42,7 +42,7 @@ class WordPressHookService
     {
         add_action('admin_menu', [$this, 'handleMenuPages']);
         add_filter('init', [$this, 'handleOptionPages'], 10, 2);
-        add_action('admin_menu', [$this, 'createPlaceholderOptionPages']);
+        add_action('admin_menu', [$this, 'handleOptionPagesActionLinks']);
     }
 
     private function registerUserHooks(): void
@@ -130,7 +130,7 @@ class WordPressHookService
         );
     }
 
-    public function handleOptionPages(): void
+    public function handleOptionPagesActionLinks(): void
     {
         $this->forms->each(function (array $group) {
             $conditions = data_get($group, 'settings.conditions', []);
@@ -146,11 +146,10 @@ class WordPressHookService
                         $links[$termPageCondition['slug']] = sprintf(
                             '<a href="%s">%s</a>',
                             url()->query(
-                                menu_page_url('lf-term-options', false),
+                                menu_page_url($termPageCondition['slug'], false),
                                 [
                                     'term_id' => $tag->term_id,
-                                    'taxonomy' => $termPageCondition['taxonomy'],
-                                    'slug' => $termPageCondition['slug']
+                                    'taxonomy' => $termPageCondition['taxonomy']
                                 ]
                             ),
                             $termPageCondition['action_name']
@@ -170,7 +169,7 @@ class WordPressHookService
                     $links[$userPageCondition['slug']] = sprintf(
                         '<a href="%s">%s</a>',
                         url()->query(
-                            menu_page_url('lf-user-options', false),
+                            menu_page_url($userPageCondition['slug'], false),
                             ['user' => $user->ID]
                         ),
                         $userPageCondition['action_name']
@@ -182,52 +181,35 @@ class WordPressHookService
         });
     }
 
-    public function createPlaceholderOptionPages(): void
+    public function handleOptionPages(): void
     {
-        add_submenu_page(
-            null,
-            'Term Options Page',
-            'Term Options Page',
-            'manage_woocommerce',
-            'lf-term-options',
-            [$this, 'renderOptionPages'],
-            100
-        );
+        collect($this->forms)->each(function($form){
+            collect($form['settings']['conditions'] ?? [])
+                ->filter(fn($value, $key) => in_array($key, ['term_page', 'user_page']))
+                ->each(function($pageCondition, $pageConditionKey) use ($form){
+                        add_submenu_page(
+                            null,
+                            $pageCondition['page_title'],
+                            $pageCondition['menu_title'],
+                            'manage_woocommerce',
+                            $pageCondition['slug'],
+                            function() use ($form, $pageCondition, $pageConditionKey){
+                                $componentArgs = [
+                                    'userContext' => $_GET['user'] ?? 0,
+                                ];
 
-        add_submenu_page(
-            null,
-            'User Options Page',
-            'User Options Page',
-            'manage_woocommerce',
-            'lf-user-options',
-            [$this, 'renderOptionPages'],
-            100
-        );
-    }
+                                if ( $pageConditionKey == 'term_page' ) {
+                                    $componentArgs = [
+                                        'termOptionsContext' => $_GET['term_id'] ?? 0,
+                                        'taxonomyContext'    => $pageCondition['taxonomy'],
+                                    ];
+                                }
 
-    public function renderOptionPages(): void
-    {
-        $this->forms->each(function (array $group): void {
-            $conditions = data_get($group, 'settings.conditions', []);
-
-            if (isset($conditions['user_page']) && isset($_GET['user'])) {
-                echo app(FormRenderer::class)->renderLivewireForm($group, [
-                    'userContext' => $_GET['user'] ?? 0,
-                ]);
-            }
-
-            if (
-                isset($conditions['term_page']) &&
-                isset($_GET['taxonomy']) &&
-                $_GET['taxonomy'] === $conditions['term_page']['taxonomy'] &&
-                isset($_GET['slug']) &&
-                $conditions['term_page']['slug'] == $_GET['slug']
-            ) {
-                echo app(FormRenderer::class)->renderLivewireForm($group, [
-                    'termOptionsContext' => $_GET['term_id'] ?? 0,
-                    'taxonomyContext' => $conditions['term_page']['taxonomy'],
-                ]);
-            }
+                                echo app(FormRenderer::class)->renderLivewireForm($form, $componentArgs);
+                            },
+                            100
+                        );
+                });
         });
     }
 }
