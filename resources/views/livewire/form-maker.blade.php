@@ -32,8 +32,8 @@
         @include('Larafields::components.WeekField', ['field' => $field])
       @endif
 
-      @if($subfield['type'] == 'month')
-        @include('Larafields::components.WeekField', ['field' => $subfield])
+      @if($field['type'] == 'month')
+        @include('Larafields::components.WeekField', ['field' => $field])
       @endif
 
       @if($field['type'] == 'datetime')
