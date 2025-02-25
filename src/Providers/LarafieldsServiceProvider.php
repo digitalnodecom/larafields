@@ -47,7 +47,7 @@ class LarafieldsServiceProvider extends ServiceProvider
         Blade::anonymousComponentPath(__DIR__.'/../../resources/views/components/');
 
         $this->publishes([
-            __DIR__ . '/../../resources/styles/public' => public_path('css/digitalnodecom')
+            __DIR__.'/../../resources/styles/public' => public_path('css/digitalnodecom'),
         ], 'larafields');
     }
 

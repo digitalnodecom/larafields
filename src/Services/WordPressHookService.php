@@ -149,7 +149,7 @@ class WordPressHookService
                                 menu_page_url($termPageCondition['slug'], false),
                                 [
                                     'term_id' => $tag->term_id,
-                                    'taxonomy' => $termPageCondition['taxonomy']
+                                    'taxonomy' => $termPageCondition['taxonomy'],
                                 ]
                             ),
                             $termPageCondition['action_name']
@@ -183,32 +183,32 @@ class WordPressHookService
 
     public function handleOptionPages(): void
     {
-        collect($this->forms)->each(function($form){
+        collect($this->forms)->each(function ($form) {
             collect($form['settings']['conditions'] ?? [])
-                ->filter(fn($value, $key) => in_array($key, ['term_page', 'user_page']))
-                ->each(function($pageCondition, $pageConditionKey) use ($form){
-                        add_submenu_page(
-                            null,
-                            $pageCondition['page_title'],
-                            $pageCondition['menu_title'],
-                            'manage_woocommerce',
-                            $pageCondition['slug'],
-                            function() use ($form, $pageCondition, $pageConditionKey){
+                ->filter(fn ($value, $key) => in_array($key, ['term_page', 'user_page']))
+                ->each(function ($pageCondition, $pageConditionKey) use ($form) {
+                    add_submenu_page(
+                        null,
+                        $pageCondition['page_title'],
+                        $pageCondition['menu_title'],
+                        'manage_woocommerce',
+                        $pageCondition['slug'],
+                        function () use ($form, $pageCondition, $pageConditionKey) {
+                            $componentArgs = [
+                                'userContext' => $_GET['user'] ?? 0,
+                            ];
+
+                            if ($pageConditionKey == 'term_page') {
                                 $componentArgs = [
-                                    'userContext' => $_GET['user'] ?? 0,
+                                    'termOptionsContext' => $_GET['term_id'] ?? 0,
+                                    'taxonomyContext' => $pageCondition['taxonomy'],
                                 ];
+                            }
 
-                                if ( $pageConditionKey == 'term_page' ) {
-                                    $componentArgs = [
-                                        'termOptionsContext' => $_GET['term_id'] ?? 0,
-                                        'taxonomyContext'    => $pageCondition['taxonomy'],
-                                    ];
-                                }
-
-                                echo app(FormRenderer::class)->renderLivewireForm($form, $componentArgs);
-                            },
-                            100
-                        );
+                            echo app(FormRenderer::class)->renderLivewireForm($form, $componentArgs);
+                        },
+                        100
+                    );
                 });
         });
     }
