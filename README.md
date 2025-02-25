@@ -357,9 +357,9 @@ add_filter('larafields_load_fields', function(Collection $fields){
 
 ## API Documentation
 
-The package provides a REST API endpoint for querying forms and their data.
+The package provides REST API endpoints for querying and updating forms and their data.
 
-### Endpoint
+### Query Endpoint
 
 ```
 GET /larafields/forms
@@ -430,6 +430,48 @@ You can perform exact searches by combining `location`, `taxonomy` (when require
 ```
 
 Note: These are just examples of possible combinations. You can search using any combination of these parameters, keeping in mind that `taxonomy` is required whenever the `location` is set to either "term_page" or "taxonomy".
+
+### Update Endpoint
+
+```
+POST /larafields/forms
+```
+
+#### Authentication
+
+The API uses Basic Authentication with WordPress Application Passwords (same as the Query Endpoint).
+
+#### Request Body
+
+The request body should be a JSON object with the following properties:
+
+| Property    | Required | Description                             |
+| ----------- | -------- | --------------------------------------- |
+| field_key   | Yes      | The key of the field to update          |
+| field_value | Yes      | The new value for the field             |
+| object_id   | Yes      | The ID of the object (post, term, etc.) |
+| object_name | Yes      | The name of the object type             |
+
+#### Example Request
+
+```json
+{
+  "field_key": "location",
+  "field_value": "Europe",
+  "object_id": "1000",
+  "object_name": "product"
+}
+```
+
+#### Response
+
+A successful update will return a JSON response with status 'ok':
+
+```json
+{
+  "status": "ok"
+}
+```
 
 ## Complete Examples
 
