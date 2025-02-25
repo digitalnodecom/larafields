@@ -39,11 +39,19 @@
                     }
                 });
 
-                $el._x_removeModelListeners = () => {
+                $el._x_removeModelListeners = {
+                    default: function() {
+                        if (tomSelect) {
+                            tomSelect.destroy();
+                        }
+                    }
+                };"
+    x-ref="{{ $attributes->get('key')  }}"
+                $cleanup(() => {
                     if (tomSelect) {
                         tomSelect.destroy();
                     }
-                };"
+                });"
     x-ref="{{ $attributes->get('key')  }}"
     x-cloak
     {{ $attributes }}>
