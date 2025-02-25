@@ -36,10 +36,6 @@
         @include('Larafields::components.MonthField', ['field' => $field])
       @endif
 
-      @if($field['type'] == 'datetime')
-        @include('Larafields::components.DateTimeField', ['field' => $field])
-      @endif
-
       @if($field['type'] == 'multiselect')
         <x-tom-select
           class="multiselect"
@@ -88,7 +84,7 @@
                       @include('Larafields::components.TextareaField', ['field' => $subfield])
                     @endif
 
-                    @if($field['type'] == 'datetime')
+                    @if($subfield['type'] == 'datetime')
                       @include('Larafields::components.DateTimeField', ['field' => $subfield])
                     @endif
 
@@ -102,10 +98,6 @@
 
                     @if($subfield['type'] == 'month')
                       @include('Larafields::components.MonthField', ['field' => $subfield])
-                    @endif
-
-                    @if($subfield['type'] == 'datetime')
-                      @include('Larafields::components.DateTimeField', ['field' => $subfield])
                     @endif
 
                     @if($subfield['type'] == 'multiselect')

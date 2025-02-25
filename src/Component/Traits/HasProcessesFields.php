@@ -21,7 +21,7 @@ trait HasProcessesFields
 
     private function fetchExistingFormData(array $group): ?array
     {
-        $fields = $this->getGroupFields($group)->map(fn ($field) => $field['name']);
+        $fields = $this->getGroupFields($group)->map(fn($field) => $field['name']);
 
         $submissions = DB::table('larafields')
             ->whereIn('field_key', $fields)
@@ -53,7 +53,7 @@ trait HasProcessesFields
     private function getGroupFields(array $group): Collection
     {
         return collect(
-            apply_filters('larafields_load_forms_'.$group['name'], $group['fields'])
+            apply_filters('larafields_load_forms_' . $group['name'], $group['fields'])
         );
     }
 
@@ -87,6 +87,10 @@ trait HasProcessesFields
             'text' => [$this, 'processBasicField'],
             'textarea' => [$this, 'processBasicField'],
             'number' => [$this, 'processBasicField'],
+            'date' => [$this, 'processBasicField'],
+            'datetime' => [$this, 'processBasicField'],
+            'week' => [$this, 'processBasicField'],
+            'month' => [$this, 'processBasicField'],
             'multiselect' => [$this, 'processMultiselectField'],
             'repeater' => [$this, 'processRepeaterField'],
         ];
@@ -135,7 +139,7 @@ trait HasProcessesFields
     private function generateRepeaterDefaults(array $subfields): array
     {
         return collect($subfields)
-            ->mapWithKeys(fn ($field) => [$field['name'] => $field['defaultValue'] ?? ''])
+            ->mapWithKeys(fn($field) => [$field['name'] => $field['defaultValue'] ?? ''])
             ->all();
     }
 }
