@@ -33,11 +33,11 @@
       @endif
 
       @if($field['type'] == 'month')
-        @include('Larafields::components.WeekField', ['field' => $field])
+        @include('Larafields::components.MonthField', ['field' => $field])
       @endif
 
       @if($field['type'] == 'datetime')
-        @include('Larafields::components.MonthField', ['field' => $field])
+        @include('Larafields::components.DateTimeField', ['field' => $field])
       @endif
 
       @if($field['type'] == 'multiselect')
@@ -101,11 +101,11 @@
                     @endif
 
                     @if($subfield['type'] == 'month')
-                      @include('Larafields::components.WeekField', ['field' => $subfield])
+                      @include('Larafields::components.MonthField', ['field' => $subfield])
                     @endif
 
                     @if($subfield['type'] == 'datetime')
-                      @include('Larafields::components.MonthField', ['field' => $subfield])
+                      @include('Larafields::components.DateTimeField', ['field' => $subfield])
                     @endif
 
                     @if($subfield['type'] == 'multiselect')
