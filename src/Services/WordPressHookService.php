@@ -146,10 +146,11 @@ class WordPressHookService
                         $links[$termPageCondition['slug']] = sprintf(
                             '<a href="%s">%s</a>',
                             url()->query(
-                                menu_page_url('lf-user-options', false),
+                                menu_page_url('lf-term-options', false),
                                 [
                                     'term_id' => $tag->term_id,
                                     'taxonomy' => $termPageCondition['taxonomy'],
+                                    'slug' => $termPageCondition['slug']
                                 ]
                             ),
                             $termPageCondition['action_name']
@@ -218,7 +219,9 @@ class WordPressHookService
             if (
                 isset($conditions['term_page']) &&
                 isset($_GET['taxonomy']) &&
-                $_GET['taxonomy'] === $conditions['term_page']['taxonomy']
+                $_GET['taxonomy'] === $conditions['term_page']['taxonomy'] &&
+                isset($_GET['slug']) &&
+                $conditions['term_page']['slug'] == $_GET['slug']
             ) {
                 echo app(FormRenderer::class)->renderLivewireForm($group, [
                     'termOptionsContext' => $_GET['term_id'] ?? 0,
