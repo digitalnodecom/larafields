@@ -1,8 +1,8 @@
 @php use Illuminate\Support\Facades\Session; @endphp
-<div>
+<div class="space-y-8">
   @foreach($availablePropertiesSchema as $key => $field)
-    <div class="mb-2 flex flex-col">
-      <label for="story">{{ $field['label'] }}</label>
+    <div class="flex flex-col">
+      <label class="text-xl font-semibold mb-3">{{ $field['label'] }}</label>
 
       @php
         $field['key'] = 'availablePropertiesData.' . $field['name'];
@@ -109,14 +109,13 @@
                     @endif
 
                     @if($subfield['type'] == 'multiselect')
-                      <x-tom-select
-                        class="multiselect"
-                        wire:model="{{ sprintf('availablePropertiesData.%s.%s.%s', $field['name'], $index, $subfield['name']) }}"
-                        options="{{ sprintf('availablePropertiesSchema.%s.subfields.%s.options', $key, $subfieldIndex) }}"
-                        key="ms{{$index}}"
-                        wire:ignore
-                        multiple
-                      />
+                        <x-tom-select
+                          class="multiselect"
+                          wire:model="{{ sprintf('availablePropertiesData.%s.%s.%s', $field['name'], $index, $subfield['name']) }}"
+                          options="{{ sprintf('availablePropertiesSchema.%s.subfields.%s.options', $key, $subfieldIndex) }}"
+                          key="ms{{$index}}"
+                          multiple
+                        />
                     @endif
 
                     @if($subfield['type'] == 'select')

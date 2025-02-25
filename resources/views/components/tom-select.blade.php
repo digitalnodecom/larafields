@@ -1,4 +1,4 @@
-<div wire:ignore>
+<div>
   <select
     x-data="{
                 tomSelect: null,
@@ -11,6 +11,11 @@
                             label: opt.label
                           }))
                         : [];
+                },
+                destroy(){
+                  if ( this.tomSelect ){
+                    this.tomSelect.destroy();
+                  }
                 }
             }"
     x-init="
@@ -38,20 +43,7 @@
                         tomSelect.setValue(newValue);
                     }
                 });
-
-                $el._x_removeModelListeners = {
-                    default: function() {
-                        if (tomSelect) {
-                            tomSelect.destroy();
-                        }
-                    }
-                };"
-    x-ref="{{ $attributes->get('key')  }}"
-                $cleanup(() => {
-                    if (tomSelect) {
-                        tomSelect.destroy();
-                    }
-                });"
+              ;"
     x-ref="{{ $attributes->get('key')  }}"
     x-cloak
     {{ $attributes }}>
