@@ -290,9 +290,12 @@ Dropdown field that allows selecting multiple options.
             'value' => 'option2',
             'label' => 'Option 2'
         ]
-    ]
+    ],
+    'custom_values' => false // Set to true to allow users to enter custom values not in the options list
 ]
 ```
+
+When `custom_values` is set to `true`, users can enter and select values that are not predefined in the options list. This is useful when you want to allow for flexible input while still providing common options.
 
 ### Repeater Field
 
