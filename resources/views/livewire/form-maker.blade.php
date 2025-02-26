@@ -49,7 +49,8 @@
         <x-tom-select
           class="multiselect"
           wire:model="{{ sprintf('availablePropertiesData.%s', $field['name']) }}"
-          options="{{ sprintf('availablePropertiesSchema.%s.options', $key) }}" multiple
+          options="{{ sprintf('availablePropertiesSchema.%s.options', $key) }}"
+          multiple
         />
       @endif
 
@@ -106,6 +107,7 @@
                           wire:model="{{ sprintf('availablePropertiesData.%s.%s.%s', $field['name'], $index, $subfield['name']) }}"
                           options="{{ sprintf('availablePropertiesSchema.%s.subfields.%s.options', $key, $subfieldIndex) }}"
                           key="ms{{$index}}"
+                          :create="($subfield['create'] ?? false) ? true : null"
                           multiple
                         />
                     @endif
@@ -115,6 +117,7 @@
                         wire:model="{{ sprintf('availablePropertiesData.%s.%s.%s', $field['name'], $index, $subfield['name']) }}"
                         options="{{ sprintf('availablePropertiesSchema.%s.subfields.%s.options', $key, $subfieldIndex) }}"
                         key="ms{{$index}}"
+                        :create="($subfield['create'] ?? false) ? true : null"
                         wire:ignore
                       />
                     @endif
