@@ -19,13 +19,23 @@ class Larafields
     protected Collection $forms;
 
     /**
+     * Collection of page configurations.
+     */
+    protected Collection $pages;
+
+    /**
      * Create a new Larafields instance.
      */
     public function __construct(Application $app)
     {
         $this->app = $app;
+
         $this->forms = collect(
             apply_filters('larafields_load_forms', config('larafields.forms', []))
+        );
+
+        $this->pages = collect(
+            apply_filters('larafields_load_pages', config('larafields.pages', []))
         );
 
         $this->initializeWordPressHooks();
@@ -45,8 +55,11 @@ class Larafields
      */
     protected function initializeWordPressHooks(): void
     {
-        $this->app->makeWith(WordPressHookService::class, ['forms' => $this->forms])
-            ->registerHooks();
+        $this->app->makeWith(
+            WordPressHookService::class, [
+                'forms' => $this->forms,
+                'pages' => $this->pages
+            ])->registerHooks();
     }
 
     /**
