@@ -50,7 +50,7 @@ class ApplicationPasswordAuth
 
         if (! $user) {
             return response()->json([
-                'message' => 'User not found',
+                'message' => 'Invalid credentials',
             ], 401);
         }
 
