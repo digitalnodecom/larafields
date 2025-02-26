@@ -115,7 +115,8 @@ This will create a new page in the WordPress Admin dashboard with the specified 
         'page' => [
             'page_title' => 'Testing',
             'menu_title' => 'Testing',
-            'slug' => 'testing'
+            'slug' => 'testing',
+            // 'parent' => 'parent_slug'  // Optional: Specify a parent slug to create this as a submenu page
         ]
     ]
 ]
@@ -355,6 +356,28 @@ use Illuminate\Support\Collection;
 
 add_filter('larafields_load_fields', function(Collection $fields){
     // Manipulate the $fields collection.
+});
+```
+
+## Dashboard Menu Pages
+
+You can add custom dashboard menu pages using the `larafields_load_pages` filter. This allows you to create additional admin pages for your application.
+
+### Adding Dashboard Menu Pages
+
+Use the `larafields_load_pages` filter to add new pages to the WordPress admin dashboard:
+
+```php
+add_filter('larafields_load_pages', function ($pages) {
+    return [
+        [
+            'type' => 'page',
+            'page_title' => 'Example Page',
+            'menu_title' => 'Example Page',
+            'slug' => 'page-example',
+            // 'hide_from_submenu' => true // This prevents the parent page from appearing in the submenu
+        ],
+    ];
 });
 ```
 
