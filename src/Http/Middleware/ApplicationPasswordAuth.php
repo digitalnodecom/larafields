@@ -54,16 +54,24 @@ class ApplicationPasswordAuth
             ], 401);
         }
 
-        $user = wp_authenticate_application_password($user, $username, $password);
-
-        if ($user instanceof WP_Error) {
+        if (! class_exists('\WP_Application_Passwords') || ! wp_is_application_passwords_available_for_user($user)) {
             return response()->json([
-                'message' => 'Invalid credentials',
+                'message' => 'Application passwords not available',
             ], 401);
         }
 
-        wp_set_current_user($user->ID, $user->user_login);
+        $password = preg_replace('/[^a-z\d]/i', '', $password);
+        $hashed_passwords = \WP_Application_Passwords::get_user_application_passwords($user->ID);
 
-        return $next($request);
+        foreach ($hashed_passwords as $key => $item) {
+            if (wp_check_password($password, $item['password'], $user->ID)) {
+                wp_set_current_user($user->ID, $user->user_login);
+                return $next($request);
+            }
+        }
+
+        return response()->json([
+            'message' => 'Invalid credentials',
+        ], 401);
     }
 }
