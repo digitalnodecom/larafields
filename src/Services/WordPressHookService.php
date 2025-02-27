@@ -3,9 +3,6 @@
 namespace DigitalNode\Larafields\Services;
 
 use Illuminate\Support\Collection;
-use function Crontrol\Schedule\add;
-use function PHPUnit\Framework\matches;
-use DigitalNode\Larafields\Services\FormRenderer;
 
 class WordPressHookService
 {
@@ -235,6 +232,12 @@ class WordPressHookService
                                 $componentArgs = [
                                     'termOptionsContext' => $_GET['term_id'] ?? 0,
                                     'taxonomyContext' => $pageCondition['taxonomy'],
+                                ];
+                            }
+
+                            if ( $pageConditionKey == 'page' ){
+                                $componentArgs = [
+                                    'pageContext' => $pageCondition['slug']
                                 ];
                             }
 
