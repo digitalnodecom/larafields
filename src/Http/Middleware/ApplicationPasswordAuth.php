@@ -4,7 +4,6 @@ namespace DigitalNode\Larafields\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use WP_Error;
 
 class ApplicationPasswordAuth
 {
@@ -66,6 +65,7 @@ class ApplicationPasswordAuth
         foreach ($hashed_passwords as $key => $item) {
             if (wp_check_password($password, $item['password'], $user->ID)) {
                 wp_set_current_user($user->ID, $user->user_login);
+
                 return $next($request);
             }
         }

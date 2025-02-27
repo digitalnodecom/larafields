@@ -2,7 +2,6 @@
 
 namespace DigitalNode\Larafields;
 
-use DigitalNode\Larafields\Services\FormRenderer;
 use DigitalNode\Larafields\Services\WordPressHookService;
 use Illuminate\Support\Collection;
 use Roots\Acorn\Application;
@@ -79,7 +78,7 @@ class Larafields
                 WordPressHookService::class,
                 [
                     'forms' => $this->forms,
-                    'pages' => $this->pages
+                    'pages' => $this->pages,
                 ]
             );
 
@@ -93,13 +92,12 @@ class Larafields
             WordPressHookService::class,
             [
                 'forms' => $this->forms,
-                'pages' => $this->pages
+                'pages' => $this->pages,
             ]
         );
 
         $this->hookService->registerHooks();
     }
-
 
     /**
      * Add a new form group to the configuration.

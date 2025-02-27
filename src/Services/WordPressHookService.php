@@ -9,8 +9,7 @@ class WordPressHookService
     public function __construct(
         private Collection $forms,
         private Collection $pages
-    ) {
-    }
+    ) {}
 
     public function registerHooks(): void
     {
@@ -148,7 +147,7 @@ class WordPressHookService
                 echo app(FormRenderer::class)->renderLivewireForm($group, [
                     'pageContext' => $pageConfig['slug'],
                 ]);
-            }
+            },
         ];
 
         if (isset($pageConfig['parent'])) {
@@ -215,7 +214,7 @@ class WordPressHookService
     {
         collect($this->forms)->each(function ($form) {
             collect($form['settings']['conditions'] ?? [])
-                ->filter(fn($value, $key) => in_array($key, ['term_page', 'user_page', 'page']))
+                ->filter(fn ($value, $key) => in_array($key, ['term_page', 'user_page', 'page']))
                 ->each(function ($pageCondition, $pageConditionKey) use ($form) {
                     add_submenu_page(
                         null,
@@ -235,9 +234,9 @@ class WordPressHookService
                                 ];
                             }
 
-                            if ( $pageConditionKey == 'page' ){
+                            if ($pageConditionKey == 'page') {
                                 $componentArgs = [
-                                    'pageContext' => $pageCondition['slug']
+                                    'pageContext' => $pageCondition['slug'],
                                 ];
                             }
 
