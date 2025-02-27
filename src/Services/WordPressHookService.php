@@ -5,20 +5,28 @@ namespace DigitalNode\Larafields\Services;
 use Illuminate\Support\Collection;
 use function Crontrol\Schedule\add;
 use function PHPUnit\Framework\matches;
+use DigitalNode\Larafields\Services\FormRenderer;
 
 class WordPressHookService
 {
     public function __construct(
         private Collection $forms,
         private Collection $pages
-    ) {}
+    ) {
+    }
 
     public function registerHooks(): void
     {
         $this->registerAssetHooks();
         $this->registerMetaBoxHooks();
-        $this->registerMenuHooks();
         $this->registerUserHooks();
+    }
+
+    public function registerAdminMenuHooks(): void
+    {
+        $this->handleOptionPages();
+        $this->handleOptionPagesActionLinks();
+        $this->handleMenuPages();
     }
 
     private function registerAssetHooks(): void
@@ -39,13 +47,6 @@ class WordPressHookService
     {
         add_action('add_meta_boxes', [$this, 'handleMetaBoxes']);
         add_action('wp_loaded', [$this, 'handleMetaBoxes']);
-    }
-
-    private function registerMenuHooks(): void
-    {
-        add_action('admin_menu', [$this, 'handleMenuPages']);
-        add_filter('init', [$this, 'handleOptionPages'], 10, 2);
-        add_action('admin_menu', [$this, 'handleOptionPagesActionLinks']);
     }
 
     private function registerUserHooks(): void
@@ -118,8 +119,8 @@ class WordPressHookService
                 callback: '__return_false'
             );
 
-            if ( isset($page['hide_from_submenu']) && $page['hide_from_submenu'] ){
-                add_action('admin_menu', function() use ($page){
+            if (isset($page['hide_from_submenu']) && $page['hide_from_submenu']) {
+                add_action('admin_menu', function () use ($page) {
                     global $submenu;
                     if (isset($submenu[$page['slug']])) {
                         unset($submenu[$page['slug']][0]);
@@ -145,15 +146,15 @@ class WordPressHookService
             'page_title' => __($pageConfig['page_title'], 'larafields'),
             'menu_title' => $pageConfig['menu_title'],
             'capability' => 'manage_woocommerce',
-            'menu_slug'  => $pageConfig['slug'],
-            'callback'   => function () use ($group, $pageConfig): void {
+            'menu_slug' => $pageConfig['slug'],
+            'callback' => function () use ($group, $pageConfig): void {
                 echo app(FormRenderer::class)->renderLivewireForm($group, [
                     'pageContext' => $pageConfig['slug'],
                 ]);
             }
         ];
 
-        if ( isset($pageConfig['parent']) ){
+        if (isset($pageConfig['parent'])) {
             $addMenuOrSubmenuFunction = 'add_submenu_page';
 
             $args['parent_slug'] = $pageConfig['parent'];
@@ -217,7 +218,7 @@ class WordPressHookService
     {
         collect($this->forms)->each(function ($form) {
             collect($form['settings']['conditions'] ?? [])
-                ->filter(fn ($value, $key) => in_array($key, ['term_page', 'user_page', 'page']))
+                ->filter(fn($value, $key) => in_array($key, ['term_page', 'user_page', 'page']))
                 ->each(function ($pageCondition, $pageConditionKey) use ($form) {
                     add_submenu_page(
                         null,
