@@ -12,12 +12,20 @@ Route::middleware(ApplicationPasswordAuth::class)
         // TODO: fix this.
         Route::get('/forms', function (Request $request) {
             $data = $request->validate([
-                'field_key' => 'required',
-                'object_id' => 'sometimes',
+                'object_id'   => 'nullable|required_without_all:object_name,field_key',
+                'object_name' => 'nullable|required_without_all:object_id,field_key',
+                'field_key'  => 'nullable|required_without_all:object_id,object_name',
             ]);
 
-            $query = DB::table('larafields')
-                ->where('field_key', $data['field_key']);
+            $query = DB::table('larafields');
+
+            if (isset($data['field_key'])) {
+                $query->where('field_key', $data['field_key']);
+            }
+
+            if (isset($data['object_name'])) {
+                $query->where('object_name', $data['object_name']);
+            }
 
             if (isset($data['object_id'])) {
                 $query->where('object_id', $data['object_id']);
@@ -26,17 +34,20 @@ Route::middleware(ApplicationPasswordAuth::class)
             $result = $query
                 ->get()
                 ->when(
-                    isset($data['object_id']),
-                    function (Collection $collection) {
-                        return $collection
-                            ->map(fn ($entry) => json_decode($entry->field_value, true))
-                            ->first();
-                    },
+                    isset($data['field_key']),
                     function (Collection $collection) {
                         return $collection
                             ->map(fn ($entry) => (array) $entry)
                             ->map(fn ($entry) => array_merge(
                                 Arr::except($entry, ['id', 'field_value', 'field_key']),
+                                ['data' => json_decode($entry['field_value'], true)]
+                            ))->first();
+                    },
+                    function (Collection $collection) {
+                        return $collection
+                            ->map(fn ($entry) => (array) $entry)
+                            ->map(fn ($entry) => array_merge(
+                                Arr::except($entry, ['id', 'field_value']),
                                 ['data' => json_decode($entry['field_value'], true)]
                             ))->all();
                     });
