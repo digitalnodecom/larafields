@@ -398,64 +398,60 @@ The API uses Basic Authentication with WordPress Application Passwords:
 - Username: Your WordPress username
 - Password: Generated Application Password key
 
-### Request Body
+### Request Parameters
 
-The request body should be a JSON object with the following properties:
+The endpoint accepts the following query parameters:
 
-| Property  | Required | Description                                                 |
-| --------- | -------- | ----------------------------------------------------------- |
-| form_name | Yes      | The name of the form to query                               |
-| location  | No       | The location type (e.g., 'page', 'term_page')               |
-| taxonomy  | No       | Required when location is 'term_page' or 'taxonomy'         |
-| id        | No       | The identifier to query (e.g., term_id, post_id, page slug) |
+| Parameter   | Required | Description                                                 |
+| ----------- | -------- | ----------------------------------------------------------- |
+| object_id   | No*      | The ID of the object (post, term, etc.)                     |
+| object_name | No*      | The name of the object type                                 |
+| field_key   | No*      | The key of the specific field to retrieve                   |
+
+*At least one of these parameters must be provided.
+
+### Field Validation
+
+The API implements the following validation rules:
+- `object_id`: Required if neither `object_name` nor `field_key` is provided
+- `object_name`: Required if neither `object_id` nor `field_key` is provided
+- `field_key`: Required if neither `object_id` nor `object_name` is provided
+
+This means you must provide at least one of these three parameters in your request.
 
 ### Query Examples
 
-#### Basic Query
+#### Query by Object ID
 
-When searching only by `form_name`, the response will include data from all locations where the form exists:
-
-```json
-{
-  "form_name": "example_form"
-}
+```
+GET /larafields/forms?object_id=123
 ```
 
-Response structure:
+This will return all form data associated with the object ID 123.
 
-```json
-{
-    "page_example": [...data],
-    "user_123": [...data]
-}
+#### Query by Object Name
+
+```
+GET /larafields/forms?object_name=product
 ```
 
-#### Exact Search Queries
+This will return all form data associated with the object type "product".
 
-You can perform exact searches by combining `location`, `taxonomy` (when required), and `id`. Here are some example combinations:
+#### Query by Field Key
 
-##### Example 1: Page Location
-
-```json
-{
-  "form_name": "vendor_mappings",
-  "location": "page",
-  "id": "testing"
-}
+```
+GET /larafields/forms?field_key=product_gender
 ```
 
-##### Example 2: Term Page Location
+This will return the specific field data for the field key "product_gender".
 
-```json
-{
-  "form_name": "vendor_mappings",
-  "location": "term_page",
-  "taxonomy": "wcpv_product_vendors",
-  "id": "220"
-}
+#### Combined Query
+
+```
+GET /larafields/forms?object_id=123&object_name=product
 ```
 
-Note: These are just examples of possible combinations. You can search using any combination of these parameters, keeping in mind that `taxonomy` is required whenever the `location` is set to either "term_page" or "taxonomy".
+This will return form data that matches both the object ID 123 and object type "product".
 
 ### Update Endpoint
 
