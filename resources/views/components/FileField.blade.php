@@ -12,11 +12,16 @@
           <img width="150" height="150"
                src="data:{{ $mimeType }};base64,{{ base64_encode(Storage::disk()->get($src)) }}">
         @else
-          File exists: {{ Storage::url($src) }}
+          <p> Existing file: {{ Storage::url($src) }} </p>
         @endif
+
       @elseif( get_class($src) == TemporaryUploadedFile::class && $src->isPreviewable() )
         <img width="150" height="150" src="data:{{ $src->getMimeType() }};base64,{{ base64_encode($src->get()) }}">
       @endif
+
+      <p><b>Change upload</b></p>
+    @else
+      <p><b>Upload file</b></p>
     @endif
   </label>
 
@@ -26,5 +31,6 @@
     type="file"
     name="{{ $field['name'] }}"
     @required($field['required'] ?? false)
+    style="display: none"
   />
 </div>
