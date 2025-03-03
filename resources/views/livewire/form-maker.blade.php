@@ -36,6 +36,10 @@
         @include('Larafields::components.MonthField', ['field' => $field])
       @endif
 
+      @if($field['type'] == 'file')
+        @include('Larafields::components.FileField', ['field' => $field])
+      @endif
+
       @if($field['type'] == 'multiselect')
         <x-tom-select
           class="multiselect"
@@ -101,6 +105,10 @@
 
                     @if($subfield['type'] == 'month')
                       @include('Larafields::components.MonthField', ['field' => $subfield])
+                    @endif
+
+                    @if($subfield['type'] == 'file')
+                      @include('Larafields::components.FileField', ['field' => $subfield])
                     @endif
 
                     @if($subfield['type'] == 'multiselect')
