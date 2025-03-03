@@ -1,10 +1,20 @@
-@php use Illuminate\Support\Facades\Storage;use Livewire\Features\SupportFileUploads\TemporaryUploadedFile; @endphp
+@php use Illuminate\Support\Facades\Storage;use Illuminate\Support\Str;use Livewire\Features\SupportFileUploads\TemporaryUploadedFile; @endphp
 <div>
   <label for="{{ $field['key'] }}">
     @if($src = data_get($this, $field['key']))
       @if ( !is_null($src) && !is_object($src) )
-        <img width="150" height="150" src="data:{{ Storage::mimeType($src) }};base64,{{ base64_encode(Storage::disk()->get($src)) }}">
-      @elseif( get_class($src) == TemporaryUploadedFile::class  )
+        @php
+          $mimeType = Storage::mimeType($src);
+          $isPreviewable = Str::startsWith($mimeType, ['image/', 'video/']);
+        @endphp
+
+        @if($isPreviewable)
+          <img width="150" height="150"
+               src="data:{{ $mimeType }};base64,{{ base64_encode(Storage::disk()->get($src)) }}">
+        @else
+          File exists: {{ Storage::url($src) }}
+        @endif
+      @elseif( get_class($src) == TemporaryUploadedFile::class && $src->isPreviewable() )
         <img width="150" height="150" src="data:{{ $src->getMimeType() }};base64,{{ base64_encode($src->get()) }}">
       @endif
     @endif
