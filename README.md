@@ -240,6 +240,21 @@ Month picker input field.
 ]
 ```
 
+### File Field
+
+File upload field with image preview support. Files are stored in the default disk under the 'larafields' directory.
+
+```php
+[
+    'type'           => 'file',
+    'label'          => 'Image',
+    'name'           => 'image',
+    'defaultValue'   => '',
+    'required'       => true,
+]
+```
+
+
 ### Textarea Field
 
 Multiline text input with optional character limit.
