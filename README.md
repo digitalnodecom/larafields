@@ -81,6 +81,32 @@ return [
 ];
 ```
 
+### Core Concepts
+
+The package uses several key terms throughout its configuration and API:
+
+#### Object Types and Names
+
+- **object_type**: Defines the WordPress entity type where fields can be attached. Can be one of:
+  - `post_type`: For WordPress posts and custom post types
+  - `taxonomy`: For categories, tags, and custom taxonomies
+  - `user`: For WordPress user profiles
+  - `settings`: For option pages, term option pages, and user option pages
+
+- **object_name**: The specific identifier within an object type. Examples:
+  - For `post_type`: Could be "post", "page", "product", or any custom post type name
+  - For `taxonomy`: Could be "category", "post_tag", "product_cat", or any custom taxonomy name
+  - For `user`: Always `null`
+  - For `settings`: The slug of the options page, term options page, or user options page
+
+- **object_id**: The unique identifier for a specific instance:
+  - For posts: The post ID
+  - For taxonomies: The term ID
+  - For users: The user ID
+  - For settings pages: The page slug
+
+These concepts are used throughout the package's API and configuration to precisely target where fields should be displayed and how data should be stored and retrieved.
+
 ### Display Conditions
 
 You can display form groups on any Post Type, any Term, and/or create a custom Options page:
