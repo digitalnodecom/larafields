@@ -4,6 +4,7 @@ namespace DigitalNode\Larafields;
 
 use DigitalNode\Larafields\Services\WordPressHookService;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Roots\Acorn\Application;
 
 class Larafields
@@ -107,5 +108,34 @@ class Larafields
         $forms = config('larafields.forms', []);
         $forms[] = $data;
         config(['larafields.forms' => $forms]);
+    }
+
+    /**
+     * Fetch field(s) from the database.
+     */
+    public static function get_field(?string $fieldKey = null, ?string $objectName = null, ?string $objectId = null): array
+    {
+        if ( is_null($fieldKey) && is_null($objectName) && is_null($objectId) ){
+            throw new \Exception("At least one of these params is required: 'field_key', 'objectName', 'objectId' ");
+        }
+
+        $query = DB::table('larafields')
+            ->when(!is_null($fieldKey), function($query) use ($fieldKey){
+               $query->where('field_key', $fieldKey);
+            })->when(!is_null($objectName), function($query) use ($objectName){
+                $query->where('object_name', $objectName);
+            })->when(!is_null($objectId), function($query) use ($objectId){
+                $query->where('object_id', $objectId);
+            });
+
+        return $query
+            ->get()
+            ->map(fn($row) => (array) $row)
+            ->map(
+                fn($row) => json_validate($row['field_value']) ?
+                    [...$row, 'field_value' => json_decode($row['field_value'], true)] :
+                    $row
+            )
+            ->toArray();
     }
 }
