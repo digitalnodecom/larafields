@@ -28,6 +28,7 @@ class WordPressHookService
     private function registerAssetHooks(): void
     {
         add_action('admin_enqueue_scripts', function (): void {
+            // Enqueue third-party assets
             wp_enqueue_script(
                 'choices-js',
                 'https://cdnjs.cloudflare.com/ajax/libs/tom-select/2.4.1/js/tom-select.complete.js'
@@ -36,7 +37,57 @@ class WordPressHookService
                 'choices-css',
                 'https://cdnjs.cloudflare.com/ajax/libs/tom-select/2.4.1/css/tom-select.css'
             );
+            
+            // Enqueue our package CSS based on environment mode
+            $this->enqueuePackageAssets();
         });
+    }
+    
+    /**
+     * Enqueue package assets based on environment mode.
+     */
+    private function enqueuePackageAssets(): void
+    {
+        $mode = config('larafields.assets.mode', 'production');
+        $version = $this->getPackageVersion();
+
+        if (true || $mode === 'development') {
+            // In development mode, use the dynamic asset endpoint
+            $cssUrl = home_url('/larafields/assets/lf.css');
+            
+            wp_enqueue_style(
+                'larafields-css-yea',
+                $cssUrl,
+                [],
+                $version
+            );
+        } else {
+            // In production mode, use the published assets
+            $cssPath = config('larafields.assets.production.url', '/css/digitalnodecom');
+            wp_enqueue_style(
+                'larafields-css',
+                $cssPath . '/larafields.css',
+                [],
+                $version
+            );
+        }
+    }
+    
+    /**
+     * Get the package version for cache busting.
+     *
+     * @return string
+     */
+    private function getPackageVersion(): string
+    {
+        $packageJsonPath = __DIR__ . '/../../package.json';
+        
+        if (file_exists($packageJsonPath)) {
+            $packageJson = json_decode(file_get_contents($packageJsonPath), true);
+            return $packageJson['version'] ?? '1.0.0';
+        }
+        
+        return '1.0.0';
     }
 
     private function registerMetaBoxHooks(): void

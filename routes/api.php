@@ -1,11 +1,17 @@
 <?php
 
+use DigitalNode\Larafields\Http\Controllers\AssetsController;
 use DigitalNode\Larafields\Http\Middleware\ApplicationPasswordAuth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
+
+// Asset routes (no authentication required)
+Route::prefix('larafields')->group(function () {
+    Route::get('/assets/lf.css', [AssetsController::class, 'css'])->name('assets.css');
+});
 
 Route::middleware(ApplicationPasswordAuth::class)
     ->group(function () {
