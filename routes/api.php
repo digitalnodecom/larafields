@@ -8,9 +8,8 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
-// Asset routes (no authentication required)
 Route::prefix('larafields')->group(function () {
-    Route::get('/assets/lf.css', [AssetsController::class, 'css'])->name('assets.css');
+    Route::get('/assets/lf.css', [AssetsController::class, 'css']);
 });
 
 Route::middleware(ApplicationPasswordAuth::class)

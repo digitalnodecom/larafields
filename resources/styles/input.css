@@ -1,11 +1,4 @@
-/* Tailwind CSS base styles */
-@tailwind base;
-
-/* Tailwind CSS component classes */
-@tailwind components;
-
-/* Tailwind CSS utility classes */
-@tailwind utilities;
+@import "tailwindcss";
 
 /* Custom styles for the form builder */
 @layer components {

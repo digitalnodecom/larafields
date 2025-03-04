@@ -9,13 +9,7 @@ use Illuminate\Support\Facades\File;
 
 class AssetsController extends Controller
 {
-    /**
-     * Serve the compiled CSS file dynamically.
-     *
-     * @param Request $request
-     * @return Response
-     */
-    public function css(Request $request)
+    public function __invoke(Request $request)
     {
         $path = __DIR__ . '/../../../resources/styles/public/larafields.css';
 
