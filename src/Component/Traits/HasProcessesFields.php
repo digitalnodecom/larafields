@@ -71,6 +71,7 @@ trait HasProcessesFields
         $this->availablePropertiesData[$field['name']] = $defaultValue;
 
         $schemaProcessor = $this->getFieldSchemaProcessor($field['type']);
+
         if ($schemaProcessor) {
             $this->availablePropertiesSchema[] = $schemaProcessor($field, $existingData);
         }
@@ -127,6 +128,14 @@ trait HasProcessesFields
                 return array_merge($defaults, $data);
             })
             ->toArray();
+
+        $field['subfields'] = collect($field['subfields'])->map(function($subfield){
+           if ( !isset($subfield['options']) ){
+               $subfield['options'] = [];
+           }
+
+           return $subfield;
+        });
 
         return [
             'type' => 'repeater',
