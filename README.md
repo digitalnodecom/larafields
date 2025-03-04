@@ -362,6 +362,33 @@ add_action('init', function() {
 
 The structure follows the same format as defined in the configuration file, allowing you to specify labels, settings, and fields for your new group.
 
+### Retrieving Field Data Programmatically
+
+You can fetch field data from the database using the `FormMaker::get_field()` method. This method accepts three optional parameters:
+
+```php
+FormMaker::get_field(?string $fieldKey = null, ?string $objectName = null, ?string $objectId = null)
+```
+
+At least one of these parameters must be provided:
+- `$fieldKey`: The specific field key to retrieve
+- `$objectName`: The name of the object type (e.g., 'product', 'category')
+- `$objectId`: The ID of the object
+
+The method will throw an Exception if none of these parameters are provided.
+
+Example usage:
+```php
+// Get all fields for a specific object
+$fields = FormMaker::get_field(objectName: 'product', objectId: '123');
+
+// Get a specific field
+$field = FormMaker::get_field(fieldKey: 'product_gender');
+
+// Get fields by object name
+$fields = FormMaker::get_field(objectName: 'product');
+```
+
 ## Extending Fields
 
 You can modify or manipulate the existing fields using the `larafields_load_fields` WordPress filter. This filter provides access to the fields collection before it's processed:
