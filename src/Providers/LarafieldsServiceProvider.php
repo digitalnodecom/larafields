@@ -51,6 +51,20 @@ class LarafieldsServiceProvider extends ServiceProvider
         ], 'larafields');
     }
 
+    private function ensureCompiledCssExists()
+    {
+        $cssPath = __DIR__ . '/../../resources/styles/public/larafields.css';
+
+        if (!file_exists($cssPath)) {
+            $dir = dirname($cssPath);
+            if (!is_dir($dir)) {
+                mkdir($dir, 0755, true);
+            }
+
+            file_put_contents($cssPath, '/* This file will be replaced by the compiled CSS */');
+        }
+    }
+
     private function configureLivewire()
     {
         Livewire::component('FormMaker', FormMakerComponent::class);

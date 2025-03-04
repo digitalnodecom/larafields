@@ -1,11 +1,16 @@
 <?php
 
+use DigitalNode\Larafields\Http\Controllers\AssetsController;
 use DigitalNode\Larafields\Http\Middleware\ApplicationPasswordAuth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
+
+Route::prefix('larafields')->group(function () {
+    Route::get('/assets/lf.css', [AssetsController::class, 'css']);
+});
 
 Route::middleware(ApplicationPasswordAuth::class)
     ->group(function () {

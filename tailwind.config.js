@@ -7,7 +7,21 @@ export default {
     "./resources/views/livewire/*.blade.php",
   ],
   theme: {
+    extend: {
+      colors: {},
+      spacing: {},
+    },
+  },
+  plugins: [
+    require('@tailwindcss/forms')({
+      strategy: 'class',
+    }),
+  ],
+  future: {
+    removeDeprecatedGapUtilities: true,
+    purgeLayersByDefault: true,
+  },
+  variants: {
     extend: {},
   },
-  plugins: [],
 };
