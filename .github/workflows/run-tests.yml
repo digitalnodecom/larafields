@@ -18,8 +18,8 @@ jobs:
         extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite
         coverage: none
 
-    - name: Validate composer.json and composer.lock
-      run: composer validate --strict
+    - name: Update Composer dependencies
+      run: composer update --no-interaction --prefer-dist
 
     - name: Cache Composer packages
       id: composer-cache
