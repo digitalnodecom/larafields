@@ -478,7 +478,7 @@ it('validates number field type constraints', function () {
     $this->assertEquals(422, $response->getStatusCode());
     $responseData = json_decode($response->getBody(), true);
     $this->assertEquals('error', $responseData['status']);
-    $this->assertEquals('Schema validation failed', $responseData['message']);
+    $this->assertEquals('ASchema validation failed', $responseData['message']);
 });
 
 it('validates multiselect field type constraints', function () {
