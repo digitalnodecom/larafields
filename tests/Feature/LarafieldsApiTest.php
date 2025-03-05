@@ -1,10 +1,9 @@
 <?php
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Psr7\Response;
 
 it('can read existing data by object_id', function () {
     // Mock a successful response
@@ -37,7 +36,7 @@ it('can read existing data by object_id', function () {
         'headers' => [
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
-            'Authorization' => 'Basic ' . base64_encode('test_user:test_app_password'),
+            'Authorization' => 'Basic '.base64_encode('test_user:test_app_password'),
         ],
         'json' => [
             'object_id' => '123',
@@ -83,7 +82,7 @@ it('can read existing data by object_name', function () {
         'headers' => [
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
-            'Authorization' => 'Basic ' . base64_encode('test_user:test_app_password'),
+            'Authorization' => 'Basic '.base64_encode('test_user:test_app_password'),
         ],
         'json' => [
             'object_name' => 'product',
@@ -117,7 +116,7 @@ it('can read existing data by field_key', function () {
         'headers' => [
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
-            'Authorization' => 'Basic ' . base64_encode('test_user:test_app_password'),
+            'Authorization' => 'Basic '.base64_encode('test_user:test_app_password'),
         ],
         'json' => [
             'field_key' => 'product_gender',
@@ -164,7 +163,7 @@ it('can read existing data with combined parameters', function () {
         'headers' => [
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
-            'Authorization' => 'Basic ' . base64_encode('test_user:test_app_password'),
+            'Authorization' => 'Basic '.base64_encode('test_user:test_app_password'),
         ],
         'json' => [
             'object_id' => '123',
@@ -199,7 +198,7 @@ it('fails when no parameters are provided', function () {
         'headers' => [
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
-            'Authorization' => 'Basic ' . base64_encode('test_user:test_app_password'),
+            'Authorization' => 'Basic '.base64_encode('test_user:test_app_password'),
         ],
         'json' => [],
     ]);
@@ -224,7 +223,7 @@ it('can insert new data', function () {
         'headers' => [
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
-            'Authorization' => 'Basic ' . base64_encode('test_user:test_app_password'),
+            'Authorization' => 'Basic '.base64_encode('test_user:test_app_password'),
         ],
         'json' => [
             'field_key' => 'product_color',
@@ -260,7 +259,7 @@ it('validates required field_key when inserting', function () {
         'headers' => [
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
-            'Authorization' => 'Basic ' . base64_encode('test_user:test_app_password'),
+            'Authorization' => 'Basic '.base64_encode('test_user:test_app_password'),
         ],
         'json' => [
             'field_value' => json_encode(['red', 'blue']),
@@ -293,7 +292,7 @@ it('validates required field_value when inserting', function () {
         'headers' => [
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
-            'Authorization' => 'Basic ' . base64_encode('test_user:test_app_password'),
+            'Authorization' => 'Basic '.base64_encode('test_user:test_app_password'),
         ],
         'json' => [
             'field_key' => 'product_color',
@@ -326,7 +325,7 @@ it('validates required object_id when inserting', function () {
         'headers' => [
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
-            'Authorization' => 'Basic ' . base64_encode('test_user:test_app_password'),
+            'Authorization' => 'Basic '.base64_encode('test_user:test_app_password'),
         ],
         'json' => [
             'field_key' => 'product_color',
@@ -359,7 +358,7 @@ it('validates required object_name when inserting', function () {
         'headers' => [
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
-            'Authorization' => 'Basic ' . base64_encode('test_user:test_app_password'),
+            'Authorization' => 'Basic '.base64_encode('test_user:test_app_password'),
         ],
         'json' => [
             'field_key' => 'product_color',
@@ -389,7 +388,7 @@ it('validates field_value contains valid JSON', function () {
         'headers' => [
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
-            'Authorization' => 'Basic ' . base64_encode('test_user:test_app_password'),
+            'Authorization' => 'Basic '.base64_encode('test_user:test_app_password'),
         ],
         'json' => [
             'field_key' => 'product_color',
@@ -427,7 +426,7 @@ it('validates text field type constraints', function () {
         'headers' => [
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
-            'Authorization' => 'Basic ' . base64_encode('test_user:test_app_password'),
+            'Authorization' => 'Basic '.base64_encode('test_user:test_app_password'),
         ],
         'json' => [
             'field_key' => 'product_description',
@@ -464,7 +463,7 @@ it('validates number field type constraints', function () {
         'headers' => [
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
-            'Authorization' => 'Basic ' . base64_encode('test_user:test_app_password'),
+            'Authorization' => 'Basic '.base64_encode('test_user:test_app_password'),
         ],
         'json' => [
             'field_key' => 'product_price',
@@ -501,7 +500,7 @@ it('validates multiselect field type constraints', function () {
         'headers' => [
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
-            'Authorization' => 'Basic ' . base64_encode('test_user:test_app_password'),
+            'Authorization' => 'Basic '.base64_encode('test_user:test_app_password'),
         ],
         'json' => [
             'field_key' => 'product_gender',
@@ -534,7 +533,7 @@ it('can update existing data', function () {
         'headers' => [
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
-            'Authorization' => 'Basic ' . base64_encode('test_user:test_app_password'),
+            'Authorization' => 'Basic '.base64_encode('test_user:test_app_password'),
         ],
         'json' => [
             'field_key' => 'product_gender',
