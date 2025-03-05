@@ -466,9 +466,9 @@ The API uses Basic Authentication with WordPress Application Passwords:
 - Username: Your WordPress username
 - Password: Generated Application Password key
 
-### Request Parameters
+### Request Body Parameters
 
-The endpoint accepts the following query parameters:
+The endpoint accepts the following parameters in the request body:
 
 | Parameter   | Required | Description                                                 |
 | ----------- | -------- | ----------------------------------------------------------- |
@@ -491,32 +491,45 @@ This means you must provide at least one of these three parameters in your reque
 
 #### Query by Object ID
 
-```
-GET /larafields/forms?object_id=123
+```json
+// Request body
+{
+  "object_id": "123"
+}
 ```
 
 This will return all form data associated with the object ID 123.
 
 #### Query by Object Name
 
-```
-GET /larafields/forms?object_name=product
+```json
+// Request body
+{
+  "object_name": "product"
+}
 ```
 
 This will return all form data associated with the object type "product".
 
 #### Query by Field Key
 
-```
-GET /larafields/forms?field_key=product_gender
+```json
+// Request body
+{
+  "field_key": "product_gender"
+}
 ```
 
 This will return the specific field data for the field key "product_gender".
 
 #### Combined Query
 
-```
-GET /larafields/forms?object_id=123&object_name=product
+```json
+// Request body
+{
+  "object_id": "123",
+  "object_name": "product"
+}
 ```
 
 This will return form data that matches both the object ID 123 and object type "product".
