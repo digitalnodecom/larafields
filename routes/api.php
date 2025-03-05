@@ -2,6 +2,8 @@
 
 use DigitalNode\Larafields\Actions\GetFormAction;
 use DigitalNode\Larafields\Actions\UpdateFormAction;
+use DigitalNode\Larafields\DTOs\GetFormDTO;
+use DigitalNode\Larafields\DTOs\UpdateFormDTO;
 use DigitalNode\Larafields\Http\Controllers\AssetsController;
 use DigitalNode\Larafields\Http\Middleware\ApplicationPasswordAuth;
 use DigitalNode\Larafields\Larafields;
@@ -16,13 +18,13 @@ Route::middleware(ApplicationPasswordAuth::class)
     ->group(function () {
         Route::get('/forms', function (Request $request, GetFormAction $action) {
             return response()->json(
-                $action->execute($request)
+                $action->execute(GetFormDTO::fromRequest($request))
             );
         })->prefix('larafields');
 
-        Route::post('/forms', function (Request $request, Larafields $larafields, UpdateFormAction $action) {
-            $result = $action->execute($request);
-            
+        Route::post('/forms', function (Request $request, UpdateFormAction $action) {
+            $result = $action->execute(UpdateFormDTO::fromRequest($request));
+
             if (isset($result['status']) && $result['status'] === 'error') {
                 return response()->json([
                     'status' => $result['status'],
@@ -30,7 +32,7 @@ Route::middleware(ApplicationPasswordAuth::class)
                     'errors' => $result['errors'] ?? null,
                 ], $result['code'] ?? 422);
             }
-            
+
             return response()->json($result);
         })->prefix('larafields');
     });
