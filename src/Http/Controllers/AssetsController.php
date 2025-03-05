@@ -11,9 +11,9 @@ class AssetsController extends Controller
 {
     public function __invoke(Request $request)
     {
-        $path = __DIR__ . '/../../../resources/styles/public/larafields.css';
+        $path = __DIR__.'/../../../resources/styles/public/larafields.css';
 
-        if (!File::exists($path)) {
+        if (! File::exists($path)) {
             return new Response('CSS file not found', 404);
         }
 
@@ -24,7 +24,7 @@ class AssetsController extends Controller
 
         if (
             $request->header('If-None-Match') === $etag ||
-            $request->header('If-Modified-Since') === gmdate('D, d M Y H:i:s', $lastModified) . ' GMT'
+            $request->header('If-Modified-Since') === gmdate('D, d M Y H:i:s', $lastModified).' GMT'
         ) {
             return new Response(null, 304);
         }
@@ -32,7 +32,7 @@ class AssetsController extends Controller
         return (new Response($content, 200))
             ->header('Content-Type', 'text/css')
             ->header('ETag', $etag)
-            ->header('Last-Modified', gmdate('D, d M Y H:i:s', $lastModified) . ' GMT')
+            ->header('Last-Modified', gmdate('D, d M Y H:i:s', $lastModified).' GMT')
             ->header('Cache-Control', config('larafields.assets.cache_control', 'public, max-age=31536000'));
     }
 
@@ -43,10 +43,11 @@ class AssetsController extends Controller
      */
     protected function getVersionString()
     {
-        $packageJsonPath = __DIR__ . '/../../../package.json';
+        $packageJsonPath = __DIR__.'/../../../package.json';
 
         if (File::exists($packageJsonPath)) {
             $packageJson = json_decode(File::get($packageJsonPath), true);
+
             return $packageJson['version'] ?? '1.0.0';
         }
 

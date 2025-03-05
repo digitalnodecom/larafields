@@ -17,12 +17,12 @@ class Larafields
     /**
      * Collection of form configurations.
      */
-    protected Collection $forms;
+    public Collection $forms;
 
     /**
      * Collection of page configurations.
      */
-    protected Collection $pages;
+    public Collection $pages;
 
     /**
      * WordPress Hook Service instance.
@@ -50,7 +50,7 @@ class Larafields
     /**
      * Load forms and pages when WordPress is fully loaded.
      */
-    protected function loadFormsAndPages(): void
+    public function loadFormsAndPages(): void
     {
         $this->forms = collect(
             apply_filters('larafields_load_forms', config('larafields.forms', []))
@@ -63,15 +63,6 @@ class Larafields
 
     protected function registerBasicHooks(): void
     {
-        add_action('admin_enqueue_scripts', function (): void {
-            if (asset('css/digitalnodecom/larafields.css')->exists()) {
-                wp_enqueue_style(
-                    'larafiels',
-                    asset('css/digitalnodecom/larafields.css')->uri()
-                );
-            }
-        });
-
         add_action('admin_menu', function (): void {
             $this->loadFormsAndPages();
 
@@ -115,24 +106,24 @@ class Larafields
      */
     public static function get_field(?string $fieldKey = null, ?string $objectName = null, ?string $objectId = null): array
     {
-        if ( is_null($fieldKey) && is_null($objectName) && is_null($objectId) ){
+        if (is_null($fieldKey) && is_null($objectName) && is_null($objectId)) {
             throw new \Exception("At least one of these params is required: 'field_key', 'objectName', 'objectId' ");
         }
 
         $query = DB::table('larafields')
-            ->when(!is_null($fieldKey), function($query) use ($fieldKey){
-               $query->where('field_key', $fieldKey);
-            })->when(!is_null($objectName), function($query) use ($objectName){
+            ->when(! is_null($fieldKey), function ($query) use ($fieldKey) {
+                $query->where('field_key', $fieldKey);
+            })->when(! is_null($objectName), function ($query) use ($objectName) {
                 $query->where('object_name', $objectName);
-            })->when(!is_null($objectId), function($query) use ($objectId){
+            })->when(! is_null($objectId), function ($query) use ($objectId) {
                 $query->where('object_id', $objectId);
             });
 
         return $query
             ->get()
-            ->map(fn($row) => (array) $row)
+            ->map(fn ($row) => (array) $row)
             ->map(
-                fn($row) => json_validate($row['field_value']) ?
+                fn ($row) => json_validate($row['field_value']) ?
                     [...$row, 'field_value' => json_decode($row['field_value'], true)] :
                     $row
             )
