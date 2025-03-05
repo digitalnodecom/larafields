@@ -2,42 +2,34 @@
 
 namespace DigitalNode\Larafields\Actions;
 
-use Illuminate\Http\Request;
+use DigitalNode\Larafields\DTOs\GetFormDTO;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class GetFormAction
 {
-    /**
-     * Execute the action to get form data.
-     *
-     * @param Request $request
-     * @return array|null
-     */
-    public function execute(Request $request)
+    public function execute(GetFormDTO $dto)
     {
-        $data = $request->validate([
-            'object_id'   => 'nullable|required_without_all:object_name,field_key',
-            'object_name' => 'nullable|required_without_all:object_id,field_key',
-            'field_key'  => 'nullable|required_without_all:object_id,object_name',
-        ]);
+        if (!$dto->isValid()) {
+            return null;
+        }
 
         $query = DB::table('larafields')
-            ->when(isset($data['field_key']), function ($query) use ($data) {
-                return $query->where('field_key', $data['field_key']);
+            ->when($dto->fieldKey, function ($query) use ($dto) {
+                return $query->where('field_key', $dto->fieldKey);
             })
-            ->when(isset($data['object_name']), function ($query) use ($data) {
-                return $query->where('object_name', $data['object_name']);
+            ->when($dto->objectName, function ($query) use ($dto) {
+                return $query->where('object_name', $dto->objectName);
             })
-            ->when(isset($data['object_id']), function ($query) use ($data) {
-                return $query->where('object_id', $data['object_id']);
+            ->when($dto->objectId, function ($query) use ($dto) {
+                return $query->where('object_id', $dto->objectId);
             });
 
         return $query
             ->get()
             ->when(
-                isset($data['field_key']),
+                $dto->fieldKey,
                 function (Collection $collection) {
                     return $collection
                         ->map(fn ($entry) => (array) $entry)

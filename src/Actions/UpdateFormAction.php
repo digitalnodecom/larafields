@@ -2,8 +2,8 @@
 
 namespace DigitalNode\Larafields\Actions;
 
+use DigitalNode\Larafields\DTOs\UpdateFormDTO;
 use DigitalNode\Larafields\Larafields;
-use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -16,30 +16,22 @@ class UpdateFormAction
         $this->formMaker = $formMaker;
     }
 
-
-    public function execute(Request $request)
+    public function execute(UpdateFormDTO $dto)
     {
-        $data = $request->validate([
-            'field_key' => 'required',
-            'field_value' => 'required',
-            'object_id' => 'required',
-            'object_name' => 'required',
-        ]);
-
         $this->formMaker->loadFormsAndPages();
 
-        $formForUpdate = $this->findFormConfiguration($data['field_key']);
+        $formForUpdate = $this->findFormConfiguration($dto->fieldKey);
         if (!$formForUpdate) {
             return [
                 'status' => 'error',
-                'message' => "Form field '{$data['field_key']}' not found in any form configuration",
+                'message' => "Form field '{$dto->fieldKey}' not found in any form configuration",
                 'code' => 422
             ];
         }
 
-        $fieldConfig = collect($formForUpdate['fields'])->firstWhere('name', $data['field_key']);
+        $fieldConfig = collect($formForUpdate['fields'])->firstWhere('name', $dto->fieldKey);
 
-        $fieldValue = json_decode($data['field_value'], true);
+        $fieldValue = json_decode($dto->fieldValue, true);
         
         if (json_last_error() !== JSON_ERROR_NONE) {
             return [
@@ -61,9 +53,9 @@ class UpdateFormAction
         }
 
         DB::table('larafields')
-            ->where('field_key', $data['field_key'])
-            ->where('object_id', $data['object_id'])
-            ->where('object_name', $data['object_name'])
+            ->where('field_key', $dto->fieldKey)
+            ->where('object_id', $dto->objectId)
+            ->where('object_name', $dto->objectName)
             ->update(['field_value' => json_encode($fieldValue)]);
 
         return [
@@ -117,13 +109,6 @@ class UpdateFormAction
         return $validationErrors;
     }
 
-    /**
-     * Validate a repeater field.
-     *
-     * @param array $fieldConfig
-     * @param mixed $fieldValue
-     * @return Collection
-     */
     protected function validateRepeaterField(array $fieldConfig, $fieldValue): Collection
     {
         $validationErrors = collect();
@@ -167,82 +152,58 @@ class UpdateFormAction
         return $validationErrors;
     }
 
-    /**
-     * Validate a text field.
-     *
-     * @param array $fieldConfig
-     * @param mixed $fieldValue
-     * @return Collection
-     */
     protected function validateTextField(array $fieldConfig, $fieldValue): Collection
     {
         $validationErrors = collect();
 
-        // Skip validation if the field is not required and the value is empty
         if (empty($fieldValue) && (!isset($fieldConfig['required']) || !$fieldConfig['required'])) {
             return $validationErrors;
         }
 
-        // Validate that the value is a string
         if (!is_string($fieldValue) && !is_null($fieldValue)) {
             $validationErrors->push("Field '{$fieldConfig['name']}' must be a string");
         }
 
-        // Validate character limit if specified
-        if (is_string($fieldValue) && isset($fieldConfig['characterLimit']) && strlen($fieldValue) > $fieldConfig['characterLimit']) {
-            $validationErrors->push("Field '{$fieldConfig['name']}' exceeds character limit of {$fieldConfig['characterLimit']}");
-        }
+        // if (is_string($fieldValue) && isset($fieldConfig['characterLimit']) && strlen($fieldValue) > $fieldConfig['characterLimit']) {
+        //     $validationErrors->push("Field '{$fieldConfig['name']}' exceeds character limit of {$fieldConfig['characterLimit']}");
+        // }
 
         return $validationErrors;
     }
 
-    /**
-     * Validate a date field.
-     *
-     * @param array $fieldConfig
-     * @param mixed $fieldValue
-     * @return Collection
-     */
     protected function validateDateField(array $fieldConfig, $fieldValue): Collection
     {
         $validationErrors = collect();
 
-        // Skip validation if the field is not required and the value is empty
         if (empty($fieldValue) && (!isset($fieldConfig['required']) || !$fieldConfig['required'])) {
             return $validationErrors;
         }
 
-        // Validate that the value is a string
         if (!is_string($fieldValue)) {
             $validationErrors->push("Field '{$fieldConfig['name']}' must be a string");
             return $validationErrors;
         }
 
-        // Validate the format based on field type
         switch ($fieldConfig['type']) {
             case 'date':
-                // Validate date format (YYYY-MM-DD)
                 if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $fieldValue)) {
                     $validationErrors->push("Field '{$fieldConfig['name']}' must be in the format YYYY-MM-DD");
                 }
                 break;
             
             case 'datetime':
-                // Validate datetime format (YYYY-MM-DDThh:mm)
                 if (!preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?$/', $fieldValue)) {
                     $validationErrors->push("Field '{$fieldConfig['name']}' must be in the format YYYY-MM-DDThh:mm");
                 }
                 break;
             
             case 'week':
-                // Validate week format (YYYY-Www)
                 if (!preg_match('/^\d{4}-W\d{2}$/', $fieldValue)) {
                     $validationErrors->push("Field '{$fieldConfig['name']}' must be in the format YYYY-Www");
                 }
                 break;
             
             case 'month':
-                // Validate month format (YYYY-MM)
                 if (!preg_match('/^\d{4}-\d{2}$/', $fieldValue)) {
                     $validationErrors->push("Field '{$fieldConfig['name']}' must be in the format YYYY-MM");
                 }
@@ -252,51 +213,33 @@ class UpdateFormAction
         return $validationErrors;
     }
 
-    /**
-     * Validate a number field.
-     *
-     * @param array $fieldConfig
-     * @param mixed $fieldValue
-     * @return Collection
-     */
+
     protected function validateNumberField(array $fieldConfig, $fieldValue): Collection
     {
         $validationErrors = collect();
 
-        // Skip validation if the field is not required and the value is empty
         if (empty($fieldValue) && (!isset($fieldConfig['required']) || !$fieldConfig['required'])) {
             return $validationErrors;
         }
 
-        // Validate that the value is a number
         if (!is_numeric($fieldValue)) {
             $validationErrors->push("Field '{$fieldConfig['name']}' must be a number");
             return $validationErrors;
         }
 
-        // Convert to numeric for comparison
-        $numericValue = (float) $fieldValue;
+        // $numericValue = (float) $fieldValue;
 
-        // Validate min value if specified
-        if (isset($fieldConfig['minValue']) && $numericValue < $fieldConfig['minValue']) {
-            $validationErrors->push("Field '{$fieldConfig['name']}' must be greater than or equal to {$fieldConfig['minValue']}");
-        }
+        // if (isset($fieldConfig['minValue']) && $numericValue < $fieldConfig['minValue']) {
+        //     $validationErrors->push("Field '{$fieldConfig['name']}' must be greater than or equal to {$fieldConfig['minValue']}");
+        // }
 
-        // Validate max value if specified
-        if (isset($fieldConfig['maxValue']) && $numericValue > $fieldConfig['maxValue']) {
-            $validationErrors->push("Field '{$fieldConfig['name']}' must be less than or equal to {$fieldConfig['maxValue']}");
-        }
+        // if (isset($fieldConfig['maxValue']) && $numericValue > $fieldConfig['maxValue']) {
+        //     $validationErrors->push("Field '{$fieldConfig['name']}' must be less than or equal to {$fieldConfig['maxValue']}");
+        // }
 
         return $validationErrors;
     }
 
-    /**
-     * Validate a select field.
-     *
-     * @param array $fieldConfig
-     * @param mixed $fieldValue
-     * @return Collection
-     */
     protected function validateSelectField(array $fieldConfig, $fieldValue): Collection
     {
         $validationErrors = collect();
@@ -317,13 +260,6 @@ class UpdateFormAction
         return $validationErrors;
     }
 
-    /**
-     * Validate a multiselect field.
-     *
-     * @param array $fieldConfig
-     * @param mixed $fieldValue
-     * @return Collection
-     */
     protected function validateMultiselectField(array $fieldConfig, $fieldValue): Collection
     {
         $validationErrors = collect();
@@ -377,9 +313,9 @@ class UpdateFormAction
                     }
                     
                     // Validate character limit if specified
-                    if (is_string($fieldValue) && isset($subfield['characterLimit']) && strlen($fieldValue) > $subfield['characterLimit']) {
-                        $validationErrors->push("Property '$fieldName' at index $index exceeds character limit of {$subfield['characterLimit']}");
-                    }
+                    // if (is_string($fieldValue) && isset($subfield['characterLimit']) && strlen($fieldValue) > $subfield['characterLimit']) {
+                    //     $validationErrors->push("Property '$fieldName' at index $index exceeds character limit of {$subfield['characterLimit']}");
+                    // }
                     break;
 
                 case 'date':
