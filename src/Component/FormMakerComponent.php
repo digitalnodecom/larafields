@@ -5,7 +5,6 @@ namespace DigitalNode\Larafields\Component;
 use DigitalNode\Larafields\Component\Traits\HasProcessesFields;
 use DigitalNode\Larafields\Component\Traits\HasRepeaterFields;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
@@ -96,8 +95,8 @@ class FormMakerComponent extends Component
         try {
             collect($this->availablePropertiesData)
                 ->each(function ($field, $key) {
-                    if ( is_array($field) ){
-                        $field = collect($field)->map(function ($repeaterField){
+                    if (is_array($field)) {
+                        $field = collect($field)->map(function ($repeaterField) {
                             return $this->processFieldBeforeStoring($repeaterField);
                         })->toArray();
                     }
@@ -114,7 +113,7 @@ class FormMakerComponent extends Component
 
                     session()->flash('message', 'Form saved successfully.');
                 });
-        } catch (\Exception ) {
+        } catch (\Exception) {
             session()->flash('message', 'An error occurred while saving the form.');
         }
     }
@@ -125,14 +124,15 @@ class FormMakerComponent extends Component
             ->layout('Larafields::livewire.layout');
     }
 
-    private function processFieldBeforeStoring( $repeaterField ) {
-        if ( is_array($repeaterField) ){
-            return collect($repeaterField)->map(function($subRepeaterField){
-                if ( is_array($subRepeaterField) ){
+    private function processFieldBeforeStoring($repeaterField)
+    {
+        if (is_array($repeaterField)) {
+            return collect($repeaterField)->map(function ($subRepeaterField) {
+                if (is_array($subRepeaterField)) {
                     return $this->processFieldBeforeStoring($subRepeaterField);
                 }
 
-                if ( is_object($subRepeaterField) && get_class($subRepeaterField) == TemporaryUploadedFile::class ){
+                if (is_object($subRepeaterField) && get_class($subRepeaterField) == TemporaryUploadedFile::class) {
                     $file = $subRepeaterField->storePublicly('larafields');
 
                     return $file;

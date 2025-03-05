@@ -55,15 +55,14 @@ class WordPressHookService
 
     /**
      * Get the package version for cache busting.
-     *
-     * @return string
      */
     private function getPackageVersion(): string
     {
-        $packageJsonPath = __DIR__ . '/../../package.json';
+        $packageJsonPath = __DIR__.'/../../package.json';
 
         if (file_exists($packageJsonPath)) {
             $packageJson = json_decode(file_get_contents($packageJsonPath), true);
+
             return $packageJson['version'] ?? '1.0.0';
         }
 

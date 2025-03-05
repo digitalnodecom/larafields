@@ -129,12 +129,12 @@ trait HasProcessesFields
             })
             ->toArray();
 
-        $field['subfields'] = collect($field['subfields'])->map(function($subfield){
-           if ( !isset($subfield['options']) ){
-               $subfield['options'] = [];
-           }
+        $field['subfields'] = collect($field['subfields'])->map(function ($subfield) {
+            if (! isset($subfield['options'])) {
+                $subfield['options'] = [];
+            }
 
-           return $subfield;
+            return $subfield;
         });
 
         return [
