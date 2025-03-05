@@ -14,6 +14,11 @@
       "DigitalNode\\Larafields\\": "src/"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
   "require": {
     "php": "^8.0"
   },
@@ -25,6 +30,18 @@
     }
   },
   "require-dev": {
-    "laravel/pint": "^1.20"
+    "laravel/pint": "^1.20",
+    "pestphp/pest": "^2.0",
+    "phpunit/phpunit": "^10.0",
+    "guzzlehttp/guzzle": "^7.0"
+  },
+  "scripts": {
+    "test": "pest",
+    "format": "pint"
+  },
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
   }
 }
