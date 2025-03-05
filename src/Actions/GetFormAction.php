@@ -11,7 +11,7 @@ class GetFormAction
 {
     public function execute(GetFormDTO $dto)
     {
-        if (!$dto->isValid()) {
+        if (! $dto->isValid()) {
             return null;
         }
 

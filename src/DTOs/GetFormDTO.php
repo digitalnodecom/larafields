@@ -5,7 +5,9 @@ namespace DigitalNode\Larafields\DTOs;
 class GetFormDTO
 {
     public ?string $objectId;
+
     public ?string $objectName;
+
     public ?string $fieldKey;
 
     public function __construct(?string $objectId = null, ?string $objectName = null, ?string $fieldKey = null)
@@ -27,6 +29,6 @@ class GetFormDTO
     public function isValid(): bool
     {
         // At least one of these parameters must be provided
-        return !is_null($this->objectId) || !is_null($this->objectName) || !is_null($this->fieldKey);
+        return ! is_null($this->objectId) || ! is_null($this->objectName) || ! is_null($this->fieldKey);
     }
 }

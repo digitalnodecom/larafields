@@ -5,8 +5,11 @@ namespace DigitalNode\Larafields\DTOs;
 class UpdateFormDTO
 {
     public string $fieldKey;
+
     public string $fieldValue;
+
     public string $objectId;
+
     public string $objectName;
 
     public function __construct(string $fieldKey, string $fieldValue, string $objectId, string $objectName)

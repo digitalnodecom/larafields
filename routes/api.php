@@ -6,7 +6,6 @@ use DigitalNode\Larafields\DTOs\GetFormDTO;
 use DigitalNode\Larafields\DTOs\UpdateFormDTO;
 use DigitalNode\Larafields\Http\Controllers\AssetsController;
 use DigitalNode\Larafields\Http\Middleware\ApplicationPasswordAuth;
-use DigitalNode\Larafields\Larafields;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
