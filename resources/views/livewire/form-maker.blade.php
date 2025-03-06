@@ -45,6 +45,7 @@
           class="multiselect"
           wire:model="{{ sprintf('availablePropertiesData.%s', $field['name']) }}"
           options="{{ sprintf('availablePropertiesSchema.%s.options', $key) }}"
+          key="ms{{$index}}"
           :create="($field['custom_values'] ?? false) ? true : null"
           multiple
         />
