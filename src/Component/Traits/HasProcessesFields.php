@@ -79,7 +79,7 @@ trait HasProcessesFields
 
     private function determineFieldDefaultValue(array $field, ?array $existingData)
     {
-        return $existingData[$field['name']] ?? $field['defaultValue'] ?? '';
+        return $existingData[$field['name']]['field_value'] ?? $field['defaultValue'] ?? '';
     }
 
     private function getFieldSchemaProcessor(string $fieldType): ?callable
