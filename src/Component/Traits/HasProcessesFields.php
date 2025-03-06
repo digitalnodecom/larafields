@@ -112,7 +112,7 @@ trait HasProcessesFields
     private function processMultiselectField(array $field, ?array $existingData): array
     {
         $this->availablePropertiesData[$field['name']] =
-            $existingData[$field['name']] ?? $field['defaultValue'] ?? [];
+            $existingData[$field['name']]['field_value'] ?? $field['defaultValue'] ?? [];
 
         return array_merge($this->processBasicField($field), [
             'options' => $field['options'] ?? [],

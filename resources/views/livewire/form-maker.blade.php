@@ -45,7 +45,7 @@
           class="multiselect"
           wire:model="{{ sprintf('availablePropertiesData.%s', $field['name']) }}"
           options="{{ sprintf('availablePropertiesSchema.%s.options', $key) }}"
-          key="ms{{$index}}"
+          key="ms{{$key}}"
           :create="($field['custom_values'] ?? false) ? true : null"
           multiple
         />
@@ -56,8 +56,8 @@
           class="multiselect"
           wire:model="{{ sprintf('availablePropertiesData.%s', $field['name']) }}"
           options="{{ sprintf('availablePropertiesSchema.%s.options', $key) }}"
+          key="ms{{$key}}"
           :create="($field['custom_values'] ?? false) ? true : null"
-          multiple
         />
       @endif
 
@@ -117,7 +117,7 @@
                           class="multiselect"
                           wire:model="{{ sprintf('availablePropertiesData.%s.%s.%s', $field['name'], $index, $subfield['name']) }}"
                           options="{{ sprintf('availablePropertiesSchema.%s.subfields.%s.options', $key, $subfieldIndex) }}"
-                          key="ms{{$index}}"
+                          key="ms{{$key}}{{$index}}"
                           :create="($subfield['custom_values'] ?? false) ? true : null"
                           multiple
                         />
