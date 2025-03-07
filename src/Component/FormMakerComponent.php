@@ -108,7 +108,7 @@ class FormMakerComponent extends Component
                             'object_id' => $this->groupObjectId,
                             'field_key' => $key,
                         ],
-                        ['field_value' => json_encode($field)]
+                        ['field_value' => json_encode($field, JSON_NUMERIC_CHECK)]
                     );
 
                     session()->flash('message', 'Form saved successfully.');
