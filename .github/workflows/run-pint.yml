@@ -11,7 +11,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
       with:
-        ref: ${{ github.head_ref }}
+        fetch-depth: 0
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
@@ -33,3 +33,4 @@ jobs:
       with:
         commit_message: "style: apply pint code style fixes"
         file_pattern: '*.php'
+        pull_before_push: true
