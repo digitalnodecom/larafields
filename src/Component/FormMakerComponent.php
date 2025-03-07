@@ -138,8 +138,14 @@ class FormMakerComponent extends Component
                     return $file;
                 }
 
+                if ( json_validate( $subRepeaterField ) ){
+                    return json_decode($subRepeaterField, true);
+                }
+
                 return $subRepeaterField;
             });
+        } else if ( json_validate( $repeaterField ) ){
+            return json_decode($repeaterField, true);
         }
 
         return $repeaterField;

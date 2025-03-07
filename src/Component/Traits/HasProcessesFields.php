@@ -45,6 +45,10 @@ trait HasProcessesFields
         $fields = $this->getGroupFields($group);
 
         $fields->each(function ($field) use ($existingData, $group) {
+            if ( $field['type'] == 'multiselect' && isset($existingData[$field['name']]['field_value']) ){
+                $existingData[$field['name']]['field_value'] = collect($existingData[$field['name']]['field_value'])->map(fn($row) => json_encode($row))->toArray();
+            }
+
             $field = $this->getGroupIndividualField($field, $group);
             $this->processGroupIndividualField($field, $existingData);
         });
@@ -124,6 +128,25 @@ trait HasProcessesFields
         $defaults = $this->generateRepeaterDefaults($field['subfields']);
 
         $this->availablePropertiesData[$field['name']] = collect($existingData[$field['name']]['field_value'] ?? [])
+            ->map(function($data) use ($field){
+                return collect($data)->map(function($value, $field_key) use ($field){
+                   $subfield = collect($field['subfields'])->firstWhere('name', $field_key);
+
+                   if ( !$subfield ){
+                       return $value;
+                   }
+
+                   if ( $subfield['type'] == 'multiselect' && is_array($value)){
+                       return collect($value)->map(fn($attr) => json_encode($attr))->toArray();
+                   }
+
+                   if ( $subfield['type'] == 'select' && is_array($value)) {
+                       return json_encode($value);
+                   }
+
+                   return $value;
+                })->toArray();
+            })
             ->map(function ($data) use ($defaults) {
                 return array_merge($defaults, $data);
             })
