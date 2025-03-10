@@ -10,7 +10,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('larafields')->group(function () {
-    Route::get('/assets/lf.css', [AssetsController::class, 'css']);
+    Route::get('/assets/lf.css', [AssetsController::class, 'css'])->name('larafields.assets.css');
+    Route::get('/assets/lf.js', [AssetsController::class, 'js'])->name('larafields.assets.js');
 });
 
 Route::middleware(ApplicationPasswordAuth::class)

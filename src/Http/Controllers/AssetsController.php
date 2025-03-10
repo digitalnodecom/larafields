@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\File;
 
 class AssetsController extends Controller
 {
-    public function __invoke(Request $request)
+    public function css(Request $request)
     {
         $path = __DIR__.'/../../../resources/styles/public/larafields.css';
 
@@ -31,6 +31,38 @@ class AssetsController extends Controller
 
         return (new Response($content, 200))
             ->header('Content-Type', 'text/css')
+            ->header('ETag', $etag)
+            ->header('Last-Modified', gmdate('D, d M Y H:i:s', $lastModified).' GMT')
+            ->header('Cache-Control', config('larafields.assets.cache_control', 'public, max-age=31536000'));
+    }
+
+    public function js(Request $request)
+    {
+        $path = __DIR__.'/../../../resources/js/public/larafields.min.js';
+        
+        // Use non-minified version in development
+        if (config('app.env') === 'local' && !File::exists($path)) {
+            $path = __DIR__.'/../../../resources/js/public/larafields.js';
+        }
+
+        if (! File::exists($path)) {
+            return new Response('JavaScript file not found', 404);
+        }
+
+        $content = File::get($path);
+
+        $etag = md5($content);
+        $lastModified = File::lastModified($path);
+
+        if (
+            $request->header('If-None-Match') === $etag ||
+            $request->header('If-Modified-Since') === gmdate('D, d M Y H:i:s', $lastModified).' GMT'
+        ) {
+            return new Response(null, 304);
+        }
+
+        return (new Response($content, 200))
+            ->header('Content-Type', 'application/javascript')
             ->header('ETag', $etag)
             ->header('Last-Modified', gmdate('D, d M Y H:i:s', $lastModified).' GMT')
             ->header('Cache-Control', config('larafields.assets.cache_control', 'public, max-age=31536000'));

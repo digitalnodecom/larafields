@@ -51,6 +51,11 @@ class WordPressHookService
             'larafields-css',
             home_url('/larafields/assets/lf.css')
         );
+
+        wp_enqueue_script(
+            'larafields-js',
+            home_url('/larafields/assets/lf.js')
+        );
     }
 
     /**

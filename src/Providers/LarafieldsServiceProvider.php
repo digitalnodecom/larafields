@@ -48,6 +48,7 @@ class LarafieldsServiceProvider extends ServiceProvider
 
         $this->publishes([
             __DIR__.'/../../resources/styles/public' => public_path('css/digitalnodecom'),
+            __DIR__.'/../../resources/js/public' => public_path('js/digitalnodecom'),
         ], 'larafields');
     }
 
