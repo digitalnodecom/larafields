@@ -12,19 +12,27 @@ composer require digitalnodecom/larafields
 
 After installation, you need to:
 
-1. Publish the package assets and configuration:
+1. Clear the Acorn cache:
+
+```bash
+wp acorn clear
+```
+
+This step is necessary for the package to be recognized by Acorn.
+
+2. Publish the package assets and configuration:
 
 ```bash
 wp acorn vendor:publish --tag="larafields"
 ```
 
-2. Run the database migrations:
+3. Run the database migrations:
 
 ```bash
 wp acorn migrate
 ```
 
-3. Add the following hooks to your current theme's `functions.php` file.
+4. Add the following hooks to your current theme's `functions.php` file.
 
 ```
 use Livewire\Mechanisms\HandleRequests\HandleRequests;
@@ -47,9 +55,11 @@ add_action('init', function() {
 }, 20);
 ```
 
-4. Clear the cached views
+5. Clear the cached views
 
-`wp acorn clear:views`
+```bash
+wp acorn clear:views
+```
 
 ## Configuration
 
