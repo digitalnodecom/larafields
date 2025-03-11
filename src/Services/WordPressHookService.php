@@ -30,11 +30,16 @@ class WordPressHookService
         add_action('admin_enqueue_scripts', function (): void {
             wp_enqueue_script(
                 'choices-js',
-                'https://cdnjs.cloudflare.com/ajax/libs/tom-select/2.4.1/js/tom-select.complete.js'
+                home_url('/larafields/assets/js/larafields.js'),
+                [],
+                $this->getPackageVersion(),
+                true
             );
             wp_enqueue_style(
                 'choices-css',
-                'https://cdnjs.cloudflare.com/ajax/libs/tom-select/2.4.1/css/tom-select.css'
+                home_url('/larafields/assets/js/css/tom-select.css'),
+                [],
+                $this->getPackageVersion()
             );
 
             $this->enqueuePackageAssets();

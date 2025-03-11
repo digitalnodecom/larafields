@@ -32,6 +32,15 @@ wp acorn vendor:publish --tag="larafields"
 wp acorn migrate
 ```
 
+4. Build the JavaScript and CSS assets:
+
+```bash
+npm install
+npm run build
+```
+
+This step compiles the JavaScript and CSS files needed for the package to function properly.
+
 4. Add the following hooks to your current theme's `functions.php` file.
 
 ```
@@ -458,6 +467,25 @@ add_filter('larafields_load_pages', function ($pages) {
     ];
 });
 ```
+
+## JavaScript Bundling
+
+This package uses webpack to bundle JavaScript dependencies. The main JavaScript dependency is tom-select, which is used for the multiselect field type.
+
+### Development
+
+To work on the JavaScript files:
+
+1. Make changes to the JavaScript files in the `resources/js` directory
+2. Run `npm run dev` to watch for changes and automatically rebuild the JavaScript files
+
+### Production
+
+To build the JavaScript files for production:
+
+1. Run `npm run build` to build both CSS and JavaScript files
+2. The bundled JavaScript file will be available at `resources/js/public/larafields.js`
+3. The tom-select CSS file will be available at `resources/js/public/css/tom-select.css`
 
 ## API Documentation
 

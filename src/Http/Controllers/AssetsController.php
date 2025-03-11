@@ -9,12 +9,45 @@ use Illuminate\Support\Facades\File;
 
 class AssetsController extends Controller
 {
-    public function __invoke(Request $request)
+    public function css(Request $request)
     {
-        $path = __DIR__.'/../../../resources/styles/public/larafields.css';
+        return $this->serveAsset(
+            $request,
+            __DIR__.'/../../../resources/styles/public/larafields.css',
+            'text/css'
+        );
+    }
 
+    public function js(Request $request)
+    {
+        return $this->serveAsset(
+            $request,
+            __DIR__.'/../../../resources/js/public/larafields.js',
+            'application/javascript'
+        );
+    }
+
+    public function tomSelectCss(Request $request)
+    {
+        return $this->serveAsset(
+            $request,
+            __DIR__.'/../../../resources/js/public/css/tom-select.css',
+            'text/css'
+        );
+    }
+
+    /**
+     * Serve an asset file with proper headers.
+     *
+     * @param Request $request
+     * @param string $path
+     * @param string $contentType
+     * @return Response
+     */
+    protected function serveAsset(Request $request, string $path, string $contentType)
+    {
         if (! File::exists($path)) {
-            return new Response('CSS file not found', 404);
+            return new Response('Asset file not found', 404);
         }
 
         $content = File::get($path);
@@ -30,7 +63,7 @@ class AssetsController extends Controller
         }
 
         return (new Response($content, 200))
-            ->header('Content-Type', 'text/css')
+            ->header('Content-Type', $contentType)
             ->header('ETag', $etag)
             ->header('Last-Modified', gmdate('D, d M Y H:i:s', $lastModified).' GMT')
             ->header('Cache-Control', config('larafields.assets.cache_control', 'public, max-age=31536000'));
