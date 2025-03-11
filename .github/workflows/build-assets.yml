@@ -1,4 +1,4 @@
-name: Build CSS
+name: Build Assets
 
 on:
   push:
@@ -22,11 +22,11 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
-    - name: Build CSS
+    - name: Build Assets (CSS and JavaScript)
       run: npm run build
 
-    - name: Commit compiled CSS
+    - name: Commit compiled assets
       uses: stefanzweifel/git-auto-commit-action@v4
       with:
-        commit_message: "chore: update compiled CSS"
-        file_pattern: 'resources/styles/public/*.css'
+        commit_message: "chore: update compiled assets (CSS and JavaScript)"
+        file_pattern: 'resources/styles/public/*.css resources/js/public/**/*'
