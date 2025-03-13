@@ -39,9 +39,6 @@ class AssetsController extends Controller
     /**
      * Serve an asset file with proper headers.
      *
-     * @param Request $request
-     * @param string $path
-     * @param string $contentType
      * @return Response
      */
     protected function serveAsset(Request $request, string $path, string $contentType)
