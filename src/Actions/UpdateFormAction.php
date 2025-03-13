@@ -53,17 +53,17 @@ class UpdateFormAction
         }
 
         DB::table('larafields')
-          ->where('field_key', $dto->fieldKey)
-          ->where('object_id', $dto->objectId)
-          ->where('object_name', $dto->objectName)
-          ->updateOrInsert([
-              'field_key' => $dto->fieldKey,
-              'object_id' => $dto->objectId,
-              'object_name' => $dto->objectName,
-              'object_type' => $dto->objectType
-          ],[
-              'field_value' => json_encode($fieldValue)
-          ]);
+            ->where('field_key', $dto->fieldKey)
+            ->where('object_id', $dto->objectId)
+            ->where('object_name', $dto->objectName)
+            ->updateOrInsert([
+                'field_key' => $dto->fieldKey,
+                'object_id' => $dto->objectId,
+                'object_name' => $dto->objectName,
+                'object_type' => $dto->objectType,
+            ], [
+                'field_value' => json_encode($fieldValue),
+            ]);
 
         return [
             'status' => 'ok',
