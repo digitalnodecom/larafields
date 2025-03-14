@@ -64,7 +64,7 @@ class WordPressHookService
      */
     private function getPackageVersion(): string
     {
-        return config('larafields.version', "1.0.0");
+        return config('larafields.version', '1.0.0');
     }
 
     private function registerMetaBoxHooks(): void
