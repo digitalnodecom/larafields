@@ -138,7 +138,7 @@ class WordPressHookService
             add_menu_page(
                 page_title: $page['page_title'],
                 menu_title: $page['menu_title'],
-                capability: 'manage_options',
+                capability: 'manage_categories',
                 menu_slug: $page['slug'],
                 callback: '__return_false'
             );
@@ -169,7 +169,7 @@ class WordPressHookService
         $args = [
             'page_title' => __($pageConfig['page_title'], 'larafields'),
             'menu_title' => $pageConfig['menu_title'],
-            'capability' => 'manage_options',
+            'capability' => 'manage_categories',
             'menu_slug' => $pageConfig['slug'],
             'callback' => function () use ($group, $pageConfig): void {
                 echo app(FormRenderer::class)->renderLivewireForm($group, [
@@ -248,7 +248,7 @@ class WordPressHookService
                         null,
                         $pageCondition['page_title'],
                         $pageCondition['menu_title'],
-                        'manage_options',
+                        'manage_categories',
                         $pageCondition['slug'],
                         function () use ($form, $pageCondition, $pageConditionKey) {
                             $componentArgs = [
