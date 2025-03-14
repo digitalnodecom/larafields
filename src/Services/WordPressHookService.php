@@ -54,7 +54,8 @@ class WordPressHookService
     {
         wp_enqueue_style(
             'larafields-css',
-            home_url('/larafields/assets/lf.css')
+            home_url('/larafields/assets/lf.css'),
+            ver: config('larafields.version')
         );
     }
 
@@ -63,15 +64,7 @@ class WordPressHookService
      */
     private function getPackageVersion(): string
     {
-        $packageJsonPath = __DIR__.'/../../package.json';
-
-        if (file_exists($packageJsonPath)) {
-            $packageJson = json_decode(file_get_contents($packageJsonPath), true);
-
-            return $packageJson['version'] ?? '1.0.0';
-        }
-
-        return '1.0.0';
+        return config('larafields.version', "1.0.0");
     }
 
     private function registerMetaBoxHooks(): void
