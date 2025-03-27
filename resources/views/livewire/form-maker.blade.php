@@ -159,5 +159,12 @@
     <p>{{ session('message') }}</p>
   @endif
 
-  <button wire:click.prevent="submit">Submit</button>
+  <button 
+    wire:click.prevent.debounce.500ms="submit" 
+    wire:loading.attr="disabled" 
+    class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+  >
+    <span wire:loading.remove>Submit</span>
+    <span wire:loading>Saving...</span>
+  </button>
 </div>

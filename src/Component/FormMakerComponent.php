@@ -93,6 +93,7 @@ class FormMakerComponent extends Component
     public function submit(): void
     {
         try {
+            DB::beginTransaction();
             collect($this->availablePropertiesData)
                 ->each(function ($field, $key) {
                     if (is_array($field)) {
@@ -113,8 +114,11 @@ class FormMakerComponent extends Component
 
                     session()->flash('message', 'Form saved successfully.');
                 });
+            DB::commit();
         } catch (\Exception) {
             session()->flash('message', 'An error occurred while saving the form.');
+
+            DB::rollBack();
         }
     }
 
