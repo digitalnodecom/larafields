@@ -252,9 +252,9 @@ class FormMakerComponent extends Component
     /**
      * Update search query for a repeater field
      */
-    public function searchRepeater(string $fieldName, string $query): void
+    public function searchRepeater(string $fieldName): void
     {
-        $this->repeaterSearch[$fieldName] = $query;
+        // The query is already stored in $this->repeaterSearch[$fieldName] via wire:model
         
         // Reset to first page when search query changes
         $this->repeaterPagination[$fieldName]['currentPage'] = 1;

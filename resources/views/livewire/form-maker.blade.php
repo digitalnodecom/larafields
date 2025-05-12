@@ -63,15 +63,15 @@
 
       @if($field['type'] == 'repeater')
         <div class="repeater">
-          <!-- Search input -->
+          <!-- Search input with button -->
           <div class="mb-4 flex">
             <div class="relative flex-grow">
               <input 
                 type="text" 
-                wire:model.debounce.300ms="repeaterSearch.{{ $field['name'] }}" 
-                wire:input="searchRepeater('{{ $field['name'] }}', $event.target.value)"
+                wire:model="repeaterSearch.{{ $field['name'] }}" 
                 placeholder="Search rows..." 
-                class="w-full p-2 border border-gray-300 rounded pl-10"
+                class="w-full p-2 border border-gray-300 rounded !pl-10"
+                wire:keydown.enter.prevent="searchRepeater('{{ $field['name'] }}')"
               >
               <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -79,6 +79,12 @@
                 </svg>
               </div>
             </div>
+            <button 
+              wire:click="searchRepeater('{{ $field['name'] }}')"
+              class="ml-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Search
+            </button>
           </div>
           
           <!-- Repeater table -->
