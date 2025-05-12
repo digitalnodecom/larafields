@@ -23,6 +23,11 @@ class FormMakerComponent extends Component
 
     public ?string $groupObjectName = '';
 
+    // Pagination and search properties
+    public array $repeaterPagination = [];
+    public array $repeaterSearch = [];
+    public int $itemsPerPage = 10;
+
     private ?string $pageContext = null;
 
     private ?string $termOptionsContext = null;
@@ -43,6 +48,13 @@ class FormMakerComponent extends Component
 
         $existingData = $this->fetchExistingFormData($group);
         $this->processFormFields($group, $existingData);
+        
+        // Initialize pagination for repeater fields
+        foreach ($this->availablePropertiesSchema as $key => $field) {
+            if ($field['type'] === 'repeater') {
+                $this->initRepeaterPagination($field['name']);
+            }
+        }
     }
 
     private function setGroupKeys(array $group): void
@@ -124,8 +136,130 @@ class FormMakerComponent extends Component
 
     public function render()
     {
+        // Process repeater fields for pagination and search
+        foreach ($this->availablePropertiesSchema as $key => $field) {
+            if ($field['type'] === 'repeater' && isset($this->availablePropertiesData[$field['name']])) {
+                $this->updateRepeaterPagination($field['name']);
+            }
+        }
+        
         return view('Larafields::livewire.form-maker')
             ->layout('Larafields::livewire.layout');
+    }
+    
+    /**
+     * Initialize pagination for a repeater field
+     */
+    public function initRepeaterPagination(string $fieldName): void
+    {
+        $this->repeaterPagination[$fieldName] = [
+            'currentPage' => 1,
+            'totalPages' => 1,
+            'totalItems' => 0,
+        ];
+        
+        $this->repeaterSearch[$fieldName] = '';
+        
+        $this->updateRepeaterPagination($fieldName);
+    }
+    
+    /**
+     * Update pagination information for a repeater field
+     */
+    public function updateRepeaterPagination(string $fieldName): void
+    {
+        if (!isset($this->availablePropertiesData[$fieldName])) {
+            return;
+        }
+        
+        $filteredRows = $this->getFilteredRepeaterRows($fieldName);
+        $totalItems = count($filteredRows);
+        $totalPages = max(1, ceil($totalItems / $this->itemsPerPage));
+        
+        $this->repeaterPagination[$fieldName]['totalItems'] = $totalItems;
+        $this->repeaterPagination[$fieldName]['totalPages'] = $totalPages;
+        
+        // Ensure current page is valid
+        if ($this->repeaterPagination[$fieldName]['currentPage'] > $totalPages) {
+            $this->repeaterPagination[$fieldName]['currentPage'] = $totalPages;
+        }
+    }
+    
+    /**
+     * Get filtered repeater rows based on search query
+     */
+    public function getFilteredRepeaterRows(string $fieldName): array
+    {
+        if (!isset($this->availablePropertiesData[$fieldName])) {
+            return [];
+        }
+        
+        $rows = $this->availablePropertiesData[$fieldName];
+        $searchQuery = $this->repeaterSearch[$fieldName] ?? '';
+        
+        if (empty($searchQuery)) {
+            return $rows;
+        }
+        
+        // Filter rows based on search query
+        return collect($rows)->filter(function ($row) use ($searchQuery) {
+            // Search in all subfields of the row
+            foreach ($row as $value) {
+                // Convert value to string and check if it contains the search query
+                $stringValue = is_array($value) ? json_encode($value) : (string) $value;
+                if (stripos($stringValue, $searchQuery) !== false) {
+                    return true;
+                }
+            }
+            return false;
+        })->toArray();
+    }
+    
+    /**
+     * Get paginated repeater rows
+     */
+    public function getPaginatedRepeaterRows(string $fieldName): array
+    {
+        $filteredRows = $this->getFilteredRepeaterRows($fieldName);
+        
+        if (empty($filteredRows)) {
+            return [];
+        }
+        
+        $currentPage = $this->repeaterPagination[$fieldName]['currentPage'];
+        $offset = ($currentPage - 1) * $this->itemsPerPage;
+        
+        return array_slice($filteredRows, $offset, $this->itemsPerPage, true);
+    }
+    
+    /**
+     * Change the current page for a repeater field
+     */
+    public function changePage(string $fieldName, int $page): void
+    {
+        if (!isset($this->repeaterPagination[$fieldName])) {
+            return;
+        }
+        
+        $totalPages = $this->repeaterPagination[$fieldName]['totalPages'];
+        
+        // Ensure page is within valid range
+        $page = max(1, min($page, $totalPages));
+        
+        $this->repeaterPagination[$fieldName]['currentPage'] = $page;
+    }
+    
+    /**
+     * Update search query for a repeater field
+     */
+    public function searchRepeater(string $fieldName, string $query): void
+    {
+        $this->repeaterSearch[$fieldName] = $query;
+        
+        // Reset to first page when search query changes
+        $this->repeaterPagination[$fieldName]['currentPage'] = 1;
+        
+        $this->updateRepeaterPagination($fieldName);
     }
 
     private function processFieldBeforeStoring($repeaterField)
