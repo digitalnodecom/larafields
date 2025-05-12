@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('larafields', function (Blueprint $table){
+        Schema::table('larafields', function (Blueprint $table) {
             $table->dropUnique('unique_field');
         });
     }
