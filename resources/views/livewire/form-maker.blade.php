@@ -63,6 +63,31 @@
 
       @if($field['type'] == 'repeater')
         <div class="repeater">
+          <!-- Search input with button -->
+          <div class="mb-4 flex">
+            <div class="relative flex-grow">
+              <input 
+                type="text" 
+                wire:model="repeaterSearch.{{ $field['name'] }}" 
+                placeholder="Search rows..." 
+                class="w-full p-2 border border-gray-300 rounded !pl-10"
+                wire:keydown.enter.prevent="searchRepeater('{{ $field['name'] }}')"
+              >
+              <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+              </div>
+            </div>
+            <button 
+              wire:click="searchRepeater('{{ $field['name'] }}')"
+              class="ml-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Search
+            </button>
+          </div>
+          
+          <!-- Repeater table -->
           <table class="w-full border-collapse border border-gray-300 mb-4">
             <thead>
             <tr>
@@ -73,78 +98,169 @@
             </tr>
             </thead>
             <tbody>
-            @foreach($availablePropertiesData['' . $field['name']] as $index => $repeaterItem)
-              <tr class="repeater-row">
-                @foreach($field['subfields'] as $subfieldIndex => $subfield)
-                  @php
-                    $subfield['key'] = sprintf("availablePropertiesData.%s.%s.%s", $field['name'], $index, $subfield['name']);
-                  @endphp
-                  <td class="border border-gray-300 p-2">
-                    @if($subfield['type'] == 'text')
-                      @include('Larafields::components.TextField', ['field' => $subfield])
-                    @endif
-
-                    @if($subfield['type'] == 'number')
-                      @include('Larafields::components.NumberField', ['field' => $subfield])
-                    @endif
-
-                    @if($subfield['type'] == 'textarea')
-                      @include('Larafields::components.TextareaField', ['field' => $subfield])
-                    @endif
-
-                    @if($subfield['type'] == 'datetime')
-                      @include('Larafields::components.DateTimeField', ['field' => $subfield])
-                    @endif
-
-                    @if($subfield['type'] == 'date')
-                      @include('Larafields::components.DateField', ['field' => $subfield])
-                    @endif
-
-                    @if($subfield['type'] == 'week')
-                      @include('Larafields::components.WeekField', ['field' => $subfield])
-                    @endif
-
-                    @if($subfield['type'] == 'month')
-                      @include('Larafields::components.MonthField', ['field' => $subfield])
-                    @endif
-
-                    @if($subfield['type'] == 'file')
-                      @include('Larafields::components.FileField', ['field' => $subfield])
-                    @endif
-
-                    @if($subfield['type'] == 'multiselect')
-                        <x-tom-select
-                          class="multiselect"
-                          wire:model="{{ sprintf('availablePropertiesData.%s.%s.%s', $field['name'], $index, $subfield['name']) }}"
-                          options="{{ sprintf('availablePropertiesSchema.%s.subfields.%s.options', $key, $subfieldIndex) }}"
-                          key="ms{{$key}}{{$index}}"
-                          :create="($subfield['custom_values'] ?? false) ? true : null"
-                          multiple
-                        />
-                    @endif
-
-                    @if($subfield['type'] == 'select')
-                      <x-tom-select
-                        wire:model="{{ sprintf('availablePropertiesData.%s.%s.%s', $field['name'], $index, $subfield['name']) }}"
-                        options="{{ sprintf('availablePropertiesSchema.%s.subfields.%s.options', $key, $subfieldIndex) }}"
-                        key="ms{{$index}}"
-                        :create="($subfield['custom_values'] ?? false) ? true : null"
-                        wire:ignore
-                      />
-                    @endif
-                  </td>
-                @endforeach
-                <td class="border border-gray-300 p-2 text-center">
-                  <button
-                    wire:click.prevent="removeRepeaterRow('{{ $field['name'] }}', {{ $index }})"
-                    class="text-red-500 hover:text-red-700">
-                    Remove
-                  </button>
+            @php
+              $paginatedRows = $this->getPaginatedRepeaterRows($field['name']);
+              $rowsCount = count($paginatedRows);
+            @endphp
+            
+            @if($rowsCount === 0)
+              <tr>
+                <td colspan="{{ count($field['subfields']) + 1 }}" class="border border-gray-300 p-4 text-center text-gray-500">
+                  @if(empty($repeaterSearch[$field['name']]))
+                    No rows available. Click "Add Row" to create one.
+                  @else
+                    No rows match your search query.
+                  @endif
                 </td>
               </tr>
-            @endforeach
+            @else
+              @foreach($paginatedRows as $index => $repeaterItem)
+                <tr class="repeater-row">
+                  @foreach($field['subfields'] as $subfieldIndex => $subfield)
+                    @php
+                      $subfield['key'] = sprintf("availablePropertiesData.%s.%s.%s", $field['name'], $index, $subfield['name']);
+                    @endphp
+                    <td class="border border-gray-300 p-2">
+                      @if($subfield['type'] == 'text')
+                        @include('Larafields::components.TextField', ['field' => $subfield])
+                      @endif
+
+                      @if($subfield['type'] == 'number')
+                        @include('Larafields::components.NumberField', ['field' => $subfield])
+                      @endif
+
+                      @if($subfield['type'] == 'textarea')
+                        @include('Larafields::components.TextareaField', ['field' => $subfield])
+                      @endif
+
+                      @if($subfield['type'] == 'datetime')
+                        @include('Larafields::components.DateTimeField', ['field' => $subfield])
+                      @endif
+
+                      @if($subfield['type'] == 'date')
+                        @include('Larafields::components.DateField', ['field' => $subfield])
+                      @endif
+
+                      @if($subfield['type'] == 'week')
+                        @include('Larafields::components.WeekField', ['field' => $subfield])
+                      @endif
+
+                      @if($subfield['type'] == 'month')
+                        @include('Larafields::components.MonthField', ['field' => $subfield])
+                      @endif
+
+                      @if($subfield['type'] == 'file')
+                        @include('Larafields::components.FileField', ['field' => $subfield])
+                      @endif
+
+                      @if($subfield['type'] == 'multiselect')
+                          <x-tom-select
+                            class="multiselect"
+                            wire:model="{{ sprintf('availablePropertiesData.%s.%s.%s', $field['name'], $index, $subfield['name']) }}"
+                            options="{{ sprintf('availablePropertiesSchema.%s.subfields.%s.options', $key, $subfieldIndex) }}"
+                            key="ms{{$key}}{{$index}}"
+                            :create="($subfield['custom_values'] ?? false) ? true : null"
+                            multiple
+                          />
+                      @endif
+
+                      @if($subfield['type'] == 'select')
+                        <x-tom-select
+                          wire:model="{{ sprintf('availablePropertiesData.%s.%s.%s', $field['name'], $index, $subfield['name']) }}"
+                          options="{{ sprintf('availablePropertiesSchema.%s.subfields.%s.options', $key, $subfieldIndex) }}"
+                          key="ms{{$index}}"
+                          :create="($subfield['custom_values'] ?? false) ? true : null"
+                          wire:ignore
+                        />
+                      @endif
+                    </td>
+                  @endforeach
+                  <td class="border border-gray-300 p-2 text-center">
+                    <button
+                      wire:click.prevent="removeRepeaterRow('{{ $field['name'] }}', {{ $index }})"
+                      class="text-red-500 hover:text-red-700">
+                      Remove
+                    </button>
+                  </td>
+                </tr>
+              @endforeach
+            @endif
             </tbody>
           </table>
+          
+          <!-- Pagination controls -->
+          @if($repeaterPagination[$field['name']]['totalPages'] > 1)
+            <div class="flex items-center justify-between mb-4">
+              <div class="text-sm text-gray-700">
+                Showing 
+                <span class="font-medium">{{ ($repeaterPagination[$field['name']]['currentPage'] - 1) * $itemsPerPage + 1 }}</span>
+                to 
+                <span class="font-medium">
+                  {{ min($repeaterPagination[$field['name']]['currentPage'] * $itemsPerPage, $repeaterPagination[$field['name']]['totalItems']) }}
+                </span>
+                of 
+                <span class="font-medium">{{ $repeaterPagination[$field['name']]['totalItems'] }}</span>
+                rows
+              </div>
+              <div class="flex space-x-2">
+                <button 
+                  wire:click="changePage('{{ $field['name'] }}', {{ $repeaterPagination[$field['name']]['currentPage'] - 1 }})"
+                  class="px-3 py-1 rounded border border-gray-300 {{ $repeaterPagination[$field['name']]['currentPage'] <= 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100' }}"
+                  {{ $repeaterPagination[$field['name']]['currentPage'] <= 1 ? 'disabled' : '' }}
+                >
+                  Previous
+                </button>
+                
+                @php
+                  $currentPage = $repeaterPagination[$field['name']]['currentPage'];
+                  $totalPages = $repeaterPagination[$field['name']]['totalPages'];
+                  $range = 2; // Show 2 pages before and after current page
+                  
+                  $startPage = max(1, $currentPage - $range);
+                  $endPage = min($totalPages, $currentPage + $range);
+                  
+                  // Always show first page
+                  if ($startPage > 1) {
+                    echo '<button wire:click="changePage(\'' . $field['name'] . '\', 1)" class="px-3 py-1 rounded border border-gray-300 hover:bg-gray-100">1</button>';
+                    
+                    // Show ellipsis if there's a gap
+                    if ($startPage > 2) {
+                      echo '<span class="px-3 py-1">...</span>';
+                    }
+                  }
+                  
+                  // Show page numbers
+                  for ($i = $startPage; $i <= $endPage; $i++) {
+                    $isCurrentPage = $i === $currentPage;
+                    $buttonClass = $isCurrentPage 
+                      ? 'px-3 py-1 rounded border border-blue-500 bg-blue-500 text-white' 
+                      : 'px-3 py-1 rounded border border-gray-300 hover:bg-gray-100';
+                    
+                    echo '<button wire:click="changePage(\'' . $field['name'] . '\', ' . $i . ')" class="' . $buttonClass . '">' . $i . '</button>';
+                  }
+                  
+                  // Always show last page
+                  if ($endPage < $totalPages) {
+                    // Show ellipsis if there's a gap
+                    if ($endPage < $totalPages - 1) {
+                      echo '<span class="px-3 py-1">...</span>';
+                    }
+                    
+                    echo '<button wire:click="changePage(\'' . $field['name'] . '\', ' . $totalPages . ')" class="px-3 py-1 rounded border border-gray-300 hover:bg-gray-100">' . $totalPages . '</button>';
+                  }
+                @endphp
+                
+                <button 
+                  wire:click="changePage('{{ $field['name'] }}', {{ $repeaterPagination[$field['name']]['currentPage'] + 1 }})"
+                  class="px-3 py-1 rounded border border-gray-300 {{ $repeaterPagination[$field['name']]['currentPage'] >= $repeaterPagination[$field['name']]['totalPages'] ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100' }}"
+                  {{ $repeaterPagination[$field['name']]['currentPage'] >= $repeaterPagination[$field['name']]['totalPages'] ? 'disabled' : '' }}
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          @endif
+          
           <button wire:click.prevent="addRepeaterRow('{{ $field['name'] }}')"
                   class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add Row
           </button>
