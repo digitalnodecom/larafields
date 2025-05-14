@@ -8,7 +8,7 @@
                     let baseOptions = Array.isArray(this.options)
                         ? this.options.map(opt => ({
                             value: opt.value,
-                            label: opt.label
+                            label: this.decodeUnicodeEscapes(opt.label || opt.value)
                           }))
                         : [];
 
@@ -18,13 +18,21 @@
                             if (!exists) {
                                 baseOptions.push({
                                     value: val,
-                                    label: val
+                                    label: this.decodeUnicodeEscapes(val)
                                 });
                             }
                         });
                     }
 
                     return baseOptions;
+                },
+                decodeUnicodeEscapes(str) {
+                    if (typeof str !== 'string') return str;
+                    
+                    // Replace Unicode escape sequences with their actual characters
+                    return str.replace(/\\u([0-9a-fA-F]{4})/g, (match, hex) => {
+                        return String.fromCodePoint(parseInt(hex, 16));
+                    });
                 },
                 destroy(){
                   if ( this.tomSelect ){
@@ -59,7 +67,10 @@
                             newValue.forEach(val => {
                                 const existingOption = tomSelect.options[val];
                                 if (!existingOption) {
-                                    tomSelect.addOption({value: val, label: val});
+                                    tomSelect.addOption({
+                                        value: val, 
+                                        label: this.decodeUnicodeEscapes(val)
+                                    });
                                 }
                             });
                         }

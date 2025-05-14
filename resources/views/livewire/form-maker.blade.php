@@ -43,8 +43,8 @@
       @if($field['type'] == 'multiselect')
         <x-tom-select
           class="multiselect"
-          wire:model="{{ sprintf('availablePropertiesData.%s', $field['name']) }}"
-          options="{{ sprintf('availablePropertiesSchema.%s.options', $key) }}"
+          wire:model="{!! sprintf('availablePropertiesData.%s', $field['name']) !!}"
+          options="{!! sprintf('availablePropertiesSchema.%s.options', $key) !!}"
           key="ms{{$key}}"
           :create="($field['custom_values'] ?? false) ? true : null"
           multiple
@@ -54,8 +54,8 @@
       @if($field['type'] == 'select')
         <x-tom-select
           class="multiselect"
-          wire:model="{{ sprintf('availablePropertiesData.%s', $field['name']) }}"
-          options="{{ sprintf('availablePropertiesSchema.%s.options', $key) }}"
+          wire:model="{!! sprintf('availablePropertiesData.%s', $field['name']) !!}"
+          options="{!! sprintf('availablePropertiesSchema.%s.options', $key) !!}"
           key="ms{{$key}}"
           :create="($field['custom_values'] ?? false) ? true : null"
         />
@@ -66,10 +66,10 @@
           <!-- Search input with button -->
           <div class="mb-4 flex">
             <div class="relative flex-grow">
-              <input 
-                type="text" 
-                wire:model="repeaterSearch.{{ $field['name'] }}" 
-                placeholder="Search rows..." 
+              <input
+                type="text"
+                wire:model="repeaterSearch.{{ $field['name'] }}"
+                placeholder="Search rows..."
                 class="w-full p-2 border border-gray-300 rounded !pl-10"
                 wire:keydown.enter.prevent="searchRepeater('{{ $field['name'] }}')"
               >
@@ -79,14 +79,14 @@
                 </svg>
               </div>
             </div>
-            <button 
+            <button
               wire:click="searchRepeater('{{ $field['name'] }}')"
               class="ml-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
             >
               Search
             </button>
           </div>
-          
+
           <!-- Repeater table -->
           <table class="w-full border-collapse border border-gray-300 mb-4">
             <thead>
@@ -102,7 +102,7 @@
               $paginatedRows = $this->getPaginatedRepeaterRows($field['name']);
               $rowsCount = count($paginatedRows);
             @endphp
-            
+
             @if($rowsCount === 0)
               <tr>
                 <td colspan="{{ count($field['subfields']) + 1 }}" class="border border-gray-300 p-4 text-center text-gray-500">
@@ -156,8 +156,8 @@
                       @if($subfield['type'] == 'multiselect')
                           <x-tom-select
                             class="multiselect"
-                            wire:model="{{ sprintf('availablePropertiesData.%s.%s.%s', $field['name'], $index, $subfield['name']) }}"
-                            options="{{ sprintf('availablePropertiesSchema.%s.subfields.%s.options', $key, $subfieldIndex) }}"
+                            wire:model="{!! sprintf('availablePropertiesData.%s.%s.%s', $field['name'], $index, $subfield['name']) !!}"
+                            options="{!! sprintf('availablePropertiesSchema.%s.subfields.%s.options', $key, $subfieldIndex) !!}"
                             key="ms{{$key}}{{$index}}"
                             :create="($subfield['custom_values'] ?? false) ? true : null"
                             multiple
@@ -166,8 +166,8 @@
 
                       @if($subfield['type'] == 'select')
                         <x-tom-select
-                          wire:model="{{ sprintf('availablePropertiesData.%s.%s.%s', $field['name'], $index, $subfield['name']) }}"
-                          options="{{ sprintf('availablePropertiesSchema.%s.subfields.%s.options', $key, $subfieldIndex) }}"
+                          wire:model="{!! sprintf('availablePropertiesData.%s.%s.%s', $field['name'], $index, $subfield['name']) !!}"
+                          options="{!! sprintf('availablePropertiesSchema.%s.subfields.%s.options', $key, $subfieldIndex) !!}"
                           key="ms{{$index}}"
                           :create="($subfield['custom_values'] ?? false) ? true : null"
                           wire:ignore
@@ -187,70 +187,70 @@
             @endif
             </tbody>
           </table>
-          
+
           <!-- Pagination controls -->
           @if($repeaterPagination[$field['name']]['totalPages'] > 1)
             <div class="flex items-center justify-between mb-4">
               <div class="text-sm text-gray-700">
-                Showing 
+                Showing
                 <span class="font-medium">{{ ($repeaterPagination[$field['name']]['currentPage'] - 1) * $itemsPerPage + 1 }}</span>
-                to 
+                to
                 <span class="font-medium">
                   {{ min($repeaterPagination[$field['name']]['currentPage'] * $itemsPerPage, $repeaterPagination[$field['name']]['totalItems']) }}
                 </span>
-                of 
+                of
                 <span class="font-medium">{{ $repeaterPagination[$field['name']]['totalItems'] }}</span>
                 rows
               </div>
               <div class="flex space-x-2">
-                <button 
+                <button
                   wire:click="changePage('{{ $field['name'] }}', {{ $repeaterPagination[$field['name']]['currentPage'] - 1 }})"
                   class="px-3 py-1 rounded border border-gray-300 {{ $repeaterPagination[$field['name']]['currentPage'] <= 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100' }}"
                   {{ $repeaterPagination[$field['name']]['currentPage'] <= 1 ? 'disabled' : '' }}
                 >
                   Previous
                 </button>
-                
+
                 @php
                   $currentPage = $repeaterPagination[$field['name']]['currentPage'];
                   $totalPages = $repeaterPagination[$field['name']]['totalPages'];
                   $range = 2; // Show 2 pages before and after current page
-                  
+
                   $startPage = max(1, $currentPage - $range);
                   $endPage = min($totalPages, $currentPage + $range);
-                  
+
                   // Always show first page
                   if ($startPage > 1) {
                     echo '<button wire:click="changePage(\'' . $field['name'] . '\', 1)" class="px-3 py-1 rounded border border-gray-300 hover:bg-gray-100">1</button>';
-                    
+
                     // Show ellipsis if there's a gap
                     if ($startPage > 2) {
                       echo '<span class="px-3 py-1">...</span>';
                     }
                   }
-                  
+
                   // Show page numbers
                   for ($i = $startPage; $i <= $endPage; $i++) {
                     $isCurrentPage = $i === $currentPage;
-                    $buttonClass = $isCurrentPage 
-                      ? 'px-3 py-1 rounded border border-blue-500 bg-blue-500 text-white' 
+                    $buttonClass = $isCurrentPage
+                      ? 'px-3 py-1 rounded border border-blue-500 bg-blue-500 text-white'
                       : 'px-3 py-1 rounded border border-gray-300 hover:bg-gray-100';
-                    
+
                     echo '<button wire:click="changePage(\'' . $field['name'] . '\', ' . $i . ')" class="' . $buttonClass . '">' . $i . '</button>';
                   }
-                  
+
                   // Always show last page
                   if ($endPage < $totalPages) {
                     // Show ellipsis if there's a gap
                     if ($endPage < $totalPages - 1) {
                       echo '<span class="px-3 py-1">...</span>';
                     }
-                    
+
                     echo '<button wire:click="changePage(\'' . $field['name'] . '\', ' . $totalPages . ')" class="px-3 py-1 rounded border border-gray-300 hover:bg-gray-100">' . $totalPages . '</button>';
                   }
                 @endphp
-                
-                <button 
+
+                <button
                   wire:click="changePage('{{ $field['name'] }}', {{ $repeaterPagination[$field['name']]['currentPage'] + 1 }})"
                   class="px-3 py-1 rounded border border-gray-300 {{ $repeaterPagination[$field['name']]['currentPage'] >= $repeaterPagination[$field['name']]['totalPages'] ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100' }}"
                   {{ $repeaterPagination[$field['name']]['currentPage'] >= $repeaterPagination[$field['name']]['totalPages'] ? 'disabled' : '' }}
@@ -260,7 +260,7 @@
               </div>
             </div>
           @endif
-          
+
           <button wire:click.prevent="addRepeaterRow('{{ $field['name'] }}')"
                   class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add Row
           </button>
@@ -275,9 +275,9 @@
     <p>{{ session('message') }}</p>
   @endif
 
-  <button 
-    wire:click.prevent.debounce.500ms="submit" 
-    wire:loading.attr="disabled" 
+  <button
+    wire:click.prevent.debounce.500ms="submit"
+    wire:loading.attr="disabled"
     class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
   >
     <span wire:loading.remove>Submit</span>
