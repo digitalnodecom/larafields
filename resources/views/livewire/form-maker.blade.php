@@ -1,4 +1,5 @@
 @php use Illuminate\Support\Facades\Session; @endphp
+
 <div class="space-y-8">
   @foreach($availablePropertiesSchema as $key => $field)
     <div class="flex flex-col">
@@ -101,7 +102,7 @@
             @php
               $paginatedRows = $this->getPaginatedRepeaterRows($field['name']);
               $rowsCount = count($paginatedRows);
-            @endphp
+              @endphp
 
             @if($rowsCount === 0)
               <tr>
@@ -114,62 +115,64 @@
                 </td>
               </tr>
             @else
-              @foreach($paginatedRows as $index => $repeaterItem)
+              @foreach($paginatedRows as $realIndex => $repeaterItem)
                 <tr class="repeater-row">
                   @foreach($field['subfields'] as $subfieldIndex => $subfield)
                     @php
-                      $subfield['key'] = sprintf("availablePropertiesData.%s.%s.%s", $field['name'], $index, $subfield['name']);
-                    @endphp
+                      // Create a copy of the subfield to avoid reference issues
+                      $currentSubfield = $subfield;
+                      $currentSubfield['key'] = sprintf("availablePropertiesData.%s.%s.%s", $field['name'], $realIndex, $subfield['name']);
+                      @endphp
                     <td class="border border-gray-300 p-2">
-                      @if($subfield['type'] == 'text')
-                        @include('Larafields::components.TextField', ['field' => $subfield])
+                      @if($currentSubfield['type'] == 'text')
+                        @include('Larafields::components.TextField', ['field' => $currentSubfield])
                       @endif
 
-                      @if($subfield['type'] == 'number')
-                        @include('Larafields::components.NumberField', ['field' => $subfield])
+                      @if($currentSubfield['type'] == 'number')
+                        @include('Larafields::components.NumberField', ['field' => $currentSubfield])
                       @endif
 
-                      @if($subfield['type'] == 'textarea')
-                        @include('Larafields::components.TextareaField', ['field' => $subfield])
+                      @if($currentSubfield['type'] == 'textarea')
+                        @include('Larafields::components.TextareaField', ['field' => $currentSubfield])
                       @endif
 
-                      @if($subfield['type'] == 'datetime')
-                        @include('Larafields::components.DateTimeField', ['field' => $subfield])
+                      @if($currentSubfield['type'] == 'datetime')
+                        @include('Larafields::components.DateTimeField', ['field' => $currentSubfield])
                       @endif
 
-                      @if($subfield['type'] == 'date')
-                        @include('Larafields::components.DateField', ['field' => $subfield])
+                      @if($currentSubfield['type'] == 'date')
+                        @include('Larafields::components.DateField', ['field' => $currentSubfield])
                       @endif
 
-                      @if($subfield['type'] == 'week')
-                        @include('Larafields::components.WeekField', ['field' => $subfield])
+                      @if($currentSubfield['type'] == 'week')
+                        @include('Larafields::components.WeekField', ['field' => $currentSubfield])
                       @endif
 
-                      @if($subfield['type'] == 'month')
-                        @include('Larafields::components.MonthField', ['field' => $subfield])
+                      @if($currentSubfield['type'] == 'month')
+                        @include('Larafields::components.MonthField', ['field' => $currentSubfield])
                       @endif
 
-                      @if($subfield['type'] == 'file')
-                        @include('Larafields::components.FileField', ['field' => $subfield])
+                      @if($currentSubfield['type'] == 'file')
+                        @include('Larafields::components.FileField', ['field' => $currentSubfield])
                       @endif
 
-                      @if($subfield['type'] == 'multiselect')
+                      @if($currentSubfield['type'] == 'multiselect')
                           <x-tom-select
                             class="multiselect"
-                            wire:model="{!! sprintf('availablePropertiesData.%s.%s.%s', $field['name'], $index, $subfield['name']) !!}"
+                            wire:model="{!! sprintf('availablePropertiesData.%s.%s.%s', $field['name'], $realIndex, $currentSubfield['name']) !!}"
                             options="{!! sprintf('availablePropertiesSchema.%s.subfields.%s.options', $key, $subfieldIndex) !!}"
-                            key="ms{{$key}}{{$index}}"
-                            :create="($subfield['custom_values'] ?? false) ? true : null"
+                            key="ms{{$key}}{{$realIndex}}"
+                            :create="($currentSubfield['custom_values'] ?? false) ? true : null"
                             multiple
                           />
                       @endif
 
-                      @if($subfield['type'] == 'select')
+                      @if($currentSubfield['type'] == 'select')
                         <x-tom-select
-                          wire:model="{!! sprintf('availablePropertiesData.%s.%s.%s', $field['name'], $index, $subfield['name']) !!}"
+                          wire:model="{!! sprintf('availablePropertiesData.%s.%s.%s', $field['name'], $realIndex, $currentSubfield['name']) !!}"
                           options="{!! sprintf('availablePropertiesSchema.%s.subfields.%s.options', $key, $subfieldIndex) !!}"
-                          key="ms{{$index}}"
-                          :create="($subfield['custom_values'] ?? false) ? true : null"
+                          key="ms{{$realIndex}}"
+                          :create="($currentSubfield['custom_values'] ?? false) ? true : null"
                           wire:ignore
                         />
                       @endif
@@ -177,7 +180,7 @@
                   @endforeach
                   <td class="border border-gray-300 p-2 text-center">
                     <button
-                      wire:click.prevent="removeRepeaterRow('{{ $field['name'] }}', {{ $index }})"
+                      wire:click.prevent="removeRepeaterRow('{{ $field['name'] }}', {{ $realIndex }})"
                       class="text-red-500 hover:text-red-700">
                       Remove
                     </button>
