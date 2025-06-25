@@ -21,7 +21,7 @@ trait HasRepeaterFields
         if (isset($this->repeaterPagination[$fieldName])) {
             $this->repeaterPagination[$fieldName]['currentPage'] = $this->repeaterPagination[$fieldName]['totalPages'];
         }
-        
+
         // Force Livewire to re-render by dispatching an event
         $this->dispatch('repeater-row-added', ['fieldName' => $fieldName]);
     }
