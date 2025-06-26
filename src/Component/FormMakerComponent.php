@@ -203,7 +203,8 @@ class FormMakerComponent extends Component
             return $rows;
         }
 
-        $filtered = collect($rows)->filter(function ($row) use ($searchQuery) {
+        // Filter rows based on search query
+        return collect($rows)->filter(function ($row) use ($searchQuery) {
             // Search in all subfields of the row
             foreach ($row as $value) {
                 // Convert value to string and check if it contains the search query
@@ -214,9 +215,7 @@ class FormMakerComponent extends Component
             }
 
             return false;
-        })->all();
-
-        return $filtered;
+        })->toArray();
     }
 
     /**
@@ -233,16 +232,7 @@ class FormMakerComponent extends Component
         $currentPage = $this->repeaterPagination[$fieldName]['currentPage'];
         $offset = ($currentPage - 1) * $this->itemsPerPage;
 
-        // Manual pagination to ensure we preserve the correct indices
-        $allKeys = array_keys($filteredRows);
-        $pageKeys = array_slice($allKeys, $offset, $this->itemsPerPage);
-
-        $result = [];
-        foreach ($pageKeys as $key) {
-            $result[$key] = $filteredRows[$key];
-        }
-
-        return $result;
+        return array_slice($filteredRows, $offset, $this->itemsPerPage, true);
     }
 
     /**
@@ -260,9 +250,6 @@ class FormMakerComponent extends Component
         $page = max(1, min($page, $totalPages));
 
         $this->repeaterPagination[$fieldName]['currentPage'] = $page;
-
-        // Force a complete re-render to ensure wire:model bindings are updated
-        $this->dispatch('page-changed', ['fieldName' => $fieldName, 'page' => $page]);
     }
 
     /**

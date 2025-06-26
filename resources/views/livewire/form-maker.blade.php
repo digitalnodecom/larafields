@@ -1,5 +1,4 @@
 @php use Illuminate\Support\Facades\Session; @endphp
-
 <div class="space-y-8">
   @foreach($availablePropertiesSchema as $key => $field)
     <div class="flex flex-col">
@@ -102,7 +101,7 @@
             @php
               $paginatedRows = $this->getPaginatedRepeaterRows($field['name']);
               $rowsCount = count($paginatedRows);
-              @endphp
+            @endphp
 
             @if($rowsCount === 0)
               <tr>
@@ -115,64 +114,62 @@
                 </td>
               </tr>
             @else
-              @foreach($paginatedRows as $realIndex => $repeaterItem)
+              @foreach($paginatedRows as $index => $repeaterItem)
                 <tr class="repeater-row">
                   @foreach($field['subfields'] as $subfieldIndex => $subfield)
                     @php
-                      // Create a copy of the subfield to avoid reference issues
-                      $currentSubfield = $subfield;
-                      $currentSubfield['key'] = sprintf("availablePropertiesData.%s.%s.%s", $field['name'], $realIndex, $subfield['name']);
-                      @endphp
+                      $subfield['key'] = sprintf("availablePropertiesData.%s.%s.%s", $field['name'], $index, $subfield['name']);
+                    @endphp
                     <td class="border border-gray-300 p-2">
-                      @if($currentSubfield['type'] == 'text')
-                        @include('Larafields::components.TextField', ['field' => $currentSubfield])
+                      @if($subfield['type'] == 'text')
+                        @include('Larafields::components.TextField', ['field' => $subfield])
                       @endif
 
-                      @if($currentSubfield['type'] == 'number')
-                        @include('Larafields::components.NumberField', ['field' => $currentSubfield])
+                      @if($subfield['type'] == 'number')
+                        @include('Larafields::components.NumberField', ['field' => $subfield])
                       @endif
 
-                      @if($currentSubfield['type'] == 'textarea')
-                        @include('Larafields::components.TextareaField', ['field' => $currentSubfield])
+                      @if($subfield['type'] == 'textarea')
+                        @include('Larafields::components.TextareaField', ['field' => $subfield])
                       @endif
 
-                      @if($currentSubfield['type'] == 'datetime')
-                        @include('Larafields::components.DateTimeField', ['field' => $currentSubfield])
+                      @if($subfield['type'] == 'datetime')
+                        @include('Larafields::components.DateTimeField', ['field' => $subfield])
                       @endif
 
-                      @if($currentSubfield['type'] == 'date')
-                        @include('Larafields::components.DateField', ['field' => $currentSubfield])
+                      @if($subfield['type'] == 'date')
+                        @include('Larafields::components.DateField', ['field' => $subfield])
                       @endif
 
-                      @if($currentSubfield['type'] == 'week')
-                        @include('Larafields::components.WeekField', ['field' => $currentSubfield])
+                      @if($subfield['type'] == 'week')
+                        @include('Larafields::components.WeekField', ['field' => $subfield])
                       @endif
 
-                      @if($currentSubfield['type'] == 'month')
-                        @include('Larafields::components.MonthField', ['field' => $currentSubfield])
+                      @if($subfield['type'] == 'month')
+                        @include('Larafields::components.MonthField', ['field' => $subfield])
                       @endif
 
-                      @if($currentSubfield['type'] == 'file')
-                        @include('Larafields::components.FileField', ['field' => $currentSubfield])
+                      @if($subfield['type'] == 'file')
+                        @include('Larafields::components.FileField', ['field' => $subfield])
                       @endif
 
-                      @if($currentSubfield['type'] == 'multiselect')
-                          <x-tom-select
-                            class="multiselect"
-                            wire:model="{!! sprintf('availablePropertiesData.%s.%s.%s', $field['name'], $realIndex, $currentSubfield['name']) !!}"
-                            options="{!! sprintf('availablePropertiesSchema.%s.subfields.%s.options', $key, $subfieldIndex) !!}"
-                            key="ms{{$key}}{{$realIndex}}"
-                            :create="($currentSubfield['custom_values'] ?? false) ? true : null"
-                            multiple
-                          />
-                      @endif
-
-                      @if($currentSubfield['type'] == 'select')
+                      @if($subfield['type'] == 'multiselect')
                         <x-tom-select
-                          wire:model="{!! sprintf('availablePropertiesData.%s.%s.%s', $field['name'], $realIndex, $currentSubfield['name']) !!}"
+                          class="multiselect"
+                          wire:model="{!! sprintf('availablePropertiesData.%s.%s.%s', $field['name'], $index, $subfield['name']) !!}"
                           options="{!! sprintf('availablePropertiesSchema.%s.subfields.%s.options', $key, $subfieldIndex) !!}"
-                          key="ms{{$realIndex}}"
-                          :create="($currentSubfield['custom_values'] ?? false) ? true : null"
+                          key="ms{{$key}}{{$index}}"
+                          :create="($subfield['custom_values'] ?? false) ? true : null"
+                          multiple
+                        />
+                      @endif
+
+                      @if($subfield['type'] == 'select')
+                        <x-tom-select
+                          wire:model="{!! sprintf('availablePropertiesData.%s.%s.%s', $field['name'], $index, $subfield['name']) !!}"
+                          options="{!! sprintf('availablePropertiesSchema.%s.subfields.%s.options', $key, $subfieldIndex) !!}"
+                          key="ms{{$index}}"
+                          :create="($subfield['custom_values'] ?? false) ? true : null"
                           wire:ignore
                         />
                       @endif
@@ -180,7 +177,7 @@
                   @endforeach
                   <td class="border border-gray-300 p-2 text-center">
                     <button
-                      wire:click.prevent="removeRepeaterRow('{{ $field['name'] }}', {{ $realIndex }})"
+                      wire:click.prevent="removeRepeaterRow('{{ $field['name'] }}', {{ $index }})"
                       class="text-red-500 hover:text-red-700">
                       Remove
                     </button>

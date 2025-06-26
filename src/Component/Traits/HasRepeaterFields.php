@@ -21,16 +21,12 @@ trait HasRepeaterFields
         if (isset($this->repeaterPagination[$fieldName])) {
             $this->repeaterPagination[$fieldName]['currentPage'] = $this->repeaterPagination[$fieldName]['totalPages'];
         }
-        
-        // Force Livewire to re-render by dispatching an event
-        $this->dispatch('repeater-row-added', ['fieldName' => $fieldName]);
     }
 
     public function removeRepeaterRow($fieldName, $index)
     {
         unset($this->availablePropertiesData[$fieldName][$index]);
-        // DO NOT use array_values() as it resets the keys and breaks pagination
-        // $this->availablePropertiesData[$fieldName] = array_values($this->availablePropertiesData[$fieldName]);
+        $this->availablePropertiesData[$fieldName] = array_values($this->availablePropertiesData[$fieldName]);
 
         // Update pagination after removing a row
         $this->updateRepeaterPagination($fieldName);
