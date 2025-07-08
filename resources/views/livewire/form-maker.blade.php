@@ -10,34 +10,74 @@
 
       @if($field['type'] == 'text')
         @include('Larafields::components.TextField', ['field' => $field])
+        @if($this->hasValidationError($field['key']))
+          <div class="text-red-500 text-sm mt-1">
+            {{ $this->getValidationError($field['key']) }}
+          </div>
+        @endif
       @endif
 
       @if($field['type'] == 'number')
         @include('Larafields::components.NumberField', ['field' => $field])
+        @if($this->hasValidationError($field['key']))
+          <div class="text-red-500 text-sm mt-1">
+            {{ $this->getValidationError($field['key']) }}
+          </div>
+        @endif
       @endif
 
       @if($field['type'] == 'textarea')
         @include('Larafields::components.TextareaField', ['field' => $field])
+        @if($this->hasValidationError($field['key']))
+          <div class="text-red-500 text-sm mt-1">
+            {{ $this->getValidationError($field['key']) }}
+          </div>
+        @endif
       @endif
 
       @if($field['type'] == 'datetime')
         @include('Larafields::components.DateTimeField', ['field' => $field])
+        @if($this->hasValidationError($field['key']))
+          <div class="text-red-500 text-sm mt-1">
+            {{ $this->getValidationError($field['key']) }}
+          </div>
+        @endif
       @endif
 
       @if($field['type'] == 'date')
         @include('Larafields::components.DateField', ['field' => $field])
+        @if($this->hasValidationError($field['key']))
+          <div class="text-red-500 text-sm mt-1">
+            {{ $this->getValidationError($field['key']) }}
+          </div>
+        @endif
       @endif
 
       @if($field['type'] == 'week')
         @include('Larafields::components.WeekField', ['field' => $field])
+        @if($this->hasValidationError($field['key']))
+          <div class="text-red-500 text-sm mt-1">
+            {{ $this->getValidationError($field['key']) }}
+          </div>
+        @endif
       @endif
 
       @if($field['type'] == 'month')
         @include('Larafields::components.MonthField', ['field' => $field])
+        @if($this->hasValidationError($field['key']))
+          <div class="text-red-500 text-sm mt-1">
+            {{ $this->getValidationError($field['key']) }}
+          </div>
+        @endif
       @endif
 
       @if($field['type'] == 'file')
         @include('Larafields::components.FileField', ['field' => $field])
+        @if($this->hasValidationError($field['key']))
+          <div class="text-red-500 text-sm mt-1">
+            {{ $this->getValidationError($field['key']) }}
+          </div>
+        @endif
       @endif
 
       @if($field['type'] == 'multiselect')
@@ -49,6 +89,11 @@
           :create="($field['custom_values'] ?? false) ? true : null"
           multiple
         />
+        @if($this->hasValidationError($field['key']))
+          <div class="text-red-500 text-sm mt-1">
+            {{ $this->getValidationError($field['key']) }}
+          </div>
+        @endif
       @endif
 
       @if($field['type'] == 'select')
@@ -59,6 +104,11 @@
           key="ms{{$key}}"
           :create="($field['custom_values'] ?? false) ? true : null"
         />
+        @if($this->hasValidationError($field['key']))
+          <div class="text-red-500 text-sm mt-1">
+            {{ $this->getValidationError($field['key']) }}
+          </div>
+        @endif
       @endif
 
       @if($field['type'] == 'repeater')
@@ -121,58 +171,66 @@
                       $subfield['key'] = sprintf("availablePropertiesData.%s.%s.%s", $field['name'], $index, $subfield['name']);
                     @endphp
                     <td class="border border-gray-300 p-2">
-                      @if($subfield['type'] == 'text')
-                        @include('Larafields::components.TextField', ['field' => $subfield])
-                      @endif
+                      <div>
+                        @if($subfield['type'] == 'text')
+                          @include('Larafields::components.TextField', ['field' => $subfield])
+                        @endif
 
-                      @if($subfield['type'] == 'number')
-                        @include('Larafields::components.NumberField', ['field' => $subfield])
-                      @endif
+                        @if($subfield['type'] == 'number')
+                          @include('Larafields::components.NumberField', ['field' => $subfield])
+                        @endif
 
-                      @if($subfield['type'] == 'textarea')
-                        @include('Larafields::components.TextareaField', ['field' => $subfield])
-                      @endif
+                        @if($subfield['type'] == 'textarea')
+                          @include('Larafields::components.TextareaField', ['field' => $subfield])
+                        @endif
 
-                      @if($subfield['type'] == 'datetime')
-                        @include('Larafields::components.DateTimeField', ['field' => $subfield])
-                      @endif
+                        @if($subfield['type'] == 'datetime')
+                          @include('Larafields::components.DateTimeField', ['field' => $subfield])
+                        @endif
 
-                      @if($subfield['type'] == 'date')
-                        @include('Larafields::components.DateField', ['field' => $subfield])
-                      @endif
+                        @if($subfield['type'] == 'date')
+                          @include('Larafields::components.DateField', ['field' => $subfield])
+                        @endif
 
-                      @if($subfield['type'] == 'week')
-                        @include('Larafields::components.WeekField', ['field' => $subfield])
-                      @endif
+                        @if($subfield['type'] == 'week')
+                          @include('Larafields::components.WeekField', ['field' => $subfield])
+                        @endif
 
-                      @if($subfield['type'] == 'month')
-                        @include('Larafields::components.MonthField', ['field' => $subfield])
-                      @endif
+                        @if($subfield['type'] == 'month')
+                          @include('Larafields::components.MonthField', ['field' => $subfield])
+                        @endif
 
-                      @if($subfield['type'] == 'file')
-                        @include('Larafields::components.FileField', ['field' => $subfield])
-                      @endif
+                        @if($subfield['type'] == 'file')
+                          @include('Larafields::components.FileField', ['field' => $subfield])
+                        @endif
 
-                      @if($subfield['type'] == 'multiselect')
-                        <x-tom-select
-                          class="multiselect"
-                          wire:model="{!! sprintf('availablePropertiesData.%s.%s.%s', $field['name'], $index, $subfield['name']) !!}"
-                          options="{!! sprintf('availablePropertiesSchema.%s.subfields.%s.options', $key, $subfieldIndex) !!}"
-                          key="ms{{$key}}{{$index}}"
-                          :create="($subfield['custom_values'] ?? false) ? true : null"
-                          multiple
-                        />
-                      @endif
+                        @if($subfield['type'] == 'multiselect')
+                          <x-tom-select
+                            class="multiselect"
+                            wire:model="{!! sprintf('availablePropertiesData.%s.%s.%s', $field['name'], $index, $subfield['name']) !!}"
+                            options="{!! sprintf('availablePropertiesSchema.%s.subfields.%s.options', $key, $subfieldIndex) !!}"
+                            key="ms{{$key}}{{$index}}"
+                            :create="($subfield['custom_values'] ?? false) ? true : null"
+                            multiple
+                          />
+                        @endif
 
-                      @if($subfield['type'] == 'select')
-                        <x-tom-select
-                          wire:model="{!! sprintf('availablePropertiesData.%s.%s.%s', $field['name'], $index, $subfield['name']) !!}"
-                          options="{!! sprintf('availablePropertiesSchema.%s.subfields.%s.options', $key, $subfieldIndex) !!}"
-                          key="ms{{$index}}"
-                          :create="($subfield['custom_values'] ?? false) ? true : null"
-                          wire:ignore
-                        />
-                      @endif
+                        @if($subfield['type'] == 'select')
+                          <x-tom-select
+                            wire:model="{!! sprintf('availablePropertiesData.%s.%s.%s', $field['name'], $index, $subfield['name']) !!}"
+                            options="{!! sprintf('availablePropertiesSchema.%s.subfields.%s.options', $key, $subfieldIndex) !!}"
+                            key="ms{{$index}}"
+                            :create="($subfield['custom_values'] ?? false) ? true : null"
+                            wire:ignore
+                          />
+                        @endif
+
+                        @if($this->hasValidationError($subfield['key']))
+                          <div class="text-red-500 text-xs mt-1">
+                            {{ $this->getValidationError($subfield['key']) }}
+                          </div>
+                        @endif
+                      </div>
                     </td>
                   @endforeach
                   <td class="border border-gray-300 p-2 text-center">

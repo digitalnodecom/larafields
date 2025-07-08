@@ -386,6 +386,75 @@ Group of fields that can be repeated multiple times.
 ]
 ```
 
+## Repeater Field Validation
+
+The package includes a validation system that allows you to enforce data integrity rules on your form fields, including unique validation within repeater fields.
+
+### Unique Within Repeater Validation
+
+You can ensure that values within a repeater field are unique by adding validation rules to your field schema. This is particularly useful for fields like categories, IDs, or names that should not be duplicated within the same repeater.
+
+```php
+[
+    'type' => 'repeater',
+    'label' => 'Category Mappings',
+    'name' => 'vendor_mappings',
+    'subfields' => [
+        [
+            'type' => 'text',
+            'label' => 'Vendor Category',
+            'name' => 'vendor_category',
+            'defaultValue' => '',
+            'required' => true,
+            'characterLimit' => 50,
+            'validation' => [
+                'unique_within_repeater' => true,
+                'unique_message' => 'This vendor category already exists. Please choose a different name.',
+            ],
+        ],
+        [
+            'type' => 'select',
+            'label' => 'Product Gender',
+            'name' => 'product_gender',
+            'defaultValue' => [],
+            'required' => true,
+            'options' => [
+                [
+                    'value' => 'men',
+                    'label' => 'Men',
+                ],
+                [
+                    'value' => 'women',
+                    'label' => 'Women',
+                ],
+                [
+                    'value' => 'unisex',
+                    'label' => 'Unisex',
+                ],
+            ],
+        ],
+        // ... other subfields
+    ],
+]
+```
+
+### Validation Features
+
+- **Case-insensitive comparison**: "Test" and "test" are considered duplicates
+- **Whitespace trimming**: Leading and trailing spaces are ignored during comparison
+- **Empty value handling**: Empty values are ignored (required validation handles empty fields separately)
+- **Error display**: Validation errors appear below each field in red text
+- **Form submission prevention**: Forms with validation errors cannot be submitted until fixed
+
+### Validation Rules
+
+The validation system supports the following rules:
+
+- `unique_within_repeater`: Ensures the value is unique within the current repeater field
+- `unique_message`: Custom error message to display when uniqueness validation fails
+- `required`: Field must have a value (existing functionality)
+- `characterLimit`: Maximum number of characters allowed (existing functionality)
+- 
 ## Adding Field Groups Programmatically
 
 You can programmatically add new field groups using the `FormMaker::add_group()` method. This can be added to an action hook in your theme or plugin:

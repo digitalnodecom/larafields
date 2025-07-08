@@ -4,6 +4,7 @@ namespace DigitalNode\Larafields\Component;
 
 use DigitalNode\Larafields\Component\Traits\HasProcessesFields;
 use DigitalNode\Larafields\Component\Traits\HasRepeaterFields;
+use DigitalNode\Larafields\Component\Traits\HasValidation;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -11,7 +12,7 @@ use Livewire\WithFileUploads;
 
 class FormMakerComponent extends Component
 {
-    use HasProcessesFields, HasRepeaterFields, WithFileUploads;
+    use HasProcessesFields, HasRepeaterFields, WithFileUploads, HasValidation;
 
     public array $availablePropertiesSchema = [];
 
@@ -106,6 +107,15 @@ class FormMakerComponent extends Component
 
     public function submit(): void
     {
+        // Clear previous validation errors
+        $this->clearValidationErrors();
+
+        // Validate the form before submission
+        if (!$this->validateForm()) {
+            session()->flash('message', 'Please fix the validation errors before submitting.');
+            return;
+        }
+
         try {
             DB::beginTransaction();
             collect($this->availablePropertiesData)
