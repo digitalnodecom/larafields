@@ -12,7 +12,7 @@ use Livewire\WithFileUploads;
 
 class FormMakerComponent extends Component
 {
-    use HasProcessesFields, HasRepeaterFields, WithFileUploads, HasValidation;
+    use HasProcessesFields, HasRepeaterFields, HasValidation, WithFileUploads;
 
     public array $availablePropertiesSchema = [];
 
@@ -111,8 +111,9 @@ class FormMakerComponent extends Component
         $this->clearValidationErrors();
 
         // Validate the form before submission
-        if (!$this->validateForm()) {
+        if (! $this->validateForm()) {
             session()->flash('message', 'Please fix the validation errors before submitting.');
+
             return;
         }
 

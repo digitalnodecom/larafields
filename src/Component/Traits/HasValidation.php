@@ -20,20 +20,20 @@ trait HasValidation
         foreach ($this->availablePropertiesSchema as $field) {
             if ($field['type'] === 'repeater') {
                 $repeaterErrors = $this->validateRepeaterField($field);
-                if (!empty($repeaterErrors)) {
+                if (! empty($repeaterErrors)) {
                     $this->validationErrors = array_merge($this->validationErrors, $repeaterErrors);
                     $hasErrors = true;
                 }
             } else {
                 $fieldErrors = $this->validateSingleField($field);
-                if (!empty($fieldErrors)) {
+                if (! empty($fieldErrors)) {
                     $this->validationErrors = array_merge($this->validationErrors, $fieldErrors);
                     $hasErrors = true;
                 }
             }
         }
 
-        return !$hasErrors;
+        return ! $hasErrors;
     }
 
     /**
@@ -42,12 +42,12 @@ trait HasValidation
     private function validateSingleField(array $field): array
     {
         $errors = [];
-        $fieldKey = 'availablePropertiesData.' . $field['name'];
+        $fieldKey = 'availablePropertiesData.'.$field['name'];
         $value = $this->availablePropertiesData[$field['name']] ?? '';
 
         $rules = $this->buildValidationRules($field);
-        
-        if (!empty($rules)) {
+
+        if (! empty($rules)) {
             $validator = Validator::make(
                 [$field['name'] => $value],
                 [$field['name'] => $rules]
@@ -75,8 +75,8 @@ trait HasValidation
                 $value = $rowData[$subfield['name']] ?? '';
 
                 $rules = $this->buildValidationRules($subfield, $field, $rowIndex);
-                
-                if (!empty($rules)) {
+
+                if (! empty($rules)) {
                     $validator = Validator::make(
                         [$subfield['name'] => $value],
                         [$subfield['name'] => $rules]
@@ -106,7 +106,7 @@ trait HasValidation
 
         // Character limit validation
         if (isset($field['characterLimit'])) {
-            $rules[] = 'max:' . $field['characterLimit'];
+            $rules[] = 'max:'.$field['characterLimit'];
         }
 
         // Custom validation rules
@@ -118,7 +118,7 @@ trait HasValidation
                 if ($parentField && $rowIndex !== null) {
                     $repeaterData = $this->availablePropertiesData[$parentField['name']] ?? [];
                     $message = $validation['unique_message'] ?? 'This value already exists.';
-                    
+
                     $rules[] = new UniqueWithinRepeater(
                         $repeaterData,
                         $field['name'],
