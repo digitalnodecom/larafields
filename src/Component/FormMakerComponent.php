@@ -107,11 +107,12 @@ class FormMakerComponent extends Component
         $this->clearValidationErrors();
 
         // Validate the form before submission
-        if (!$this->validateForm()) {
+        if (! $this->validateForm()) {
             // Navigate to the first page with validation errors
             $this->navigateToFirstErrorPage();
 
             session()->flash('message', $this->getValidationErrorSummary());
+
             return;
         }
 

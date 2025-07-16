@@ -233,16 +233,16 @@ trait HasValidation
         }
 
         $errorPages = [];
-        
+
         foreach ($this->validationErrors as $fieldKey => $errorMessage) {
             // Check if this is a repeater field error
             if (preg_match('/availablePropertiesData\.([^.]+)\.(\d+)\./', $fieldKey, $matches)) {
                 $fieldName = $matches[1];
                 $rowIndex = (int) $matches[2];
-                
+
                 // Calculate which page this row would be on
                 $page = $this->getPageForRowIndex($fieldName, $rowIndex);
-                
+
                 if ($page > 0) {
                     $errorPages[] = $page;
                 }
@@ -259,7 +259,8 @@ trait HasValidation
         if (count($uniquePages) === 1) {
             return sprintf('Please fix the validation errors on page %d before submitting.', $uniquePages[0]);
         } else {
-            $pageList = implode(', ', array_slice($uniquePages, 0, -1)) . ' and ' . end($uniquePages);
+            $pageList = implode(', ', array_slice($uniquePages, 0, -1)).' and '.end($uniquePages);
+
             return sprintf('Please fix the validation errors on pages %s before submitting.', $pageList);
         }
     }
@@ -269,17 +270,17 @@ trait HasValidation
      */
     private function getPageForRowIndex(string $fieldName, int $rowIndex): int
     {
-        if (!isset($this->repeaterPagination[$fieldName])) {
+        if (! isset($this->repeaterPagination[$fieldName])) {
             return 1;
         }
 
         // Get filtered rows to account for search
         $filteredRows = $this->getFilteredRepeaterRows($fieldName);
         $filteredKeys = array_keys($filteredRows);
-        
+
         // Find the position of this row index in the filtered results
         $position = array_search($rowIndex, $filteredKeys);
-        
+
         if ($position === false) {
             return 1;
         }
@@ -302,13 +303,14 @@ trait HasValidation
             if (preg_match('/availablePropertiesData\.([^.]+)\.(\d+)\./', $fieldKey, $matches)) {
                 $fieldName = $matches[1];
                 $rowIndex = (int) $matches[2];
-                
+
                 // Calculate which page this row would be on
                 $page = $this->getPageForRowIndex($fieldName, $rowIndex);
-                
+
                 if ($page > 0 && isset($this->repeaterPagination[$fieldName])) {
                     // Navigate to the page with the error
                     $this->changePage($fieldName, $page);
+
                     return; // Navigate to the first error found
                 }
             }
