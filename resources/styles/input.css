@@ -13,4 +13,8 @@
     margin: 2px 0 !important;
     width: fit-content !important;
   }
+
+  .recursive-field > input {
+    width: 100%;
+  }
 }

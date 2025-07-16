@@ -3,5 +3,6 @@
   wire:key="{{ $field['key'] }}"
   type="month"
   name="{{ $field['name'] }}"
+  class="w-full"
   @required($field['required'])
 />
