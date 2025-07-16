@@ -29,7 +29,7 @@ class FormMakerComponent extends Component
 
     public array $repeaterSearch = [];
 
-    public int $itemsPerPage = 25;
+    public int $itemsPerPage = 5;
 
     private ?string $pageContext = null;
 
@@ -112,7 +112,10 @@ class FormMakerComponent extends Component
 
         // Validate the form before submission
         if (!$this->validateForm()) {
-            session()->flash('message', 'Please fix the validation errors before submitting.');
+            // Navigate to the first page with validation errors
+            $this->navigateToFirstErrorPage();
+
+            session()->flash('message', $this->getValidationErrorSummary());
             return;
         }
 
