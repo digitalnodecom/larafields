@@ -52,12 +52,8 @@ class FormMakerComponent extends Component
         $existingData = $this->fetchExistingFormData($group);
         $this->processFormFields($group, $existingData);
 
-        // Initialize pagination for repeater fields
-        foreach ($this->availablePropertiesSchema as $key => $field) {
-            if ($field['type'] === 'repeater') {
-                $this->initRepeaterPagination($field['name']);
-            }
-        }
+        // Initialize pagination for repeater fields (including nested ones)
+        $this->initializeAllRepeaterPagination($this->availablePropertiesSchema);
     }
 
     private function setGroupKeys(array $group): void
@@ -151,12 +147,8 @@ class FormMakerComponent extends Component
 
     public function render()
     {
-        // Process repeater fields for pagination and search
-        foreach ($this->availablePropertiesSchema as $key => $field) {
-            if ($field['type'] === 'repeater' && isset($this->availablePropertiesData[$field['name']])) {
-                $this->updateRepeaterPagination($field['name']);
-            }
-        }
+        // Process repeater fields for pagination and search (including nested ones)
+        $this->updateAllRepeaterPagination($this->availablePropertiesSchema);
 
         return view('Larafields::livewire.form-maker')
             ->layout('Larafields::livewire.layout');
@@ -205,12 +197,13 @@ class FormMakerComponent extends Component
      */
     public function getFilteredRepeaterRows(string $fieldName): array
     {
-        if (! isset($this->availablePropertiesData[$fieldName])) {
+        $rows = data_get($this->availablePropertiesData, $fieldName, []);
+        $searchQuery = $this->repeaterSearch[$fieldName] ?? '';
+
+        // Ensure we return an array
+        if (!is_array($rows)) {
             return [];
         }
-
-        $rows = $this->availablePropertiesData[$fieldName];
-        $searchQuery = $this->repeaterSearch[$fieldName] ?? '';
 
         if (empty($searchQuery)) {
             return $rows;
@@ -303,5 +296,44 @@ class FormMakerComponent extends Component
         }
 
         return $repeaterField;
+    }
+    
+    /**
+     * Initialize pagination for all repeater fields recursively
+     */
+    private function initializeAllRepeaterPagination($fields, $parentPath = '')
+    {
+        foreach ($fields as $field) {
+            if ($field['type'] === 'repeater') {
+                $fieldPath = $parentPath ? "{$parentPath}.{$field['name']}" : $field['name'];
+                $this->initRepeaterPagination($fieldPath);
+                
+                // Recursively initialize nested repeaters
+                if (isset($field['subfields'])) {
+                    $this->initializeAllRepeaterPagination($field['subfields'], $fieldPath);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Update pagination for all repeater fields recursively
+     */
+    private function updateAllRepeaterPagination($fields, $parentPath = '')
+    {
+        foreach ($fields as $field) {
+            if ($field['type'] === 'repeater') {
+                $fieldPath = $parentPath ? "{$parentPath}.{$field['name']}" : $field['name'];
+                
+                if (data_get($this->availablePropertiesData, $fieldPath)) {
+                    $this->updateRepeaterPagination($fieldPath);
+                }
+                
+                // Recursively update nested repeaters
+                if (isset($field['subfields'])) {
+                    $this->updateAllRepeaterPagination($field['subfields'], $fieldPath);
+                }
+            }
+        }
     }
 }

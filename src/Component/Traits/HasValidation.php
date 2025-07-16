@@ -17,33 +17,56 @@ trait HasValidation
         $this->validationErrors = [];
         $hasErrors = false;
 
-        foreach ($this->availablePropertiesSchema as $field) {
-            if ($field['type'] === 'repeater') {
-                $repeaterErrors = $this->validateRepeaterField($field);
-                if (! empty($repeaterErrors)) {
-                    $this->validationErrors = array_merge($this->validationErrors, $repeaterErrors);
-                    $hasErrors = true;
-                }
-            } else {
-                $fieldErrors = $this->validateSingleField($field);
-                if (! empty($fieldErrors)) {
-                    $this->validationErrors = array_merge($this->validationErrors, $fieldErrors);
-                    $hasErrors = true;
-                }
-            }
+        $errors = $this->validateFieldsRecursively($this->availablePropertiesSchema, '');
+        if (!empty($errors)) {
+            $this->validationErrors = array_merge($this->validationErrors, $errors);
+            $hasErrors = true;
         }
 
         return ! $hasErrors;
     }
 
     /**
-     * Validate a single field
+     * Validate fields recursively, supporting nested repeaters
      */
-    private function validateSingleField(array $field): array
+    private function validateFieldsRecursively($fields, string $parentPath = ''): array
     {
         $errors = [];
-        $fieldKey = 'availablePropertiesData.'.$field['name'];
-        $value = $this->availablePropertiesData[$field['name']] ?? '';
+        
+        // Convert Collection to array if needed
+        if ($fields instanceof \Illuminate\Support\Collection) {
+            $fields = $fields->toArray();
+        }
+        
+        foreach ($fields as $field) {
+            $fieldPath = $parentPath ? "{$parentPath}.{$field['name']}" : $field['name'];
+            
+            if ($field['type'] === 'repeater') {
+                $repeaterErrors = $this->validateRepeaterFieldRecursively($field, $parentPath);
+                if (!empty($repeaterErrors)) {
+                    $errors = array_merge($errors, $repeaterErrors);
+                }
+            } else {
+                $fieldErrors = $this->validateSingleFieldRecursively($field, $parentPath);
+                if (!empty($fieldErrors)) {
+                    $errors = array_merge($errors, $fieldErrors);
+                }
+            }
+        }
+        
+        return $errors;
+    }
+
+    /**
+     * Validate a single field with support for nested paths
+     */
+    private function validateSingleFieldRecursively(array $field, string $parentPath = ''): array
+    {
+        $errors = [];
+        $fieldPath = $parentPath ? "{$parentPath}.{$field['name']}" : $field['name'];
+        $fieldKey = "availablePropertiesData.{$fieldPath}";
+        
+        $value = data_get($this->availablePropertiesData, $fieldPath, '');
 
         $rules = $this->buildValidationRules($field);
 
@@ -62,19 +85,53 @@ trait HasValidation
     }
 
     /**
-     * Validate a repeater field
+     * Validate a single field (legacy method for backward compatibility)
      */
-    private function validateRepeaterField(array $field): array
+    private function validateSingleField(array $field): array
+    {
+        return $this->validateSingleFieldRecursively($field, '');
+    }
+
+    /**
+     * Validate a repeater field recursively
+     */
+    private function validateRepeaterFieldRecursively(array $field, string $parentPath = ''): array
     {
         $errors = [];
-        $repeaterData = $this->availablePropertiesData[$field['name']] ?? [];
+        $fieldPath = $parentPath ? "{$parentPath}.{$field['name']}" : $field['name'];
+        $repeaterData = data_get($this->availablePropertiesData, $fieldPath, []);
+
+        // Ensure repeaterData is an array
+        if (!is_array($repeaterData)) {
+            // Skip validation if the data is not in the expected format
+            return $errors;
+        }
 
         foreach ($repeaterData as $rowIndex => $rowData) {
-            foreach ($field['subfields'] as $subfield) {
-                $subfieldKey = sprintf('availablePropertiesData.%s.%s.%s', $field['name'], $rowIndex, $subfield['name']);
+            // Ensure rowData is an array
+            if (!is_array($rowData)) {
+                continue;
+            }
+            
+            $rowPath = "{$fieldPath}.{$rowIndex}";
+            
+            // Recursively validate subfields
+            $subfields = $field['subfields'];
+            if ($subfields instanceof \Illuminate\Support\Collection) {
+                $subfields = $subfields->toArray();
+            }
+            
+            $subfieldErrors = $this->validateFieldsRecursively($subfields, $rowPath);
+            if (!empty($subfieldErrors)) {
+                $errors = array_merge($errors, $subfieldErrors);
+            }
+            
+            // Also validate each subfield for repeater-specific rules (like unique_within_repeater)
+            foreach ($subfields as $subfield) {
+                $subfieldKey = "availablePropertiesData.{$rowPath}.{$subfield['name']}";
                 $value = $rowData[$subfield['name']] ?? '';
 
-                $rules = $this->buildValidationRules($subfield, $field, $rowIndex);
+                $rules = $this->buildValidationRules($subfield, $field, (int) $rowIndex, $fieldPath);
 
                 if (! empty($rules)) {
                     $validator = Validator::make(
@@ -93,9 +150,17 @@ trait HasValidation
     }
 
     /**
+     * Validate a repeater field (legacy method for backward compatibility)
+     */
+    private function validateRepeaterField(array $field): array
+    {
+        return $this->validateRepeaterFieldRecursively($field, '');
+    }
+
+    /**
      * Build validation rules for a field
      */
-    private function buildValidationRules(array $field, ?array $parentField = null, ?int $rowIndex = null): array
+    private function buildValidationRules(array $field, ?array $parentField = null, ?int $rowIndex = null, ?string $repeaterPath = null): array
     {
         $rules = [];
 
@@ -116,7 +181,9 @@ trait HasValidation
             // Unique within repeater validation
             if ($validation['unique_within_repeater'] ?? false) {
                 if ($parentField && $rowIndex !== null) {
-                    $repeaterData = $this->availablePropertiesData[$parentField['name']] ?? [];
+                    // Use the provided repeater path or fallback to parent field name
+                    $dataPath = $repeaterPath ?? $parentField['name'];
+                    $repeaterData = data_get($this->availablePropertiesData, $dataPath, []);
                     $message = $validation['unique_message'] ?? 'This value already exists.';
 
                     $rules[] = new UniqueWithinRepeater(

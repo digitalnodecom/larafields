@@ -41,7 +41,7 @@
                 }
             }"
     x-init="
-                tomSelect = new TomSelect($refs.{{$attributes->get('key')}}, {
+                tomSelect = new TomSelect($refs['{{$attributes->get('key')}}'], {
                     options: getCleanOptions(),
                     {{ $attributes->get('create') ? 'create: true,' : false }}
                     items: selectValue || [],
@@ -88,7 +88,7 @@
                     tomSelect.setValue(currentValues);
                 });
               ;"
-    x-ref="{{ $attributes->get('key')  }}"
+    x-ref="{{ $attributes->get('key') }}"
     x-cloak
     {{ $attributes }}>
   </select>

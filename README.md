@@ -367,6 +367,7 @@ Group of fields that can be repeated multiple times.
     'type'          => 'repeater',
     'label'         => 'Repeatable Group',
     'name'          => 'repeater_field',
+    'showSearch'    => true,  // Optional: Enable search for nested repeaters (default: false)
     'subfields'     => [
         [
             'type'           => 'text',
@@ -381,6 +382,41 @@ Group of fields that can be repeated multiple times.
             'name'           => 'sub_field_2',
             'defaultValue'   => '',
             'required'       => true
+        ]
+    ]
+]
+```
+
+#### Repeater Field Options
+
+- **showSearch** (boolean, default: false): By default, only top-level repeaters display search functionality to save screen space. Set this to `true` to enable search for nested repeaters.
+
+Example with nested repeaters:
+```php
+[
+    'type' => 'repeater',
+    'label' => 'Contact Persons',
+    'name' => 'contact_persons',
+    'subfields' => [
+        [
+            'type' => 'text',
+            'label' => 'Name',
+            'name' => 'name',
+            'required' => true
+        ],
+        [
+            'type' => 'repeater',
+            'label' => 'Phone Numbers',
+            'name' => 'phone_numbers',
+            'showSearch' => true,  // Enable search for this nested repeater
+            'subfields' => [
+                [
+                    'type' => 'text',
+                    'label' => 'Phone',
+                    'name' => 'phone',
+                    'required' => true
+                ]
+            ]
         ]
     ]
 ]
