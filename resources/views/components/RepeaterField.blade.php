@@ -45,7 +45,7 @@
 
     <!-- Repeater table -->
     <div class="overflow-x-auto">
-        <table class="w-full border-collapse border border-gray-300 mb-4">
+        <table class="border-collapse border border-gray-300 mb-4">
             <thead>
                 <tr>
                     @foreach($field['subfields'] as $subfield)
