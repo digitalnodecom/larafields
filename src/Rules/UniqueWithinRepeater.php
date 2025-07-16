@@ -7,8 +7,11 @@ use Illuminate\Contracts\Validation\Rule;
 class UniqueWithinRepeater implements Rule
 {
     private array $repeaterData;
+
     private string $fieldName;
+
     private int $currentIndex;
+
     private string $message;
 
     public function __construct(array $repeaterData, string $fieldName, int $currentIndex, string $message = 'This value already exists.')
@@ -28,16 +31,16 @@ class UniqueWithinRepeater implements Rule
 
         // Case-insensitive uniqueness check with trimming
         $normalizedValue = strtolower(trim($value));
-        
+
         foreach ($this->repeaterData as $index => $row) {
             if ($index !== $this->currentIndex) {
                 $existingValue = strtolower(trim($row[$this->fieldName] ?? ''));
-                if ($existingValue === $normalizedValue && !empty($existingValue)) {
+                if ($existingValue === $normalizedValue && ! empty($existingValue)) {
                     return false;
                 }
             }
         }
-        
+
         return true;
     }
 

@@ -12,7 +12,7 @@ use Livewire\WithFileUploads;
 
 class FormMakerComponent extends Component
 {
-    use HasProcessesFields, HasRepeaterFields, WithFileUploads, HasValidation;
+    use HasProcessesFields, HasRepeaterFields, HasValidation, WithFileUploads;
 
     public array $availablePropertiesSchema = [];
 
@@ -29,7 +29,7 @@ class FormMakerComponent extends Component
 
     public array $repeaterSearch = [];
 
-    public int $itemsPerPage = 5;
+    public int $itemsPerPage = 25;
 
     private ?string $pageContext = null;
 
