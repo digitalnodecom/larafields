@@ -202,7 +202,7 @@ class FormMakerComponent extends Component
         $searchQuery = $this->repeaterSearch[$fieldName] ?? '';
 
         // Ensure we return an array
-        if (!is_array($rows)) {
+        if (! is_array($rows)) {
             return [];
         }
 
@@ -298,7 +298,7 @@ class FormMakerComponent extends Component
 
         return $repeaterField;
     }
-    
+
     /**
      * Initialize pagination for all repeater fields recursively
      */
@@ -308,7 +308,7 @@ class FormMakerComponent extends Component
             if ($field['type'] === 'repeater') {
                 $fieldPath = $parentPath ? "{$parentPath}.{$field['name']}" : $field['name'];
                 $this->initRepeaterPagination($fieldPath);
-                
+
                 // Recursively initialize nested repeaters
                 if (isset($field['subfields'])) {
                     $this->initializeAllRepeaterPagination($field['subfields'], $fieldPath);
@@ -316,7 +316,7 @@ class FormMakerComponent extends Component
             }
         }
     }
-    
+
     /**
      * Update pagination for all repeater fields recursively
      */
@@ -325,11 +325,11 @@ class FormMakerComponent extends Component
         foreach ($fields as $field) {
             if ($field['type'] === 'repeater') {
                 $fieldPath = $parentPath ? "{$parentPath}.{$field['name']}" : $field['name'];
-                
+
                 if (data_get($this->availablePropertiesData, $fieldPath)) {
                     $this->updateRepeaterPagination($fieldPath);
                 }
-                
+
                 // Recursively update nested repeaters
                 if (isset($field['subfields'])) {
                     $this->updateAllRepeaterPagination($field['subfields'], $fieldPath);
