@@ -183,6 +183,13 @@
     box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2) !important;
   }
 
+  .repeater-field,
+  .repeater,
+  .repeater table,
+  .repeater > div {
+    overflow: visible !important;
+  }
+
   .repeater button:hover {
     background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
     transform: translateY(-1px) !important;
