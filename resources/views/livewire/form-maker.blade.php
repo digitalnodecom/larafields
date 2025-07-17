@@ -1,5 +1,5 @@
 @php use Illuminate\Support\Facades\Session; @endphp
-<div class="space-y-8">
+<div class="space-y-8" style="max-width: 100%; overflow-x: auto; box-sizing: border-box; margin-right: 16px;">
   @foreach($availablePropertiesSchema as $key => $field)
     <div class="flex flex-col">
       <label class="text-xl font-semibold mb-3">{{ $field['label'] }}</label>

@@ -19,7 +19,7 @@
 <div class="repeater" data-nesting-level="{{ $nestingLevel }}">
     <!-- Search input with button - show for top-level repeaters or when showSearch is enabled -->
     @if($nestingLevel === 1 || ($field['showSearch'] ?? false))
-        <div class="mb-4 flex">
+        <div class="mb-4 flex flex-col sm:flex-row gap-2">
             <div class="relative flex-grow">
                 <input
                     type="text"
@@ -36,7 +36,7 @@
             </div>
             <button
                 wire:click="searchRepeater('{{ $repeaterFieldName }}')"
-                class="ml-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 w-full sm:w-auto"
             >
                 Search
             </button>
@@ -97,8 +97,8 @@
 
     <!-- Pagination controls -->
     @if(($this->repeaterPagination[$repeaterFieldName]['totalPages'] ?? 1) > 1)
-        <div class="flex items-center justify-between mb-4">
-            <div class="text-sm text-gray-700">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-3">
+            <div class="text-sm text-gray-700 text-center sm:text-left">
                 Showing
                 <span class="font-medium">{{ (($this->repeaterPagination[$repeaterFieldName]['currentPage'] ?? 1) - 1) * $this->itemsPerPage + 1 }}</span>
                 to
@@ -109,7 +109,7 @@
                 <span class="font-medium">{{ $this->repeaterPagination[$repeaterFieldName]['totalItems'] ?? 0 }}</span>
                 rows
             </div>
-            <div class="flex space-x-2">
+            <div class="flex flex-wrap justify-center sm:justify-end gap-1 sm:gap-2">
                 @php
                     $currentPage = $this->repeaterPagination[$repeaterFieldName]['currentPage'] ?? 1;
                     $totalPages = $this->repeaterPagination[$repeaterFieldName]['totalPages'] ?? 1;
@@ -117,16 +117,16 @@
                 
                 <button
                     wire:click="changePage('{{ $repeaterFieldName }}', {{ $currentPage - 1 }})"
-                    class="px-3 py-1 rounded border border-gray-300 {{ $currentPage <= 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100' }}"
+                    class="px-2 sm:px-3 py-1 text-xs sm:text-sm rounded border border-gray-300 {{ $currentPage <= 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100' }}"
                     {{ $currentPage <= 1 ? 'disabled' : '' }}
                 >
-                    Previous
+                    Prev
                 </button>
 
                 @for ($i = max(1, $currentPage - 2); $i <= min($totalPages, $currentPage + 2); $i++)
                     <button
                         wire:click="changePage('{{ $repeaterFieldName }}', {{ $i }})"
-                        class="px-3 py-1 rounded border {{ $i === $currentPage ? 'border-blue-500 bg-blue-500 text-white' : 'border-gray-300 hover:bg-gray-100' }}"
+                        class="px-2 sm:px-3 py-1 text-xs sm:text-sm rounded border {{ $i === $currentPage ? 'border-blue-500 bg-blue-500 text-white' : 'border-gray-300 hover:bg-gray-100' }}"
                     >
                         {{ $i }}
                     </button>
@@ -134,7 +134,7 @@
 
                 <button
                     wire:click="changePage('{{ $repeaterFieldName }}', {{ $currentPage + 1 }})"
-                    class="px-3 py-1 rounded border border-gray-300 {{ $currentPage >= $totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100' }}"
+                    class="px-2 sm:px-3 py-1 text-xs sm:text-sm rounded border border-gray-300 {{ $currentPage >= $totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100' }}"
                     {{ $currentPage >= $totalPages ? 'disabled' : '' }}
                 >
                     Next

@@ -3,6 +3,16 @@
 @import "tailwindcss/utilities.css" layer(utilities);
 
 @layer components {
+  /* WordPress Admin Container Constraints */
+  .wrap .repeater,
+  .postbox .repeater,
+  .form-table .repeater {
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    box-sizing: border-box !important;
+    margin-right: 20px !important;
+  }
+
   /* Modern Table Design */
   .repeater {
     border-radius: 12px !important;
@@ -12,6 +22,8 @@
     background: white !important;
     padding: 20px !important;
     width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .repeater table {
@@ -19,11 +31,13 @@
     border-collapse: separate !important;
     border-spacing: 0 !important;
     background: white !important;
-    width: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
     border-radius: 8px !important;
     overflow: hidden !important;
     border: 1px solid #e5e7eb !important;
-    display: table-caption !important;
+    display: table !important;
+    box-sizing: border-box !important;
   }
 
   /* Modern table headers */
@@ -222,7 +236,42 @@
     font-size: 14px !important;
     background: white !important;
     transition: all 0.2s ease !important;
-    min-width: 300px !important;
+    min-width: 200px !important;
+  }
+  
+  /* WordPress Admin Responsive Adjustments */
+  @media (max-width: 782px) {
+    .repeater {
+      padding: 15px !important;
+      margin: 0 !important;
+    }
+    
+    .repeater table {
+      font-size: 13px !important;
+    }
+    
+    .repeater table thead th,
+    .repeater table tbody td {
+      padding: 12px 8px !important;
+    }
+  }
+
+  /* Responsive search field */
+  @media (max-width: 640px) {
+    .repeater .relative input[placeholder="Search rows..."] {
+      min-width: 0 !important;
+      font-size: 16px !important; /* Prevents zoom on iOS */
+    }
+    
+    .repeater {
+      padding: 10px !important;
+    }
+    
+    .repeater table thead th,
+    .repeater table tbody td {
+      padding: 8px 4px !important;
+      font-size: 12px !important;
+    }
   }
 
   .repeater .relative input[placeholder="Search rows..."]:focus {
