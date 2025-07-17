@@ -109,7 +109,7 @@
   }
 
   .ts-control {
-    flex-direction: column !important;
+    flex-direction: row !important;
     align-items: flex-start !important;
     width: auto !important;
     display: inline-flex !important;
@@ -119,6 +119,7 @@
     box-shadow: none !important;
     transition: all 0.2s ease !important;
     min-width: 150px !important;
+    flex-wrap: wrap !important;
   }
 
   .ts-control:focus-within {
@@ -127,7 +128,7 @@
   }
 
   .ts-wrapper.multi .ts-control > div {
-    margin: 2px 0 !important;
+    margin: 2px 2px 2px 0 !important;
     width: fit-content !important;
     background: #f1f5f9 !important;
     border: 1px solid #e2e8f0 !important;
@@ -135,6 +136,18 @@
     padding: 4px 8px !important;
     font-size: 12px !important;
     color: #475569 !important;
+  }
+
+  /* Vertical layout for multiselect */
+  .multiselect-vertical .ts-wrapper.multi .ts-control {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .multiselect-vertical .ts-wrapper.multi .ts-control > div {
+    margin: 1px 0 !important;
+    width: 100% !important;
+    display: block !important;
   }
 
   /* Remove Button Styling */
@@ -176,27 +189,28 @@
     box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3) !important;
   }
 
-  /* Table cells with tom-select fields size to their content */
-  .repeater table td:has(.ts-wrapper) {
-    width: 1% !important;
+  .repeater-row td {
+    width: 100% !important;
   }
 
-  /* Fix first column width issue - only target tom-select fields */
-  .repeater table td:first-child:has(.ts-wrapper) {
-    width: 1% !important;
+  /* Fixed layout - equal width columns */
+  .repeater table.table-fixed-layout {
+    table-layout: fixed !important;
   }
 
-  /* Actions column should have fixed width */
-  .repeater table th:last-child,
-  .repeater table td:last-child {
+  .repeater table.table-fixed-layout th,
+  .repeater table.table-fixed-layout td {
+    width: auto !important;
+    min-width: auto !important;
+    max-width: none !important;
+  }
+
+  /* Actions column width (applies to auto layout only) */
+  .repeater table:not(.table-fixed-layout) th:last-child,
+  .repeater table:not(.table-fixed-layout) td:last-child {
     width: 100px !important;
     min-width: 100px !important;
     max-width: 100px !important;
-  }
-
-  /* Ensure first column (text fields) size to content */
-  .repeater table td:first-child:not(:has(.ts-wrapper)) {
-    width: 1% !important;
   }
 
   /* First column text fields should size to content */
@@ -238,7 +252,7 @@
     transition: all 0.2s ease !important;
     min-width: 200px !important;
   }
-  
+
   /* WordPress Admin Responsive Adjustments */
   @media (max-width: 782px) {
     .repeater {
