@@ -18,7 +18,7 @@ trait HasValidation
         $hasErrors = false;
 
         $errors = $this->validateFieldsRecursively($this->availablePropertiesSchema, '');
-        if (!empty($errors)) {
+        if (! empty($errors)) {
             $this->validationErrors = array_merge($this->validationErrors, $errors);
             $hasErrors = true;
         }
@@ -32,28 +32,28 @@ trait HasValidation
     private function validateFieldsRecursively($fields, string $parentPath = ''): array
     {
         $errors = [];
-        
+
         // Convert Collection to array if needed
         if ($fields instanceof \Illuminate\Support\Collection) {
             $fields = $fields->toArray();
         }
-        
+
         foreach ($fields as $field) {
             $fieldPath = $parentPath ? "{$parentPath}.{$field['name']}" : $field['name'];
-            
+
             if ($field['type'] === 'repeater') {
                 $repeaterErrors = $this->validateRepeaterFieldRecursively($field, $parentPath);
-                if (!empty($repeaterErrors)) {
+                if (! empty($repeaterErrors)) {
                     $errors = array_merge($errors, $repeaterErrors);
                 }
             } else {
                 $fieldErrors = $this->validateSingleFieldRecursively($field, $parentPath);
-                if (!empty($fieldErrors)) {
+                if (! empty($fieldErrors)) {
                     $errors = array_merge($errors, $fieldErrors);
                 }
             }
         }
-        
+
         return $errors;
     }
 
@@ -65,7 +65,7 @@ trait HasValidation
         $errors = [];
         $fieldPath = $parentPath ? "{$parentPath}.{$field['name']}" : $field['name'];
         $fieldKey = "availablePropertiesData.{$fieldPath}";
-        
+
         $value = data_get($this->availablePropertiesData, $fieldPath, '');
 
         $rules = $this->buildValidationRules($field);
@@ -102,30 +102,30 @@ trait HasValidation
         $repeaterData = data_get($this->availablePropertiesData, $fieldPath, []);
 
         // Ensure repeaterData is an array
-        if (!is_array($repeaterData)) {
+        if (! is_array($repeaterData)) {
             // Skip validation if the data is not in the expected format
             return $errors;
         }
 
         foreach ($repeaterData as $rowIndex => $rowData) {
             // Ensure rowData is an array
-            if (!is_array($rowData)) {
+            if (! is_array($rowData)) {
                 continue;
             }
-            
+
             $rowPath = "{$fieldPath}.{$rowIndex}";
-            
+
             // Recursively validate subfields
             $subfields = $field['subfields'];
             if ($subfields instanceof \Illuminate\Support\Collection) {
                 $subfields = $subfields->toArray();
             }
-            
+
             $subfieldErrors = $this->validateFieldsRecursively($subfields, $rowPath);
-            if (!empty($subfieldErrors)) {
+            if (! empty($subfieldErrors)) {
                 $errors = array_merge($errors, $subfieldErrors);
             }
-            
+
             // Also validate each subfield for repeater-specific rules (like unique_within_repeater)
             foreach ($subfields as $subfield) {
                 $subfieldKey = "availablePropertiesData.{$rowPath}.{$subfield['name']}";
