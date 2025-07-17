@@ -37,7 +37,6 @@
     color: #334155 !important;
     text-align: left !important;
     letter-spacing: 0.025em !important;
-    white-space: nowrap !important;
   }
 
   .repeater table thead th:first-child {
@@ -56,7 +55,6 @@
     background: white !important;
     vertical-align: middle !important;
     transition: all 0.2s ease !important;
-    white-space: nowrap !important;
   }
 
   /* Hover effects for rows */
@@ -216,7 +214,7 @@
   }
 
   /* Search field styling */
-  .repeater .mb-4 .relative input[placeholder="Search rows..."] {
+  .repeater .relative input[placeholder="Search rows..."] {
     width: 100% !important;
     padding: 12px 16px 12px 40px !important;
     border: 1px solid #d1d5db !important;
@@ -227,20 +225,21 @@
     min-width: 300px !important;
   }
 
-  .repeater .mb-4 .relative input[placeholder="Search rows..."]:focus {
+  .repeater .relative input[placeholder="Search rows..."]:focus {
     outline: none !important;
     border-color: #3b82f6 !important;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
   }
 
-  .repeater .mb-4 .relative .absolute {
+  .repeater .relative .absolute {
     left: 12px !important;
     top: 50% !important;
     transform: translateY(-50%) !important;
     color: #6b7280 !important;
   }
 
-  .repeater .mb-4 button {
+  .submit-btn,
+  .repeater button {
     background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
     color: white !important;
     border: none !important;
@@ -254,51 +253,10 @@
     min-width: 80px !important;
   }
 
-  .repeater .mb-4 button:hover {
+  .submit-btn:hover,
+  .repeater button:hover {
     background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
     transform: translateY(-1px) !important;
     box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3) !important;
-  }
-
-  /* Submit Button Styling */
-  button[wire\\:click*="submit"] {
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 8px !important;
-    padding: 12px 24px !important;
-    font-size: 14px !important;
-    font-weight: 500 !important;
-    transition: all 0.2s ease !important;
-    cursor: pointer !important;
-    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2), 0 0 0 0 rgba(59, 130, 246, 0.3) !important;
-  }
-
-  button[wire\\:click*="submit"]:hover {
-    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
-    transform: translateY(-1px) !important;
-    box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3), 0 0 20px rgba(59, 130, 246, 0.2) !important;
-  }
-
-  /* Blue Glowing Effect for All Blue Buttons */
-  .repeater button,
-  .repeater .mb-4 button,
-  button[wire\\:click*="submit"] {
-    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2), 0 0 0 0 rgba(59, 130, 246, 0.3) !important;
-  }
-
-  .repeater button:hover,
-  .repeater .mb-4 button:hover,
-  button[wire\\:click*="submit"]:hover {
-    box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3), 0 0 20px rgba(59, 130, 246, 0.2) !important;
-  }
-
-  /* Disabled state for submit button */
-  button[wire\\:click*="submit"]:disabled {
-    background: #9ca3af !important;
-    cursor: not-allowed !important;
-    opacity: 0.5 !important;
-    box-shadow: none !important;
-    transform: none !important;
   }
 }

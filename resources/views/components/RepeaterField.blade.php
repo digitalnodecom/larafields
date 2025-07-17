@@ -84,7 +84,6 @@
                             <td class="border border-gray-300 p-2 text-center">
                                 <button
                                     wire:click.prevent="removeRepeaterRow('{{ $repeaterFieldName }}', {{ $rowIndex }})"
-                                    class="text-red-500 hover:text-red-700"
                                 >
                                     Remove
                                 </button>
