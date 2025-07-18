@@ -29,7 +29,7 @@ class FormMakerComponent extends Component
 
     public array $repeaterSearch = [];
 
-    public int $itemsPerPage = 5;
+    public int $itemsPerPage = 25;
 
     private ?string $pageContext = null;
 
