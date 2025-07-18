@@ -257,7 +257,7 @@ class FormMakerComponent extends Component
         $page = max(1, min($page, $totalPages));
 
         $this->repeaterPagination[$fieldName]['currentPage'] = $page;
-        
+
         // Dispatch browser event to scroll to top
         $this->dispatch('scroll-to-top');
     }
