@@ -27,3 +27,14 @@
     <span wire:loading>Saving...</span>
   </button>
 </div>
+
+<script>
+document.addEventListener('livewire:init', () => {
+    Livewire.on('scroll-to-top', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+});
+</script>

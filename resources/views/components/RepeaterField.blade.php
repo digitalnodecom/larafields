@@ -115,6 +115,16 @@
                     $totalPages = $this->repeaterPagination[$repeaterFieldName]['totalPages'] ?? 1;
                 @endphp
                 
+                <!-- First button -->
+                <button
+                    wire:click="changePage('{{ $repeaterFieldName }}', 1)"
+                    class="px-2 sm:px-3 py-1 text-xs sm:text-sm rounded border border-gray-300 {{ $currentPage <= 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100' }}"
+                    {{ $currentPage <= 1 ? 'disabled' : '' }}
+                >
+                    First
+                </button>
+                
+                <!-- Previous button -->
                 <button
                     wire:click="changePage('{{ $repeaterFieldName }}', {{ $currentPage - 1 }})"
                     class="px-2 sm:px-3 py-1 text-xs sm:text-sm rounded border border-gray-300 {{ $currentPage <= 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100' }}"
@@ -123,22 +133,33 @@
                     Prev
                 </button>
 
+                <!-- Page numbers -->
                 @for ($i = max(1, $currentPage - 2); $i <= min($totalPages, $currentPage + 2); $i++)
                     <button
                         wire:click="changePage('{{ $repeaterFieldName }}', {{ $i }})"
                         class="px-2 sm:px-3 py-1 text-xs sm:text-sm rounded border {{ $i === $currentPage ? 'border-blue-600 bg-blue-600 text-white font-semibold shadow-md' : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400' }}"
-                        style="{{ $i === $currentPage ? 'background:rgb(19, 63, 158) !important; color: white !important; border-color: #2563eb !important;' : '' }}"
+                        style="{{ $i === $currentPage ? 'background:rgb(7, 36, 98) !important; color: white !important; border-color: #2563eb !important;' : '' }}"
                     >
                         {{ $i }}
                     </button>
                 @endfor
 
+                <!-- Next button -->
                 <button
                     wire:click="changePage('{{ $repeaterFieldName }}', {{ $currentPage + 1 }})"
                     class="px-2 sm:px-3 py-1 text-xs sm:text-sm rounded border border-gray-300 {{ $currentPage >= $totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100' }}"
                     {{ $currentPage >= $totalPages ? 'disabled' : '' }}
                 >
                     Next
+                </button>
+                
+                <!-- Last button -->
+                <button
+                    wire:click="changePage('{{ $repeaterFieldName }}', {{ $totalPages }})"
+                    class="px-2 sm:px-3 py-1 text-xs sm:text-sm rounded border border-gray-300 {{ $currentPage >= $totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100' }}"
+                    {{ $currentPage >= $totalPages ? 'disabled' : '' }}
+                >
+                    Last
                 </button>
             </div>
         </div>
