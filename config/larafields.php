@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'version' => '1.1.31',
+    'version' => '1.2.12',
     'forms' => [],
 ];
