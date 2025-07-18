@@ -126,7 +126,8 @@
                 @for ($i = max(1, $currentPage - 2); $i <= min($totalPages, $currentPage + 2); $i++)
                     <button
                         wire:click="changePage('{{ $repeaterFieldName }}', {{ $i }})"
-                        class="px-2 sm:px-3 py-1 text-xs sm:text-sm rounded border {{ $i === $currentPage ? 'border-blue-500 bg-blue-500 text-white' : 'border-gray-300 hover:bg-gray-100' }}"
+                        class="px-2 sm:px-3 py-1 text-xs sm:text-sm rounded border {{ $i === $currentPage ? 'border-blue-600 bg-blue-600 text-white font-semibold shadow-md' : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400' }}"
+                        style="{{ $i === $currentPage ? 'background:rgb(19, 63, 158) !important; color: white !important; border-color: #2563eb !important;' : '' }}"
                     >
                         {{ $i }}
                     </button>
