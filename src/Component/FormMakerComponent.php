@@ -5,6 +5,7 @@ namespace DigitalNode\Larafields\Component;
 use DigitalNode\Larafields\Component\Traits\HasProcessesFields;
 use DigitalNode\Larafields\Component\Traits\HasRepeaterFields;
 use DigitalNode\Larafields\Component\Traits\HasValidation;
+use DigitalNode\Larafields\Component\Traits\HasCsvExport;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -12,7 +13,7 @@ use Livewire\WithFileUploads;
 
 class FormMakerComponent extends Component
 {
-    use HasProcessesFields, HasRepeaterFields, HasValidation, WithFileUploads;
+    use HasProcessesFields, HasRepeaterFields, HasValidation, HasCsvExport, WithFileUploads;
 
     public array $availablePropertiesSchema = [];
 
