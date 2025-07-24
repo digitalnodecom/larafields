@@ -16,21 +16,21 @@ trait HasCsvExport
 
         return Response::streamDownload(function () use ($flattenedData) {
             $handle = fopen('php://output', 'w');
-            
+
             // Write CSV headers
-            if (!empty($flattenedData)) {
+            if (! empty($flattenedData)) {
                 fputcsv($handle, array_keys($flattenedData[0]));
-                
+
                 // Write data rows
                 foreach ($flattenedData as $row) {
                     fputcsv($handle, $row);
                 }
             }
-            
+
             fclose($handle);
         }, $filename, [
             'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
         ]);
     }
 
@@ -41,7 +41,7 @@ trait HasCsvExport
     {
         $timestamp = now()->format('Y-m-d_H-i-s');
         $formName = $this->getFormName();
-        
+
         return "{$formName}_export_{$timestamp}.csv";
     }
 
@@ -51,7 +51,7 @@ trait HasCsvExport
     private function getFormName(): string
     {
         // Try to get form name from schema
-        if (!empty($this->availablePropertiesSchema)) {
+        if (! empty($this->availablePropertiesSchema)) {
             $firstField = reset($this->availablePropertiesSchema);
             if (isset($firstField['label'])) {
                 return $this->sanitizeFilename($firstField['label']);
@@ -61,7 +61,7 @@ trait HasCsvExport
         // Fallback to object type and name
         $name = $this->groupObjectType;
         if ($this->groupObjectName) {
-            $name .= '_' . $this->groupObjectName;
+            $name .= '_'.$this->groupObjectName;
         }
 
         return $this->sanitizeFilename($name);
@@ -76,7 +76,7 @@ trait HasCsvExport
         $filename = preg_replace('/[^a-zA-Z0-9\s_-]/', '', $filename);
         $filename = preg_replace('/\s+/', '_', $filename);
         $filename = trim($filename, '_');
-        
+
         return strtolower($filename) ?: 'form_export';
     }
 
@@ -91,6 +91,7 @@ trait HasCsvExport
         // If no repeater fields, create a single row
         if ($maxRepeaterRows === 0) {
             $flattenedRows[] = $this->flattenSingleRow();
+
             return $flattenedRows;
         }
 
@@ -108,7 +109,7 @@ trait HasCsvExport
     private function getMaxRepeaterRows(): int
     {
         $maxRows = 0;
-        
+
         foreach ($this->availablePropertiesSchema as $field) {
             if ($field['type'] === 'repeater') {
                 $fieldData = $this->availablePropertiesData[$field['name']] ?? [];
@@ -125,7 +126,7 @@ trait HasCsvExport
     private function flattenSingleRow(): array
     {
         $row = [];
-        
+
         foreach ($this->availablePropertiesSchema as $field) {
             if ($field['type'] === 'repeater') {
                 // Handle repeater fields
@@ -146,7 +147,7 @@ trait HasCsvExport
     private function flattenRowAtIndex(int $index): array
     {
         $row = [];
-        
+
         foreach ($this->availablePropertiesSchema as $field) {
             if ($field['type'] === 'repeater') {
                 // Handle repeater fields
@@ -176,7 +177,7 @@ trait HasCsvExport
                 $row = array_merge($row, $this->flattenNestedRepeater($subfield, $rowData, $index));
             } else {
                 // Handle regular subfields
-                $columnName = $field['label'] . ' - ' . $subfield['label'];
+                $columnName = $field['label'].' - '.$subfield['label'];
                 $value = $rowData[$subfield['name']] ?? '';
                 $row[$columnName] = $this->formatFieldValue($value);
             }
@@ -196,19 +197,19 @@ trait HasCsvExport
         // For nested repeaters, we'll concatenate all rows into a single cell
         // or create separate columns for each nested row (configurable)
         $nestedValues = [];
-        
+
         foreach ($nestedData as $nestedIndex => $nestedRow) {
             $nestedRowValues = [];
-            
+
             foreach ($subfield['subfields'] as $nestedSubfield) {
                 $value = $nestedRow[$nestedSubfield['name']] ?? '';
-                $nestedRowValues[] = $nestedSubfield['label'] . ': ' . $this->formatFieldValue($value);
+                $nestedRowValues[] = $nestedSubfield['label'].': '.$this->formatFieldValue($value);
             }
-            
+
             $nestedValues[] = implode('; ', $nestedRowValues);
         }
 
-        $columnName = $subfield['label'] . ' (Nested)';
+        $columnName = $subfield['label'].' (Nested)';
         $row[$columnName] = implode(' | ', $nestedValues);
 
         return $row;
@@ -224,13 +225,15 @@ trait HasCsvExport
             if (empty($value)) {
                 return '';
             }
-            
+
             // Handle array values (multiselect, etc.)
             return implode(', ', array_map(function ($item) {
                 if (is_string($item) && $this->isJson($item)) {
                     $decoded = json_decode($item, true);
+
                     return $decoded['label'] ?? $item;
                 }
+
                 return is_array($item) ? json_encode($item) : (string) $item;
             }, $value));
         }
@@ -238,12 +241,12 @@ trait HasCsvExport
         if (is_string($value) && $this->isJson($value)) {
             // Handle JSON values (select fields with objects)
             $decoded = json_decode($value, true);
-            
+
             // Check if decoded value is an empty array
             if (is_array($decoded) && empty($decoded)) {
                 return '';
             }
-            
+
             return $decoded['label'] ?? $value;
         }
 
@@ -261,6 +264,7 @@ trait HasCsvExport
     private function isJson(string $string): bool
     {
         json_decode($string);
+
         return json_last_error() === JSON_ERROR_NONE;
     }
 }
