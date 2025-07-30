@@ -1,0 +1,19 @@
+{
+  "resources/js/app.js": {
+    "file": "assets/app-DVLKBoU_.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "css": [
+      "assets/input-Bg-LzQTo.css"
+    ]
+  },
+  "resources/styles/input.css": {
+    "file": "assets/input-Bg-LzQTo.css",
+    "src": "resources/styles/input.css",
+    "isEntry": true,
+    "names": [
+      "input.css"
+    ]
+  }
+}

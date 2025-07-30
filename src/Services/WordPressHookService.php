@@ -54,7 +54,7 @@ class WordPressHookService
     {
         wp_enqueue_style(
             'larafields-css',
-            home_url('/larafields/assets/lf.css'),
+            home_url('/larafields/assets/css/larafields.css'),
             ver: config('larafields.version')
         );
     }

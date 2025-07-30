@@ -77,7 +77,7 @@
     @endif
 
     @if($this->hasValidationError($fieldKey))
-        <div class="text-red-500 text-sm mt-1">
+        <div class="lftw-text-red-500 lftw-text-sm lftw-mt-1">
             {{ $this->getValidationError($fieldKey) }}
         </div>
     @endif

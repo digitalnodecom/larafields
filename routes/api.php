@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('larafields')->group(function () {
-    Route::get('/assets/lf.css', [AssetsController::class, 'css']);
+    Route::get('/assets/css/larafields.css', [AssetsController::class, 'css']);
     Route::get('/assets/js/larafields.js', [AssetsController::class, 'js']);
     Route::get('/assets/js/css/tom-select.css', [AssetsController::class, 'tomSelectCss']);
 });

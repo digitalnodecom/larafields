@@ -2,34 +2,24 @@
   "name": "abstract-form-builder",
   "version": "1.0.0",
   "description": "Abstract Form Builder Package",
+  "type": "module",
   "scripts": {
-    "dev:css": "npx @tailwindcss/cli -i ./resources/styles/input.css -o ./resources/styles/public/larafields.css --watch",
-    "dev:js": "webpack --watch",
-    "dev": "npm run dev:css & npm run dev:js",
-    "build:css:dev": "npx @tailwindcss/cli -i ./resources/styles/input.css -o ./resources/styles/public/larafields.css --sourcemap",
-    "build:css:prod": "npx @tailwindcss/cli -i ./resources/styles/input.css -o ./resources/styles/public/larafields.css --minify",
-    "build:js:dev": "NODE_ENV=development webpack",
-    "build:js:prod": "NODE_ENV=production webpack",
-    "build:dev": "npm run build:css:dev && npm run build:js:dev",
-    "build:prod": "npm run build:css:prod && npm run build:js:prod",
-    "build": "npm run build:prod",
-    "watch": "npm run dev"
+    "dev": "vite",
+    "build": "vite build"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "tailwindcss": "^4.0.8",
-    "tom-select": "^2.4.3",
-    "webpack": "^5.98.0",
-    "webpack-cli": "^6.0.1"
+    "tom-select": "^2.4.3"
   },
   "devDependencies": {
-    "@babel/core": "^7.26.9",
-    "@babel/preset-env": "^7.26.9",
     "@tailwindcss/forms": "^0.5.10",
+    "@tailwindcss/vite": "^4.1.11",
     "autoprefixer": "^10.4.16",
-    "babel-loader": "^10.0.0",
-    "postcss": "^8.4.31"
+    "laravel-vite-plugin": "^2.0.0",
+    "postcss": "^8.4.31",
+    "vite": "^7.0.6"
   }
 }

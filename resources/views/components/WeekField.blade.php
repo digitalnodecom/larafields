@@ -3,6 +3,6 @@
   wire:key="{{ $field['key'] }}"
   type="week"
   name="{{ $field['name'] }}"
-  class="w-full"
+  class="lftw-w-full"
   @required($field['required'])
 />
