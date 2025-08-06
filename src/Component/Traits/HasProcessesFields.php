@@ -46,7 +46,8 @@ trait HasProcessesFields
 
         $fields->each(function ($field) use ($existingData, $group) {
             if ($field['type'] == 'multiselect' && isset($existingData[$field['name']]['field_value'])) {
-                $existingData[$field['name']]['field_value'] = collect($existingData[$field['name']]['field_value'])->map(fn ($row) => json_encode($row))->toArray();
+                // Keep multiselect data as-is, no need for additional JSON encoding
+                // The data is already properly structured for frontend consumption
             }
 
             $field = $this->getGroupIndividualField($field, $group);
@@ -137,7 +138,8 @@ trait HasProcessesFields
                     }
 
                     if ($subfield['type'] == 'multiselect' && is_array($value)) {
-                        return collect($value)->map(fn ($attr) => json_encode($attr))->toArray();
+                        // Keep multiselect data as-is for proper frontend display
+                        return $value;
                     }
 
                     if ($subfield['type'] == 'select' && is_array($value)) {
