@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "prepare-release": "npm run build && git add public/ && git commit -m 'Build assets for release'"
   },
   "keywords": [],
   "author": "",

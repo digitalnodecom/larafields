@@ -1,6 +1,14 @@
 name: Build Assets
 
 on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'resources/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'vite.config.js'
+      - 'tailwind.config.js'
   workflow_run:
     workflows: ["Run Laravel Pint"]
     types:
@@ -12,25 +20,37 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v4
       with:
-        ref: main
+        token: ${{ secrets.GITHUB_TOKEN }}
         fetch-depth: 0
 
     - name: Setup Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
-        node-version: '18'
+        node-version: '20'
         cache: 'npm'
 
     - name: Install dependencies
       run: npm ci
 
-    - name: Build Assets (CSS and JavaScript)
+    - name: Build Assets
       run: npm run build
 
+    - name: Check for changes
+      id: verify-changed-files
+      run: |
+        if [ -n "$(git status --porcelain public/)" ]; then
+          echo "changed=true" >> $GITHUB_OUTPUT
+        else
+          echo "changed=false" >> $GITHUB_OUTPUT
+        fi
+
     - name: Commit compiled assets
+      if: steps.verify-changed-files.outputs.changed == 'true'
       uses: stefanzweifel/git-auto-commit-action@v4
       with:
-        commit_message: "chore: update compiled assets (CSS and JavaScript)"
-        file_pattern: 'resources/styles/public/*.css resources/js/public/**/*'
+        commit_message: "🤖 Auto-build assets [skip ci]"
+        file_pattern: 'public/'
+        skip_dirty_check: true
