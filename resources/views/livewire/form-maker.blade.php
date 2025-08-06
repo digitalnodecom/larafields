@@ -1,8 +1,8 @@
 @php use Illuminate\Support\Facades\Session; @endphp
-<div class="larafields lftw-space-y-8" style="max-width: 100%; overflow-x: auto; box-sizing: border-box; margin-right: 16px;">
+<div class="larafields lftw:space-y-6" style="max-width: 100%; overflow-x: auto; box-sizing: border-box;">
   @foreach($availablePropertiesSchema as $key => $field)
-    <div class="lftw-flex lftw-flex-col">
-      <label class="lftw-text-xl lftw-font-semibold lftw-mb-3">{{ $field['label'] }}</label>
+    <div class="lftw:flex lftw:flex-col">
+      <label class="lftw:text-lg lftw:font-semibold lftw:mb-4 lftw:text-gray-900">{{ $field['label'] }}</label>
 
       @php
         $field['key'] = 'availablePropertiesData.' . $field['name'];
@@ -14,15 +14,16 @@
   @endforeach
 
   @if(Session::has('message'))
-    <hr>
-    <p>{{ session('message') }}</p>
+    <div class="lftw:border-t lftw:border-gray-200 lftw:pt-4 lftw:mt-6">
+      <p class="lftw:text-sm lftw:text-gray-600">{{ session('message') }}</p>
+    </div>
   @endif
 
-  <div class="lftw-flex lftw-flex-col lftw-sm:flex-row lftw-gap-3 lftw-items-start lftw-sm:items-center">
+  <div class="lftw:flex lftw:flex-col lftw:sm:flex-row lftw:gap-3 lftw:items-start lftw:sm:items-center lftw:pt-4 lftw:border-t lftw:border-gray-200">
     <button
       wire:click.prevent.debounce.500ms="submit"
       wire:loading.attr="disabled"
-      class="submit-btn"
+      class="lftw:px-6 lftw:py-2 lftw:bg-brand-500 lftw:text-white lftw:font-medium lftw:hover:bg-brand-600 lftw:focus:outline-none lftw:focus:ring-2 lftw:focus:ring-brand-500 lftw:focus:ring-offset-2 lftw:disabled:opacity-50 lftw:disabled:cursor-not-allowed lftw:transition-colors lftw:duration-200"
     >
       <span wire:loading.remove>Submit</span>
       <span wire:loading>Saving...</span>
@@ -31,7 +32,7 @@
     <button
       wire:click.prevent="exportCsv"
       wire:loading.attr="disabled"
-      class="lftw:px-4 lftw:py-2 lftw:bg-green-600 lftw:text-white lftw:rounded-lg lftw:hover:bg-green-700 lftw:focus:ring-2 lftw:focus:ring-green-500 lftw:focus:ring-offset-2 lftw:disabled:opacity-50 lftw:disabled:cursor-not-allowed lftw:outline-none lftw:transition-colors lftw:duration-200 lftw:flex lftw:items-center lftw:gap-2 lftw:font-medium lftw:whitespace-nowrap"
+      class="lftw:px-4 lftw:py-2 lftw:bg-gray-600 lftw:text-white lftw:font-medium lftw:hover:bg-gray-700 lftw:focus:outline-none lftw:focus:ring-2 lftw:focus:ring-gray-500 lftw:focus:ring-offset-2 lftw:disabled:opacity-50 lftw:disabled:cursor-not-allowed lftw:transition-colors lftw:duration-200 lftw:flex lftw:items-center lftw:gap-2 lftw:whitespace-nowrap"
       title="Download form data as CSV"
     >
       <svg class="lftw:w-4 lftw:h-4 lftw:flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
