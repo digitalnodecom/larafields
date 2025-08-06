@@ -30,6 +30,8 @@ class FormMakerComponent extends Component
 
     public array $repeaterSearch = [];
 
+    public array $repeaterControlsOpen = [];
+
     public int $itemsPerPage = 25;
 
     private ?string $pageContext = null;
@@ -340,5 +342,37 @@ class FormMakerComponent extends Component
                 }
             }
         }
+    }
+
+    /**
+     * Check if form has any repeater fields
+     */
+    public function hasRepeaters(): bool
+    {
+        return $this->checkForRepeaters($this->availablePropertiesSchema);
+    }
+
+    /**
+     * Recursively check if there are any repeater fields in the schema
+     */
+    private function checkForRepeaters($fields): bool
+    {
+        foreach ($fields as $field) {
+            if ($field['type'] === 'repeater') {
+                return true;
+            }
+            if (isset($field['subfields']) && $this->checkForRepeaters($field['subfields'])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Toggle repeater controls visibility
+     */
+    public function toggleRepeaterControls($fieldName): void
+    {
+        $this->repeaterControlsOpen[$fieldName] = !($this->repeaterControlsOpen[$fieldName] ?? false);
     }
 }
