@@ -1,5 +1,6 @@
 {
   "name": "digitalnodecom/larafields",
+  "version": "2.0.0",
   "type": "package",
   "description": "A Laravel-powered form maker for your WordPress site.",
   "license": "MIT",
@@ -15,7 +16,8 @@
     }
   },
   "require": {
-    "php": "^8.2"
+    "php": "^8.2",
+    "roots/acorn": "^5.0"
   },
   "extra": {
     "acorn": {

@@ -11,30 +11,26 @@ class AssetsController extends Controller
 {
     public function css(Request $request)
     {
+        $assetPath = $this->getViteAssetPath('resources/css/app.css');
+        
         return $this->serveAsset(
             $request,
-            __DIR__.'/../../../resources/styles/public/larafields.css',
+            __DIR__.'/../../../public/build/'.$assetPath,
             'text/css'
         );
     }
 
     public function js(Request $request)
     {
+        $assetPath = $this->getViteAssetPath('resources/js/app.js');
+        
         return $this->serveAsset(
             $request,
-            __DIR__.'/../../../resources/js/public/larafields.js',
+            __DIR__.'/../../../public/build/'.$assetPath,
             'application/javascript'
         );
     }
 
-    public function tomSelectCss(Request $request)
-    {
-        return $this->serveAsset(
-            $request,
-            __DIR__.'/../../../resources/js/public/css/tom-select.css',
-            'text/css'
-        );
-    }
 
     /**
      * Serve an asset file with proper headers.
@@ -82,5 +78,25 @@ class AssetsController extends Controller
         }
 
         return '1.0.0';
+    }
+
+    /**
+     * Get the asset path from Vite manifest.
+     */
+    protected function getViteAssetPath(string $entry): string
+    {
+        $manifestPath = __DIR__.'/../../../public/build/manifest.json';
+        
+        if (!File::exists($manifestPath)) {
+            throw new \RuntimeException('Vite manifest not found. Run npm run build first.');
+        }
+        
+        $manifest = json_decode(File::get($manifestPath), true);
+        
+        if (!isset($manifest[$entry])) {
+            throw new \RuntimeException("Asset '{$entry}' not found in Vite manifest.");
+        }
+        
+        return $manifest[$entry]['file'];
     }
 }
