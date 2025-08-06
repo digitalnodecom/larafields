@@ -1,7 +1,7 @@
 {
-  "name": "abstract-form-builder",
+  "name": "larafields",
   "version": "1.0.0",
-  "description": "Abstract Form Builder Package",
+  "description": "Larafields",
   "type": "module",
   "scripts": {
     "dev": "vite",

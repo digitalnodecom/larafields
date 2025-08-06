@@ -11,7 +11,7 @@ class AssetsController extends Controller
 {
     public function css(Request $request)
     {
-        $assetPath = $this->getViteAssetPath('resources/styles/input.css');
+        $assetPath = $this->getViteAssetPath('resources/css/app.css');
         
         return $this->serveAsset(
             $request,
@@ -31,14 +31,6 @@ class AssetsController extends Controller
         );
     }
 
-    public function tomSelectCss(Request $request)
-    {
-        return $this->serveAsset(
-            $request,
-            __DIR__.'/../../../resources/js/public/css/tom-select.css',
-            'text/css'
-        );
-    }
 
     /**
      * Serve an asset file with proper headers.

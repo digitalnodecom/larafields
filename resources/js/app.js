@@ -1,7 +1,4 @@
-// Import CSS
-import '../styles/input.css';
-
-// Import tom-select
+// Import tom-select JavaScript only
 import TomSelect from 'tom-select';
 
 // Make TomSelect available globally

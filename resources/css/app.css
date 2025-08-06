@@ -1,3 +1,7 @@
+/* Import tom-select CSS first */
+@import "tom-select/dist/css/tom-select.css";
+
+/* Import Tailwind CSS with prefix */
 @import "tailwindcss" prefix(lftw);
 
 @source "resources/views/components/RepeaterField.blade.php";

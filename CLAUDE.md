@@ -9,18 +9,14 @@ This is "Abstract Form Builder" (digitalnodecom/larafields) - a Laravel-powered 
 ## Development Commands
 
 ### Asset Building
-- `npm run dev` - Watch for changes and rebuild both CSS and JavaScript
-- `npm run dev:css` - Watch CSS files with Tailwind
-- `npm run dev:js` - Watch JavaScript files with Webpack
-- `npm run build` - Build production assets (CSS + JS)
-- `npm run build:prod` - Build production assets (minified)
-- `npm run build:dev` - Build development assets
+- `npm run dev` - Start Vite development server with HMR for CSS and JavaScript
+- `npm run build` - Build production assets (minified CSS + JS)
 
 ### WordPress Integration
 - `wp acorn clear` - Clear Acorn cache (required after installation)
 - `wp acorn vendor:publish --tag="larafields"` - Publish package assets and configuration
 - `wp acorn migrate` - Run database migrations
-- `wp acorn clear:views` - Clear cached views
+- `wp acorn clear:views` - Clear cached Blade views
 
 ### Code Quality
 - `vendor/bin/pint` - Run Laravel Pint for code formatting
@@ -40,14 +36,15 @@ This is "Abstract Form Builder" (digitalnodecom/larafields) - a Laravel-powered 
 - Includes pagination and search for repeater fields
 - Handles file uploads and form validation
 
-**Form Renderer Service**: `src/Services/FormRenderer.php`
-- Handles Livewire form mounting and rendering
-- Provides wrapper methods for different display contexts
+**Service Provider**: `src/Providers/LarafieldsServiceProvider.php`
+- Registers Livewire components, views, routes, and assets
+- Configures database migrations and configuration publishing
 
 ### Key Traits
 - `HasProcessesFields` - Field processing logic
 - `HasRepeaterFields` - Repeater field functionality
 - `HasValidation` - Form validation including unique-within-repeater rules
+- `HasCsvExport` - CSV export functionality
 
 ### Configuration
 Forms are defined in `config/larafields.php` and support:
@@ -78,9 +75,16 @@ Example:
 Uses `larafields` table with migrations in `database/migrations/`
 
 ### Frontend Assets
-- **CSS**: Tailwind CSS compiled from `resources/styles/input.css`
-- **JavaScript**: Webpack bundles `resources/js/app.js` with tom-select dependency
+- **CSS**: Tailwind CSS 4 with prefix `lftw`, compiled from `resources/styles/input.css`
+- **JavaScript**: Vite bundles `resources/js/app.js` with tom-select dependency
+- **Build System**: Vite 7 with Laravel plugin and @tailwindcss/vite
 - **Views**: Blade templates in `resources/views/` for form components and layouts
+
+### API Layer
+- REST endpoints: `GET/POST /larafields/forms`
+- Authentication via WordPress Application Passwords
+- Actions: `GetFormAction`, `UpdateFormAction`
+- DTOs: `GetFormDTO`, `UpdateFormDTO`
 
 ## Key Development Patterns
 
@@ -105,4 +109,4 @@ FormMaker::get_field(?string $fieldKey, ?string $objectName, ?string $objectId)
 - `larafields_load_pages` - Filter for adding custom admin pages
 
 ## Testing Context
-This package runs within a WordPress environment using Roots/Acorn (Laravel components for WordPress). The namespace is `DigitalNode\Larafields`.
+This package runs within a WordPress environment using Roots/Acorn (Laravel components for WordPress). The namespace is `DigitalNode\Larafields`. No dedicated test suite is included in the package; testing relies on Roots/Acorn's infrastructure.

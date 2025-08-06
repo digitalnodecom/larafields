@@ -35,12 +35,6 @@ class WordPressHookService
                 $this->getPackageVersion(),
                 true
             );
-            wp_enqueue_style(
-                'choices-css',
-                home_url('/larafields/assets/js/css/tom-select.css'),
-                [],
-                $this->getPackageVersion()
-            );
 
             $this->enqueuePackageAssets();
         });
