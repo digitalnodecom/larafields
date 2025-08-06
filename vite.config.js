@@ -8,20 +8,20 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 export default defineConfig({
   plugins: [
+    tailwindcss(),
     laravel({
       input: [
-        'resources/css/app.css',
-        'resources/js/app.js',
+        'resources/css/app.css', // This is mapped to larafields.css in AssetsController
+        'resources/js/app.js', // This is mapped to larafields.js in AssetsController
       ],
       refresh: true,
     }),
-    tailwindcss(),
   ],
   resolve: {
     alias: {
       '@': resolve(__dirname, 'resources'),
       '@scripts': resolve(__dirname, 'resources/js'),
-      '@styles': resolve(__dirname, 'resources/styles'),
+      '@styles': resolve(__dirname, 'resources/css'),
     },
   },
 });
