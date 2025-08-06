@@ -2,6 +2,7 @@
 
 namespace DigitalNode\Larafields\Services;
 
+use Composer\InstalledVersions;
 use Illuminate\Support\Collection;
 
 class WordPressHookService
@@ -49,7 +50,7 @@ class WordPressHookService
         wp_enqueue_style(
             'larafields-css',
             home_url('/larafields/assets/css/larafields.css'),
-            ver: config('larafields.version')
+            ver: $this->getPackageVersion()
         );
     }
 
@@ -58,7 +59,11 @@ class WordPressHookService
      */
     private function getPackageVersion(): string
     {
-        return config('larafields.version', '1.0.0');
+        try {
+            return InstalledVersions::getVersion('digitalnodecom/larafields') ?? '1.0.0';
+        } catch (\Throwable $e) {
+            return '1.0.0';
+        }
     }
 
     private function registerMetaBoxHooks(): void
