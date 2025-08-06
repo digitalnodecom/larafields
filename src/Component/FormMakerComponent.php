@@ -365,6 +365,7 @@ class FormMakerComponent extends Component
                 return true;
             }
         }
+
         return false;
     }
 
@@ -373,6 +374,6 @@ class FormMakerComponent extends Component
      */
     public function toggleRepeaterControls($fieldName): void
     {
-        $this->repeaterControlsOpen[$fieldName] = !($this->repeaterControlsOpen[$fieldName] ?? false);
+        $this->repeaterControlsOpen[$fieldName] = ! ($this->repeaterControlsOpen[$fieldName] ?? false);
     }
 }
