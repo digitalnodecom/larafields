@@ -1,348 +1,102 @@
 /* Import tom-select CSS first */
 @import "tom-select/dist/css/tom-select.css";
 
-/* Import Tailwind CSS with prefix */
+/* Import Tailwind CSS with prefix lftw (larafields-tailwind)! */
 @import "tailwindcss" prefix(lftw);
-
-@source "resources/views/components/RepeaterField.blade.php";
 
 @plugin "@tailwindcss/forms";
 
+@theme {
+  /* Brand colors based on #487254 - your primary green */
+  --color-brand-50: #f0f4f1;
+  --color-brand-100: #dce6de;
+  --color-brand-200: #bad1be;
+  --color-brand-300: #92b598;
+  --color-brand-400: #6b9672;
+  --color-brand-500: #487254;
+  --color-brand-600: #3c5e46;
+  --color-brand-700: #324d39;
+  --color-brand-800: #2a3f30;
+  --color-brand-900: #253529;
+  --color-brand-950: #121c15;
+
+  /* Override default grays for monochrome design */
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+  --color-gray-950: #030712;
+
+  /* Status colors - muted for monochrome feel */
+  --color-success-50: #f0fdf4;
+  --color-success-500: #22c55e;
+  --color-success-600: #16a34a;
+  --color-success-700: #15803d;
+
+  --color-warning-50: #fffbeb;
+  --color-warning-500: #f59e0b;
+  --color-warning-600: #d97706;
+  --color-warning-700: #b45309;
+
+  --color-danger-50: #fef2f2;
+  --color-danger-500: #ef4444;
+  --color-danger-600: #dc2626;
+  --color-danger-700: #b91c1c;
+
+  /* Sharp design - no border radius */
+  --radius-none: 0px;
+  --radius-sm: 0px;
+  --radius-DEFAULT: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --radius-3xl: 0px;
+  --radius-full: 0px;
+
+  /* Minimal shadows for clean look */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-DEFAULT: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  --shadow-md: 0 2px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 4px 8px -2px rgb(0 0 0 / 0.1);
+  --shadow-none: 0 0 #0000;
+
+  /* Clean spacing additions */
+  --spacing-18: 4.5rem;
+  --spacing-88: 22rem;
+}
+
 @layer components {
+  /* WordPress Admin Integration - Minimal overrides only */
   .larafields {
-    /* WordPress Admin Container Constraints */
+    /* WordPress Admin Container Constraints - Only essential overrides */
     .wrap .repeater,
     .postbox .repeater,
     .form-table .repeater {
       max-width: 100% !important;
       overflow-x: auto !important;
       box-sizing: border-box !important;
-      margin-right: 20px !important;
     }
-
-    /* Modern Table Design */
-    .repeater {
-      border-radius: 12px !important;
-      overflow: visible !important;
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important;
-      border: 1px solid #e5e7eb !important;
-      background: white !important;
-      padding: 20px !important;
-      width: 100% !important;
-      max-width: 100% !important;
-      box-sizing: border-box !important;
-    }
-
-    .repeater table {
-      table-layout: auto !important;
-      border-collapse: separate !important;
-      border-spacing: 0 !important;
-      background: white !important;
-      width: 100% !important;
-      max-width: 100% !important;
-      border-radius: 8px !important;
-      overflow: hidden !important;
-      border: 1px solid #e5e7eb !important;
-      display: table !important;
-      box-sizing: border-box !important;
-    }
-
-    /* Modern table headers */
-    .repeater table thead th {
-      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
-      border: none !important;
-      border-bottom: 2px solid #e2e8f0 !important;
-      padding: 16px 20px !important;
-      font-weight: 600 !important;
-      font-size: 14px !important;
-      color: #334155 !important;
-      text-align: left !important;
-      letter-spacing: 0.025em !important;
-    }
-
-    .repeater table thead th:first-child {
-      border-top-left-radius: 8px !important;
-    }
-
-    .repeater table thead th:last-child {
-      border-top-right-radius: 8px !important;
-    }
-
-    /* Modern table cells */
-    .repeater table tbody td {
-      border: none !important;
-      border-bottom: 1px solid #f1f5f9 !important;
-      padding: 16px 20px !important;
-      background: white !important;
-      vertical-align: middle !important;
-      transition: all 0.2s ease !important;
-    }
-
-    /* Hover effects for rows */
-    .repeater table tbody tr:hover td {
-      background: #f8fafc !important;
-    }
-
-    /* Last row styling */
-    .repeater table tbody tr:last-child td {
-      border-bottom: none !important;
-    }
-
-    /* Modern form inputs */
-    .recursive-field input,
-    .recursive-field textarea {
-      width: 100% !important;
-      border: 1px solid #e2e8f0 !important;
-      border-radius: 8px !important;
-      padding: 8px 12px !important;
-      font-size: 14px !important;
-      transition: all 0.2s ease !important;
-      background: white !important;
-      color: #374151 !important;
-      min-width: 150px !important;
-    }
-
-    .recursive-field input:focus,
-    .recursive-field textarea:focus {
-      outline: none !important;
-      border-color: #3b82f6 !important;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
-    }
-
-    /* Tom-select styling */
+    
+    /* Tom-select minimal styling fixes for WordPress admin */
     .ts-wrapper {
       display: inline-block !important;
       width: auto !important;
     }
-
+    
     .ts-control {
       flex-direction: row !important;
       align-items: flex-start !important;
       width: auto !important;
       display: inline-flex !important;
-      border: 1px solid #e2e8f0 !important;
-      border-radius: 8px !important;
-      background: white !important;
-      box-shadow: none !important;
-      transition: all 0.2s ease !important;
       min-width: 150px !important;
       flex-wrap: wrap !important;
-    }
-
-    .ts-control:focus-within {
-      border-color: #3b82f6 !important;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
-    }
-
-    .ts-wrapper.multi .ts-control > div {
-      margin: 2px 2px 2px 0 !important;
-      width: fit-content !important;
-      background: #f1f5f9 !important;
-      border: 1px solid #e2e8f0 !important;
-      border-radius: 6px !important;
-      padding: 4px 8px !important;
-      font-size: 12px !important;
-      color: #475569 !important;
-    }
-
-    /* Vertical layout for multiselect */
-    .multiselect-vertical .ts-wrapper.multi .ts-control {
-      flex-direction: column !important;
-      align-items: stretch !important;
-    }
-
-    .multiselect-vertical .ts-wrapper.multi .ts-control > div {
-      margin: 1px 0 !important;
-      width: 100% !important;
-      display: block !important;
-    }
-
-    /* Remove Button Styling */
-    .repeater table tbody td button {
-      background: #ef4444 !important;
-      color: white !important;
-      border: none !important;
-      border-radius: 6px !important;
-      padding: 6px 12px !important;
-      font-size: 12px !important;
-      font-weight: 500 !important;
-      transition: all 0.2s ease !important;
-      cursor: pointer !important;
-    }
-
-    .repeater table tbody td button:hover {
-      background: #dc2626 !important;
-      transform: translateY(-1px) !important;
-      box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2) !important;
-    }
-
-    /* Add Row Button Styling */
-    .repeater button {
-      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
-      color: white !important;
-      border: none !important;
-      border-radius: 8px !important;
-      padding: 12px 24px !important;
-      font-size: 14px !important;
-      font-weight: 500 !important;
-      transition: all 0.2s ease !important;
-      cursor: pointer !important;
-      box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2) !important;
-    }
-
-    .repeater-field,
-    .repeater,
-    .repeater table,
-    .repeater > div {
-      overflow: visible !important;
-    }
-
-    .repeater button:hover {
-      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
-      transform: translateY(-1px) !important;
-      box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3) !important;
-    }
-
-    .repeater-row td {
-      width: 100% !important;
-    }
-
-    /* Fixed layout - equal width columns */
-    .repeater table.table-fixed-layout {
-      table-layout: fixed !important;
-    }
-
-    .repeater table.table-fixed-layout th,
-    .repeater table.table-fixed-layout td {
-      width: auto !important;
-      min-width: auto !important;
-      max-width: none !important;
-    }
-
-    /* Actions column width (applies to auto layout only) */
-    .repeater table:not(.table-fixed-layout) th:last-child,
-    .repeater table:not(.table-fixed-layout) td:last-child {
-      width: 100px !important;
-      min-width: 100px !important;
-      max-width: 100px !important;
-    }
-
-    /* First column text fields should size to content */
-    .repeater table td:first-child:not(:has(.ts-wrapper)) input,
-    .repeater table td:first-child:not(:has(.ts-wrapper)) textarea {
-      width: auto !important;
-      display: inline-block !important;
-      overflow: visible !important;
-    }
-
-    .recursive-field,
-    .recursive-field > div {
-      display: inline-block !important;
-      width: 100%;
-    }
-
-    /* But keep tom-select fields auto-width */
-    .recursive-field:has(.ts-wrapper) input,
-    .recursive-field:has(.ts-wrapper) textarea {
-      width: auto !important;
-      display: inline-block !important;
-    }
-
-    /* Ensure text fields without tom-select take full width */
-    .recursive-field:not(:has(.ts-wrapper)) input,
-    .recursive-field:not(:has(.ts-wrapper)) textarea {
-      width: 100% !important;
-      display: block !important;
-    }
-
-    /* Search field styling */
-    .repeater .relative input[placeholder="Search rows..."] {
-      width: 100% !important;
-      padding: 8px 12px 8px 32px !important;
-      border: 1px solid #d1d5db !important;
-      border-radius: 8px !important;
-      font-size: 14px !important;
-      background: white !important;
-      transition: all 0.2s ease !important;
-      min-width: 200px !important;
-      height: 36px !important;
-    }
-
-    /* WordPress Admin Responsive Adjustments */
-    @media (max-width: 782px) {
-      .repeater {
-        padding: 15px !important;
-        margin: 0 !important;
-      }
-      
-      .repeater table {
-        font-size: 13px !important;
-      }
-      
-      .repeater table thead th,
-      .repeater table tbody td {
-        padding: 12px 8px !important;
-      }
-    }
-
-    /* Responsive search field */
-    @media (max-width: 640px) {
-      .repeater .relative input[placeholder="Search rows..."] {
-        min-width: 0 !important;
-        font-size: 16px !important; /* Prevents zoom on iOS */
-      }
-      
-      .repeater {
-        padding: 10px !important;
-      }
-      
-      .repeater table thead th,
-      .repeater table tbody td {
-        padding: 8px 4px !important;
-        font-size: 12px !important;
-      }
-    }
-
-    .repeater .relative input[placeholder="Search rows..."]:focus {
-      outline: none !important;
-      border-color: #3b82f6 !important;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
-    }
-
-    .repeater .relative .absolute {
-      left: 8px !important;
-      top: 50% !important;
-      transform: translateY(-50%) !important;
-      color: #6b7280 !important;
-    }
-
-    /* Fix search icon sizing */
-    .repeater .relative .absolute svg {
-      width: 16px !important;
-      height: 16px !important;
-      flex-shrink: 0 !important;
-    }
-
-    .submit-btn,
-    .repeater button {
-      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
-      color: white !important;
-      border: none !important;
-      border-radius: 8px !important;
-      padding: 12px 20px !important;
-      font-size: 14px !important;
-      font-weight: 500 !important;
-      transition: all 0.2s ease !important;
-      cursor: pointer !important;
-      box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2) !important;
-      min-width: 80px !important;
-    }
-
-    .submit-btn:hover,
-    .repeater button:hover {
-      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
-      transform: translateY(-1px) !important;
-      box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3) !important;
     }
   }
 }
