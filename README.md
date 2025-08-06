@@ -1,6 +1,6 @@
-# Abstract Form Maker
+# Larafields
 
-A flexible form maker package that allows you to define custom form groups for WordPress posts and taxonomies.
+A flexible form maker package that allows you to define custom form groups for WordPress posts and taxonomies built with Acorn (Laravel) & Livewire.
 
 ## Installation
 
